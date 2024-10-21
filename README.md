@@ -4,7 +4,9 @@ Collegianer Task Management System
 
 A web based task management sytem for collegianer
 
-Members
+#Descritption
+
+#Members
 Margaret Zoe A. Neri 
 Reynante Baldivino
 Yed Francois Y. Cagang
