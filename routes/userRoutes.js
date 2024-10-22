@@ -16,5 +16,4 @@ userRoutes.get('/:id', (req, res) => {
     //handle getting user ID
 }); 
 
-
 module.exports = app;
