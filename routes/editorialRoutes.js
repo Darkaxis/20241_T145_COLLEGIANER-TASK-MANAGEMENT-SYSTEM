@@ -1,18 +1,18 @@
 
 const express = require('express');
-const userRoutes = express().Router();
+const editorialRoutes = express().Router();
+const editorialServices = require('../services/editoralServices');
+const taskServices = require('../services/taskServices');
 
-
-userRoutes.post('/login', (req, res) => {
+ editorialRoutes.post('/login', (req, res) => {
     //handle user login
 
 
 });
-
-userRoutes.post('/logout', (req, res) => {
+ editorialRoutes.post('/logout', (req, res) => {
     //handle user logout
     try {
-        userServices.logoutUser();
+        editorialServices.logoutUser();
         res.status(200).json({
             message: 'User logged out successfully'
         });
@@ -24,12 +24,11 @@ userRoutes.post('/logout', (req, res) => {
     }
 }
 );
-
-userRoutes.get('/:id', (req, res) => {
+ editorialRoutes.get('/:id', (req, res) => {
     //handle getting user ID
     try {
         const userId = req.params.id;
-        const user = await userServices.getUserDetails(userId);
+        const user =  editorialServices.getUserDetails(userId);
         res.status(200).json({
             message: 'User details retrieved successfully',
             data: user
@@ -42,12 +41,11 @@ userRoutes.get('/:id', (req, res) => {
     }
 }
 );
-
-userRoutes.get('/tasks/:id', (req, res) => {
+ editorialRoutes.get('/tasks/:id', (req, res) => {
     //handle getting user tasks
     try {
         const userId = req.params.id;
-        const tasks = await taskServices.getAllTasks(userId);
+        const tasks = taskServices.getAllTasks(userId);
         res.status(200).json(tasks);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -55,8 +53,7 @@ userRoutes.get('/tasks/:id', (req, res) => {
 
 });
 
-
-userRoutes.post('/tasks/:taskId/submit', async (req, res) => {
+ editorialRoutes.post('/tasks/:taskId/submit', async (req, res) => {
     //handle submitting assigned task
     try {
         const taskId = req.params.taskId;
@@ -67,6 +64,15 @@ userRoutes.post('/tasks/:taskId/submit', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+editorialRoutes.post('/tasks/create', async (req, res) => {
+    //handle creating a task
+    try {
+        const taskData = req.body;
+        const newTask = await taskServices.createTask(taskData);
+        res.status(201).send(newTask);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
 
-module.exports = userRoutes;
-module.exports = app;
+module.exports = editorialRoutes;

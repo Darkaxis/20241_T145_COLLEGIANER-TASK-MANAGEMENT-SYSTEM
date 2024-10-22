@@ -1,11 +1,11 @@
 const express = require('express');
-const adminRoutes = express.Router();  
-const adminServices = require('../services/adminServices'); // Import the admin services
+const eicRoutes = express.Router();  
+const eicServices = require('../services/eicServices'); // Import the admin services
 
-adminRoutes.post('/login', (req, res) => {
+eicRoutes.post('/login', (req, res) => {
     //handle admin login
     const { username, password } = req.body;
-    const admin = adminServices.authenticateAdmin(username, password);
+    const admin = eicServices.authenticateAdmin(username, password);
     if (admin) {
         res.status(200).json({
             message: 'Admin authenticated successfully',
@@ -18,17 +18,17 @@ adminRoutes.post('/login', (req, res) => {
     }
 });
 
-adminRoutes.post('/logout', (req, res) => { 
+eicRoutes.post('/logout', (req, res) => { 
     //handle admin logout
-    adminServices.logoutAdmin();
+    eicServices.logoutAdmin();
     res.status(200).json({
         message: 'Admin logged out successfully'
     });
 });
-adminRoutes.get('/:id', (req, res) => {
+eicRoutes.get('/:id', (req, res) => {
     //handle getting admin ID
     const adminId = req.params.id;
-    const admin = adminServices.getAdminDetails(adminId);
+    const admin = eicServices.getAdminDetails(adminId);
     if (admin) {
         res.status(200).json({
             message: 'Admin details retrieved successfully',
@@ -40,10 +40,10 @@ adminRoutes.get('/:id', (req, res) => {
         });
     }
 });
-adminRoutes.add('/add', (req, res) => {   
+eicRoutes.add('/add', (req, res) => {   
     //handle adding user
     const userData = req.body;
-    adminServices.addUser(userData);
+    eicServices.addUser(userData);
     res.status(201).json({
         message: 'User added successfully'
     }); 
@@ -51,4 +51,4 @@ adminRoutes.add('/add', (req, res) => {
     
 });
 
-module.exports = adminRoutes;
+module.exports = eicRoutes;
