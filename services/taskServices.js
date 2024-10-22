@@ -11,7 +11,7 @@ async function getTask(taskId) {
 }
 
 // Function to get all tasks
-async function getAllTasks() {
+async function getAllTasks(userId) {
     
 }
 
