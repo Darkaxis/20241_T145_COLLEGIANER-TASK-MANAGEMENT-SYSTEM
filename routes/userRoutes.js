@@ -16,7 +16,14 @@ userRoutes.post('/logout', (req, res) => {
         res.status(200).json({
             message: 'User logged out successfully'
         });
-    });
+    }
+    catch (error) {
+        res.status(400).json({
+            message: 'User logout failed'
+        });
+    }
+}
+);
 
 userRoutes.get('/:id', (req, res) => {
     //handle getting user ID
