@@ -1,0 +1,12 @@
+{
+  "name": "20241_t145_collegianer-task-management-system",
+  "version": "1.0.0",
+  "description": "T145\r Collegianer Task Management System",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

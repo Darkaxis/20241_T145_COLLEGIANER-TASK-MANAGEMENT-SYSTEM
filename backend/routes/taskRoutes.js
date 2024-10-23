@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import taskService from '../services/taskServices.js';
+
 const taskRoutes = express.Router();
-const taskService = require('../services/taskServices');
 
 taskRoutes.post('/create', async (req, res) => {
     try {
@@ -12,7 +13,6 @@ taskRoutes.post('/create', async (req, res) => {
     }
 });
 
-
 taskRoutes.get('/:id', async (req, res) => {    
     try {
         const taskId = req.params.id;
@@ -21,8 +21,8 @@ taskRoutes.get('/:id', async (req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-}
-);
+});
+
 taskRoutes.get('/', async (req, res) => {    
     try {
         const tasks = await taskService.getAllTasks();
@@ -30,8 +30,8 @@ taskRoutes.get('/', async (req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-}   
-);
+});
+
 taskRoutes.put('/:id', async (req, res) => {
     try {
         const taskId = req.params.id;
@@ -41,8 +41,8 @@ taskRoutes.put('/:id', async (req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-}   
-);
+});
+
 taskRoutes.delete('/:id', async (req, res) => {
     try {
         const taskId = req.params.id;
@@ -51,6 +51,6 @@ taskRoutes.delete('/:id', async (req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-}   
-);  
-module.exports = taskRoutes;
+});
+
+export default taskRoutes;

@@ -1,6 +1,7 @@
-const express = require('express');
-const eicRoutes = express.Router();  
-const eicServices = require('../services/eicServices'); // Import the admin services
+import express from 'express';
+import eicServices from '../services/eicServices'; // Import the admin services
+
+const eicRoutes = express.Router();
 
 eicRoutes.post('/login', (req, res) => {
     //handle admin login
@@ -25,6 +26,7 @@ eicRoutes.post('/logout', (req, res) => {
         message: 'Admin logged out successfully'
     });
 });
+
 eicRoutes.get('/:id', (req, res) => {
     //handle getting admin ID
     const adminId = req.params.id;
@@ -40,15 +42,14 @@ eicRoutes.get('/:id', (req, res) => {
         });
     }
 });
-eicRoutes.add('/add', (req, res) => {   
+
+eicRoutes.post('/add', (req, res) => {   
     //handle adding user
     const userData = req.body;
     eicServices.addUser(userData);
     res.status(201).json({
         message: 'User added successfully'
     }); 
-    
-    
 });
 
-module.exports = eicRoutes;
+export default eicRoutes;

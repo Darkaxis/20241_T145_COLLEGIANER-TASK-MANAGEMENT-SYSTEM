@@ -1,14 +1,11 @@
+import express from 'express';
+import staffServices from '../services/staffServices';
+import taskServices from '../services/taskServices';
 
-const express = require('express');
-const staffRoutes = express().Router();
-const staffServices = require('../services/staffServices');
-const taskServices = require('../services/taskServices');
-
+const staffRoutes = express.Router();
 
 staffRoutes.post('/login', (req, res) => {
     //handle user login
-
-
 });
 
 staffRoutes.post('/logout', (req, res) => {
@@ -18,32 +15,28 @@ staffRoutes.post('/logout', (req, res) => {
         res.status(200).json({
             message: 'User logged out successfully'
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({
             message: 'User logout failed'
         });
     }
-}
-);
+});
 
 staffRoutes.get('/:id', (req, res) => {
     //handle getting user ID
     try {
         const userId = req.params.id;
-        const user =  staffServices.getUserDetails(userId);
+        const user = staffServices.getUserDetails(userId);
         res.status(200).json({
             message: 'User details retrieved successfully',
             data: user
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(404).json({
             message: 'User not found'
         });
     }
-}
-);
+});
 
 staffRoutes.get('/tasks/:id', (req, res) => {
     //handle getting user tasks
@@ -54,9 +47,7 @@ staffRoutes.get('/tasks/:id', (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
 });
-
 
 staffRoutes.post('/tasks/:taskId/submit', async (req, res) => {
     //handle submitting assigned task
@@ -70,5 +61,4 @@ staffRoutes.post('/tasks/:taskId/submit', async (req, res) => {
     }
 });
 
-module.exports = staffRoutes;
-module.exports = app;
+export default staffRoutes;
