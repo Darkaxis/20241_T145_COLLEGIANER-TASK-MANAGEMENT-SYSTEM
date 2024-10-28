@@ -1,47 +1,44 @@
+import express from 'express';
+import editorialServices from '../services/editorialServices.js';
+import taskServices from '../services/taskServices.js';
 
-const express = require('express');
-const editorialRoutes = express().Router();
-const editorialServices = require('../services/editoralServices');
-const taskServices = require('../services/taskServices');
+const editorialRoutes = express.Router();
 
- editorialRoutes.post('/login', (req, res) => {
+editorialRoutes.post('/login', (req, res) => {
     //handle user login
-
-
 });
- editorialRoutes.post('/logout', (req, res) => {
+
+editorialRoutes.post('/logout', (req, res) => {
     //handle user logout
     try {
         editorialServices.logoutUser();
         res.status(200).json({
             message: 'User logged out successfully'
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({
             message: 'User logout failed'
         });
     }
-}
-);
- editorialRoutes.get('/:id', (req, res) => {
+});
+
+editorialRoutes.get('/:id', (req, res) => {
     //handle getting user ID
     try {
         const userId = req.params.id;
-        const user =  editorialServices.getUserDetails(userId);
+        const user = editorialServices.getUserDetails(userId);
         res.status(200).json({
             message: 'User details retrieved successfully',
             data: user
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(404).json({
             message: 'User not found'
         });
     }
-}
-);
- editorialRoutes.get('/tasks/:id', (req, res) => {
+});
+
+editorialRoutes.get('/tasks/:id', (req, res) => {
     //handle getting user tasks
     try {
         const userId = req.params.id;
@@ -50,10 +47,9 @@ const taskServices = require('../services/taskServices');
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-
 });
 
- editorialRoutes.post('/tasks/:taskId/submit', async (req, res) => {
+editorialRoutes.post('/tasks/:taskId/submit', async (req, res) => {
     //handle submitting assigned task
     try {
         const taskId = req.params.taskId;
@@ -64,6 +60,7 @@ const taskServices = require('../services/taskServices');
         res.status(400).json({ error: error.message });
     }
 });
+
 editorialRoutes.post('/tasks/create', async (req, res) => {
     //handle creating a task
     try {
@@ -75,4 +72,4 @@ editorialRoutes.post('/tasks/create', async (req, res) => {
     }
 });
 
-module.exports = editorialRoutes;
+export default editorialRoutes;

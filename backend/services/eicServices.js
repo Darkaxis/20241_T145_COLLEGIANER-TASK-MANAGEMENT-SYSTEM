@@ -1,5 +1,5 @@
 
-const db = require('../db'); // Import the Firestore instance from db.js
+
 
 // Function to create a new admin user
 async function createAdmin(adminData) {
@@ -25,9 +25,4 @@ function addUser(userData) {
     // Add user
 }   
 
-module.exports = {
-    createAdmin,
-    authenticateAdmin,
-    getAdminDetails,
-    logoutAdmin
-};
+export default { createAdmin, authenticateAdmin, getAdminDetails, logoutAdmin, addUser };

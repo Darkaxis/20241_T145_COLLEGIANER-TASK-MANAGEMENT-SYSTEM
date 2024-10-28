@@ -24,3 +24,5 @@ async function updateTask(taskId, taskData) {
 async function deleteTask(taskId) {
     
 }
+
+export default { createTask, getTask, getAllTasks, updateTask, deleteTask };

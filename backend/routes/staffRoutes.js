@@ -1,6 +1,6 @@
 import express from 'express';
-import staffServices from '../services/staffServices';
-import taskServices from '../services/taskServices';
+import staffServices from '../services/staffServices.js';
+import taskServices from '../services/taskServices.js';
 
 const staffRoutes = express.Router();
 

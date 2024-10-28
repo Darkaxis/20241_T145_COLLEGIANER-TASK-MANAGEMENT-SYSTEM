@@ -1,4 +1,4 @@
-const db = require('../db'); // Import the Firestore instance from db.js
+
 
 function logoutUser() {
     // Logout user
@@ -18,9 +18,7 @@ function submitTask(taskId, submissionData) {
 
 
 
-module.exports = {
-    logoutUser,
-    getUserDetails,
-    getAllTasks,
-    submitTask
-};
+export default {
+logoutUser , getUserDetails, getAllTasks, submitTask
+
+}

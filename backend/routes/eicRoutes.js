@@ -1,5 +1,5 @@
 import express from 'express';
-import eicServices from '../services/eicServices'; // Import the admin services
+import eicServices from '../services/eicServices.js'; // Import the admin services
 
 const eicRoutes = express.Router();
 
