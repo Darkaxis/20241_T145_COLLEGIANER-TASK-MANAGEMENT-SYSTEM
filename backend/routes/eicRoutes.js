@@ -1,16 +1,20 @@
 import express from 'express';
+import bodyParser from 'body-parser'
 import eicServices from '../services/eicServices.js'; // Import the admin services
 
 const eicRoutes = express.Router();
+eicRoutes.use(bodyParser.json());
+eicRoutes.use(bodyParser.urlencoded({ extended: true }));
 
-eicRoutes.post('/login', (req, res) => {
+
+eicRoutes.post('/login', async (req, res) => {
     //handle admin login
     const { username, password } = req.body;
-    const admin = eicServices.authenticateAdmin(username, password);
+    const admin = await eicServices.authenticateAdmin(username, password);
     if (admin) {
         res.status(200).json({
             message: 'Admin authenticated successfully',
-            data: admin
+            token: admin
         });
     } else {
         res.status(401).json({
@@ -39,6 +43,23 @@ eicRoutes.get('/:id', (req, res) => {
     } else {
         res.status(404).json({
             message: 'Admin not found'
+        });
+    }
+});
+
+
+// Add admin
+eicRoutes.post('/add/admin', async (req, res) => {   
+    try {
+        const adminData = req.body;
+        console.log('Received adminData:', adminData); // Log the admin data for debugging
+        const result = await eicServices.createAdmin(adminData); // Use await to handle the promise
+        console.log('Result:', result); // Log the result for debugging
+        res.status(result.status).json({ message: result.message });
+    } catch (error) {
+        res.status(400).json({
+            message: 'Error adding admin',
+            error: error.message
         });
     }
 });

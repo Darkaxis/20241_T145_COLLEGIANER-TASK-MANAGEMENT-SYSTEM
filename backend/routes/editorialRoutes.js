@@ -6,6 +6,7 @@ const editorialRoutes = express.Router();
 
 editorialRoutes.post('/login', (req, res) => {
     //handle user login
+    
 });
 
 editorialRoutes.post('/logout', (req, res) => {
