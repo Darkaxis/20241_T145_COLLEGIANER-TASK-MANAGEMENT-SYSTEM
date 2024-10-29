@@ -1,28 +1,21 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import staffRoutes from './routes/staffRoutes.js';
-import editorialRoutes from './routes/editorialRoutes.js';
-import taskRoutes from './routes/taskRoutes.js';
-import eicRoutes from './routes/eicRoutes.js';
+import eicRoutes from './routes/eicRoutes.js'; // Import the admin routes
+import oauthRoutes from './routes/oauthRoutes.js'; // Import the OAuth2 routes
 
-
-dotenv.config();
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.use('/staff', staffRoutes);
-app.use('/editorial', editorialRoutes);
-app.use('/task', taskRoutes);
-app.use('/eic', eicRoutes);
+// Middleware to parse JSON request bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('landing page');
-});
+// Use the admin routes
+app.use('/eic', eicRoutes);
 
-const port = process.env.PORT || 3000;
+// Use the OAuth2 routes
+app.use('/google/oauth2', oauthRoutes);
+
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`);
 });
