@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import { v4 as uuidv4 } from 'uuid';
 import eicServices from '../services/eicServices.js'; // Import the admin services
 import oauthRoutes from './oauthRoutes.js'; // Import the OAuth routes
-import oauth2Client from '../services/google/oauthClient.js'; // Import the shared OAuth client
+import oauth2Client from '../utils/oauthClient.js'; // Import the shared OAuth client
 import { setTempAdminData } from '../utils/tempData.js'; // Import temp data functions
 
 const eicRoutes = express.Router();
