@@ -1,0 +1,347 @@
+    /* Base Styling */
+    
+    body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f8fafb;
+        overflow: hidden;
+    }
+    
+    p {
+        color: #b3b3b3;
+        font-weight: 300;
+        margin-left: 19px;
+    }
+    
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: bold;
+        filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3))
+    }
+    
+    a {
+        transition: .3s all ease;
+    }
+    
+    a:hover {
+        text-decoration: none !important;
+    }
+    /* Content Styling */
+    
+    .content {
+        padding: 7rem 0;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+    
+    @media (max-width: 991.98px) {
+        .content .bg {
+            height: 500px;
+        }
+    }
+    
+    .content .contents,
+    .content .bg {
+        width: 50%;
+    }
+    
+    @media (max-width: 1199.98px) {
+        .content .contents,
+        .content .bg {
+            width: 100%;
+        }
+    }
+    /* Logo Styling */
+    
+    .logo {
+        position: absolute;
+    }
+    
+    .logo img {
+        width: 80px;
+        height: 80px;
+        margin-top: -50px;
+        filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+    }
+    
+    .logo p {
+        margin-top: -3vh;
+        letter-spacing: 0.03em;
+        line-height: 25.2px;
+        white-space: pre-wrap;
+        display: block;
+        width: 100%;
+        margin-left: 26vw;
+        font-size: 12px;
+        font-weight: 100;
+        color: #555;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    /* Input Field with Icon */
+    
+    .input-icon {
+        position: relative;
+    }
+    
+    .input-icon .icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+    }
+    
+    .input-icon input {
+        padding-left: 35px;
+        /* to account for the icon */
+        font-size: 14px;
+        width: 100%;
+        padding: 10px;
+        /* reasonable padding */
+        border: 1px solid #cccccc;
+        border-radius: 5px;
+    }
+    
+    .input-icon input:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+    /* General input field settings */
+    
+    input {
+        width: 100%;
+        padding: 10px;
+        /* fixed padding */
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    input:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+    /* Form Group */
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    input {
+        width: 100%;
+        padding: 810px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    input:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+    /* Button Styles */
+    
+    .login-btn {
+        width: 100%;
+        background-color: #3b82f6;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        padding: 10px;
+        margin: 15px 0;
+    }
+    
+    .login-btn:hover {
+        background-color: #2563eb;
+    }
+    /* Separator for 'or' text */
+    
+    .or {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #777;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        text-align: center;
+        margin: 15px 0;
+    }
+    
+    .line {
+        flex: 1;
+        height: 1px;
+        background-color: #ccc;
+        margin: 0 10px;
+    }
+    /* Layout Adjustment */
+    
+    .move-down {
+        padding-top: 60px;
+    }
+    /* Form Group */
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    input {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    input:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+    /* Button Styles */
+    
+    .login-btn {
+        width: 100%;
+        background-color: #3b82f6;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        padding: 8px 40px;
+        width: 90%;
+        margin: 15px;
+    }
+    
+    .login-btn:hover {
+        background-color: #2563eb;
+    }
+    
+    .or {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 10px;
+        /* Adjusted margin */
+        color: #777;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        width: 90%;
+        /* Match the input field width */
+        text-align: center;
+        padding-top: 1px;
+        margin: 15px;
+        font-weight: bold;
+    }
+    
+    .line {
+        flex: 1;
+        height: 1px;
+        background-color: #ccc;
+        margin: 0 10px;
+        /* Spacing around the line */
+        width: 100%;
+        /* Ensure it stretches the full width */
+        font-weight: bold;
+    }
+    
+    .google button {
+        width: 100%;
+        background-color: #fff;
+        color: #a5a1a1;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        padding: 8px 40px;
+        width: 90%;
+        margin: 15px;
+        border: #555;
+    }
+    /* Background Image Styling */
+    
+    .background-image {
+        flex: 1;
+        background: linear-gradient(to right, rgba(1, 39, 75, 0.5) 5%, rgba(1, 20, 75, .9) 100%), url('../figma-to-html/images/v160_1178.png');
+        background-size: cover;
+        background-position: center;
+        border-radius: 10 10px 10px 100px;
+    }
+    
+    h1 {
+        margin: 30px 10px 30px;
+        padding-left: 10px;
+        font-size: 40px;
+        font-family: 'Poppins', sans-serif;
+    }
+    /* Style for input-icon div */
+    
+    .input-icon {
+        position: relative;
+        width: 90%;
+        margin: auto;
+    }
+    
+    .input-icon span {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #777;
+    }
+    
+    .input-icon input {
+        width: 100%;
+        padding: 8px 10px;
+        padding-left: 40px;
+        font-size: 14px;
+        border: 1px solid #d3d3d3;
+        border-radius: 5px;
+        font-family: 'Poppins', sans-serif;
+    }
+    /* Input field styles */
+    
+    .input-container input {
+        width: 100%;
+        padding: 8px 10px;
+        padding-left: 50px;
+        font-size: 14px;
+        border: 1px solid #d3d3d3;
+        border-radius: 5px;
+    }
+    /* Placeholder Styles */
+    
+    input::placeholder {
+        color: #aaa;
+        font-family: 'Poppins', sans-serif;
+        font-weight: bold;
+    }
+    /* Add box-shadow to input fields and buttons */
+    
+    .input-icon input,
+    .login-btn,
+    .google button {
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
