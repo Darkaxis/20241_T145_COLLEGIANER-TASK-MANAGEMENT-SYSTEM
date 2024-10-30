@@ -2,18 +2,26 @@ import express from 'express';
 import { google } from 'googleapis';
 import dotenv from 'dotenv';
 import eicServices from '../services/eicServices.js';
-import oauth2Client from '../utils/oauthClient.js'; // Import the shared OAuth client
-import { getTempAdminData, deleteTempAdminData } from '../utils/tempData.js'; // Import temp data functions
+import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
+import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
 const oauthRoutes = express.Router();
 
 // Initialize OAuth2 client
-
+const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URL
+);
 
 // Generate the URL for the Google OAuth2 consent page
 oauthRoutes.get('/auth', (req, res) => {
+    const state = `login-${uuidv4()}`; // Generate a unique state
+    setTempAdminData(state, { type: 'login' }); // Store the state temporarily
+
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'
@@ -21,10 +29,36 @@ oauthRoutes.get('/auth', (req, res) => {
 
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
-        scope: scopes
+        scope: scopes,
+        state: state // Pass the state parameter
     });
 
     res.redirect(url);
+});
+
+// Generate the URL for adding a user via Google OAuth2 consent page
+oauthRoutes.post('/add/user', (req, res) => {
+    const { email, role } = req.body;
+    const state = `user-${uuidv4()}`; // Generate a unique state
+    setTempAdminData(state, { email, role }); // Store the email and role temporarily
+
+    const scopes = [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email'
+    ];
+
+    const url = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: scopes,
+        state: state // Pass the state parameter
+    });
+
+    console.log(`OAuth URL for user with email ${email}: ${url}`);
+
+    res.status(200).json({
+        message: 'OAuth URL generated. Check the console for the URL.',
+        url: url
+    });
 });
 
 // Handle the OAuth callback
@@ -38,9 +72,9 @@ oauthRoutes.get('/callback', async (req, res) => {
         });
     }
 
-    const adminData = getTempAdminData(state);
+    const tempData = getTempAdminData(state);
 
-    if (!adminData) {
+    if (!tempData) {
         return res.status(400).json({
             message: 'Invalid or expired state parameter'
         });
@@ -52,37 +86,64 @@ oauthRoutes.get('/callback', async (req, res) => {
 
         // Fetch user profile information
         const userProfile = await eicServices.getUserProfile(tokens.access_token);
-        console.log('User Profile:', userProfile); // Debugging: Log the user profile
+        console.log('User Profile:', userProfile); // Debugging
 
         // Extract user information
-        const name = userProfile.names[0].displayName;
+        const name = userProfile.names && userProfile.names[0] ? userProfile.names[0].displayName : 'No Name';
+        const email = userProfile.emailAddresses && userProfile.emailAddresses[0] ? userProfile.emailAddresses[0].value : 'No Email';
 
-        // Combine the temporary admin data with the fetched user profile
-        const combinedAdminData = {
-            ...adminData,
-            name: name,
-            accessToken: tokens.access_token
-        };
-
-        // Validate combinedAdminData to ensure no properties are undefined
-        for (const key in combinedAdminData) {
-            if (combinedAdminData[key] === undefined) {
-                return res.status(400).json({
-                    message: `Invalid data: ${key} is undefined`
+        // Handle login callback
+        if (state.startsWith('login')) {
+            // Check if the user exists in the database
+            const user = await eicServices.getUserByEmail(email);
+            if (!user) {
+                return res.status(401).json({
+                    message: 'User not found. Please sign up first.'
                 });
             }
+
+            // Generate a JWT token for the user
+            const token = jwt.sign(
+                { id: user.id, name: user.name, email: user.email, role: user.role },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            // Clean up temporary data
+            deleteTempAdminData(state);
+            if(user.role == 'admin'){
+                return res.redirect(`http://localhost:4000/eic/dashboard?token=${token}`);
+            }
+            else if(user.role == 'eb'){
+                return res.redirect(`http://localhost:4000/eb/dashboard?token=${token}`);
+            }
+        
+        } else if (state.startsWith('user')) {
+            // Handle user callback
+            const role = tempData.role;
+            const combinedUserData = {
+                email: email,
+                name: name,
+                role: role,
+                accessToken: tokens.access_token 
+               
+            };
+
+            // Call addUser function from eicServices
+            const addUserResponse = await eicServices.addUser(combinedUserData);
+
+            // Clean up temporary data
+            deleteTempAdminData(state);
+
+            res.status(addUserResponse.status).json({
+                message: addUserResponse.message,
+                data: combinedUserData
+            });
+        } else {
+            res.status(400).json({
+                message: 'Invalid state parameter'
+            });
         }
-
-        // Call createAdmin function from eicServices
-        const createAdminResponse = await eicServices.createAdmin(combinedAdminData);
-
-        // Clean up temporary data
-        deleteTempAdminData(state);
-
-        res.status(createAdminResponse.status).json({
-            message: createAdminResponse.message,
-            data: combinedAdminData
-        });
     } catch (error) {
         console.error('Error during OAuth2 callback:', error);
         res.status(500).json({

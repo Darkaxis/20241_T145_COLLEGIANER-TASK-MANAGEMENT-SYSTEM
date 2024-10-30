@@ -156,7 +156,7 @@ p .task {
 
 @font-face {
     font-family: 'Old English Text MT';
-    src: url('path/to/OldEnglishTextMT.ttf') format('truetype');
+    src: url('../fonts/oldenglishtextmt.ttf') format('truetype');
 }
 
 .collegianer {

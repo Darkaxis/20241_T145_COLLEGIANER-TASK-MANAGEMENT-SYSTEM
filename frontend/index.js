@@ -16,13 +16,17 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '/assets')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/Login Page/index.html'));
+    res.sendFile(path.join(__dirname, '/login/index.html'));
 });
 app.get('/eic/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '/EIC-DASHBOARD/eic-dashboard.html'));
+    res.sendFile(path.join(__dirname, '/eic/eic-dashboard.html'));
 });
-
-
+app.get('/eic/accounts', (req, res) => {
+    res.sendFile(path.join(__dirname, '/eic/eic-accounts.html'));
+});
+app.get('/eb/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '/eb/eb-dashboard.html'));
+});
 
 // Start the server
 app.listen(PORT, () => {

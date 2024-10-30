@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Store the token in local storage
                 localStorage.setItem('token', result.token);
                 alert('Login successful!');
-                window.location.href = '/eic/dashboard'; // Example redirection
+                // Redirect to the dashboard page
+                window.location.href = '/eic/dashboard';
             } else {
                 alert(`Login failed: ${result.message}`);
             }
@@ -30,5 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error during login:', error);
             alert('An error occurred during login. Please try again.');
         }
+    });
+
+    // Google login button click handler
+    const googleLoginButton = document.getElementById('googleLoginButton');
+    googleLoginButton.addEventListener('click', () => {
+        window.location.href = 'http://localhost:3000/google/oauth2/auth'; // Redirect to the OAuth URL
     });
 });

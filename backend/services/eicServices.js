@@ -3,9 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
-import  oauth2Client  from '../utils/oauthClient.js';
+import oauth2Client from '../utils/oauthClient.js'; // Ensure shared OAuth client is imported
 
-// Load environment variables
 dotenv.config();
 
 // Initialize Firebase Admin SDK
@@ -23,14 +22,12 @@ if (!admin.apps.length) {
             auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
             client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
         }),
-        databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+        databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
+        ignoreUndefinedProperties: true // Enable ignoring undefined properties
     });
 }
 
 const db = admin.firestore();
-
-
-
 
 // Function to get user profile information from Google People API
 export async function getUserProfile(accessToken) {
@@ -39,22 +36,41 @@ export async function getUserProfile(accessToken) {
         const people = google.people({ version: 'v1', auth: oauth2Client });
         const response = await people.people.get({
             resourceName: 'people/me',
-            personFields: 'names,emailAddresses'
+            personFields: 'names,emailAddresses,photos'
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching user profile:', error);
-        throw new Error('Error fetching user profile from Google People API');
+        if (error.response && error.response.status === 401) {
+        
+            const people = google.people({ version: 'v1', auth: oauth2Client });
+            const response = await people.people.get({
+                resourceName: 'people/me',
+                personFields: 'names,emailAddresses,photos'
+            });
+            return response.data;
+        } else {
+            console.error('Error fetching user profile:', error);
+            throw new Error('Error fetching user profile from Google People API');
+        }
     }
+}
+
+// Function to get user by email
+export async function getUserByEmail(email) {
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (userSnapshot.empty) {
+        return null;
+    }
+    return userSnapshot.docs[0].data();
 }
 
 // Function to create a new admin user
 export async function createAdmin(adminData) {
-    if (!adminData) {
-        return { status: 400, message: 'adminData is undefined' };
+    if (!adminData || !adminData.username || !adminData.password) {
+        return { status: 400, message: 'adminData, username, and password are required' };
     }
 
-    const { username, password, email } = adminData;
+    const { username, password, email, name } = adminData;
 
     // Check if the username already exists
     const existingAdminSnapshot = await db.collection('admins').where('username', '==', username).get();
@@ -67,8 +83,9 @@ export async function createAdmin(adminData) {
         username,
         password: hashedPassword,
         email,
-        name: adminData.name,
-        accessToken: adminData.accessToken
+        name,
+        accessToken: adminData.accessToken,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
     await db.collection('admins').add(newAdmin);
     return { status: 201, message: 'Admin created successfully' };
@@ -102,10 +119,39 @@ export async function getAdminDetails(adminId) {
     return adminDoc.data();
 }
 
+// Function to add a new user
+export async function addUser(userData) {
+    const { email, name, role, accessToken, refreshToken } = userData;
+
+    // Check if the email already exists
+    const existingUserSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (!existingUserSnapshot.empty) {
+        return { status: 400, message: 'Email already exists' };
+    }
+
+    const newUser = {
+        email,
+        name,
+        role,
+        accessToken: accessToken || null,
+        refreshToken: refreshToken || null,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    await db.collection('users').add(newUser);
+    return { status: 201, message: 'User added successfully' };
+}
+
+// Function to logout an admin user (implementation depends on JWT strategy)
+export function logoutAdmin() {
+    // Implement token invalidation if necessary
+}
+
 export default {
-    
     createAdmin,
     authenticateAdmin,
     getAdminDetails,
-    getUserProfile
+    getUserProfile,
+    getUserByEmail,
+    addUser,
+    logoutAdmin
 };
