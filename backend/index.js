@@ -2,9 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import eicRoutes from './routes/eicRoutes.js'; // Import the admin routes
 import oauthRoutes from './routes/oauthRoutes.js'; // Import the OAuth2 routes
-
+import cors from 'cors';
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Enable CORS
+app.use(cors());
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());
