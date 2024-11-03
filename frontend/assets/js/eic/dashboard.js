@@ -1,18 +1,27 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('token');
+    // Extract the token from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    
 
-    if (!token) {
+    // Get the token from local storage
+    let storedToken = localStorage.getItem('token');
+    
+    if (!storedToken) {
         alert('You are not logged in!');
         window.location.href = '/';
         return;
     }
 
-  
-        const response = await fetch('http://localhost:3000/eic/profile', { 
+    console.log('Stored Token:', storedToken);
+    // Use the token from local storage for fetching the user profile
+    try {
+        let response = await fetch('http://localhost:3000/eic/profile', { // Update the port to 4000
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${storedToken}`
             }
         });
+
+
         const result = await response.json();
 
         if (response.ok) {
@@ -32,13 +41,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             alert(`Failed to load user profile: ${result.message}`);
         }
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        alert('An error occurred while fetching the user profile. Please try again.');
+    }
 
     // Logout functionality
     const logoutButton = document.getElementById('logoutButton');
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         window.location.href = '/';
     });
-
-    
 });

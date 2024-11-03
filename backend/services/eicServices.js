@@ -4,30 +4,12 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import oauth2Client from '../utils/oauthClient.js'; // Ensure shared OAuth client is imported
+import db from '../utils/firestoreClient.js'; // Ensure shared Firestore client is imported
 
 dotenv.config();
 
-// Initialize Firebase Admin SDK
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            type: process.env.FIREBASE_TYPE,
-            project_id: process.env.FIREBASE_PROJECT_ID,
-            private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-            private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-            client_email: process.env.FIREBASE_CLIENT_EMAIL,
-            client_id: process.env.FIREBASE_CLIENT_ID,
-            auth_uri: process.env.FIREBASE_AUTH_URI,
-            token_uri: process.env.FIREBASE_TOKEN_URI,
-            auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-            client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
-        }),
-        databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
-        ignoreUndefinedProperties: true // Enable ignoring undefined properties
-    });
-}
 
-const db = admin.firestore();
+
 
 // Function to get user profile information from Google People API
 export async function getUserProfile(accessToken) {
@@ -65,22 +47,22 @@ export async function getUserByEmail(email) {
 }
 
 // Function to create a new admin user
+// Function to create a new admin user
 export async function createAdmin(adminData) {
-    if (!adminData || !adminData.username || !adminData.password) {
-        return { status: 400, message: 'adminData, username, and password are required' };
+    if (!adminData || !adminData.email || !adminData.password) {
+        return { status: 400, message: 'adminData, email, and password are required' };
     }
 
-    const { username, password, email, name } = adminData;
+    const { password, email, name } = adminData;
 
-    // Check if the username already exists
-    const existingAdminSnapshot = await db.collection('admins').where('username', '==', username).get();
+    // Check if the email already exists
+    const existingAdminSnapshot = await db.collection('admins').where('email', '==', email).get();
     if (!existingAdminSnapshot.empty) {
-        return { status: 400, message: 'Username already exists' };
+        return { status: 400, message: 'Email already exists' };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = {
-        username,
         password: hashedPassword,
         email,
         name,
@@ -88,12 +70,19 @@ export async function createAdmin(adminData) {
         createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
     await db.collection('admins').add(newAdmin);
-    return { status: 201, message: 'Admin created successfully' };
+
+    // Generate tokens
+    const token = jwt.sign(
+        { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+    return { status: 201, message: 'Admin created successfully', token };
 }
 
 // Function to authenticate an admin user
-export async function authenticateAdmin(username, password) {
-    const adminSnapshot = await db.collection('admins').where('username', '==', username).get();
+export async function authenticateAdmin(email, password) {
+    const adminSnapshot = await db.collection('admins').where('email', '==', email).get();
     if (adminSnapshot.empty) {
         throw new Error('Admin not found');
     }
@@ -105,9 +94,10 @@ export async function authenticateAdmin(username, password) {
     const token = jwt.sign(
         { id: adminSnapshot.docs[0].id, name: adminData.name, email: adminData.email },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '7d' }
     );
-    return token;
+    console.log('Token:', token);
+    return  token ;
 }
 
 // Function to get details of an admin user
@@ -121,7 +111,7 @@ export async function getAdminDetails(adminId) {
 
 // Function to add a new user
 export async function addUser(userData) {
-    const { email, name, role, accessToken, refreshToken } = userData;
+    const { email, name, role, accessToken } = userData;
 
     // Check if the email already exists
     const existingUserSnapshot = await db.collection('users').where('email', '==', email).get();
@@ -129,19 +119,19 @@ export async function addUser(userData) {
         return { status: 400, message: 'Email already exists' };
     }
 
+    
     const newUser = {
         email,
         name,
         role,
-        accessToken: accessToken || null,
-        refreshToken: refreshToken || null,
+        accessToken: accessToken,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
     await db.collection('users').add(newUser);
     return { status: 201, message: 'User added successfully' };
 }
 
-// Function to logout an admin user (implementation depends on JWT strategy)
+
 export function logoutAdmin() {
     // Implement token invalidation if necessary
 }

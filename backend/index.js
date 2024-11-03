@@ -5,7 +5,7 @@ import editorialRoutes from './routes/editorialRoutes.js'; // Import the editori
 import oauthRoutes from './routes/oauthRoutes.js'; // Import the OAuth2 routes
 import cors from 'cors';
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // Enable CORS
 app.use(cors());

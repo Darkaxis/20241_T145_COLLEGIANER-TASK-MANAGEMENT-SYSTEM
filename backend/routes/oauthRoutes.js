@@ -65,7 +65,6 @@ oauthRoutes.post('/add/user', (req, res) => {
 oauthRoutes.get('/callback', async (req, res) => {
     const code = req.query.code;
     const state = req.query.state; // Retrieve the state parameter
-
     if (!state) {
         return res.status(400).json({
             message: 'Missing state parameter'
@@ -83,41 +82,34 @@ oauthRoutes.get('/callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
-
         // Fetch user profile information
         const userProfile = await eicServices.getUserProfile(tokens.access_token);
-        console.log('User Profile:', userProfile); // Debugging
+        
 
         // Extract user information
         const name = userProfile.names && userProfile.names[0] ? userProfile.names[0].displayName : 'No Name';
         const email = userProfile.emailAddresses && userProfile.emailAddresses[0] ? userProfile.emailAddresses[0].value : 'No Email';
 
-        // Handle login callback
-        if (state.startsWith('login')) {
-            // Check if the user exists in the database
-            const user = await eicServices.getUserByEmail(email);
-            if (!user) {
-                return res.status(401).json({
-                    message: 'User not found. Please sign up first.'
-                });
-            }
+        // Determine if the callback is for admin or user
+        if (state.startsWith('admin')) {
+            // Handle admin callback
+            const combinedAdminData = {
+                email: email,
+                name: name,
+                password: tempData.password,
+                accessToken: tokens.access_token,
+            };
 
-            // Generate a JWT token for the user
-            const token = jwt.sign(
-                { id: user.id, name: user.name, email: user.email, role: user.role },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
+            // Call createAdmin function from eicServices
+            const createAdminResponse = await eicServices.createAdmin(combinedAdminData);
 
             // Clean up temporary data
             deleteTempAdminData(state);
-            if(user.role == 'admin'){
-                return res.redirect(`http://localhost:4000/eic/dashboard?token=${token}`);
-            }
-            else if(user.role == 'eb'){
-                return res.redirect(`http://localhost:4000/eb/dashboard?token=${token}`);
-            }
-        
+
+            res.status(createAdminResponse.status).json({
+                message: createAdminResponse.message,
+                data: combinedAdminData
+            });
         } else if (state.startsWith('user')) {
             // Handle user callback
             const role = tempData.role;
@@ -125,8 +117,7 @@ oauthRoutes.get('/callback', async (req, res) => {
                 email: email,
                 name: name,
                 role: role,
-                accessToken: tokens.access_token 
-               
+                accessToken: tokens.access_token,
             };
 
             // Call addUser function from eicServices
@@ -139,7 +130,34 @@ oauthRoutes.get('/callback', async (req, res) => {
                 message: addUserResponse.message,
                 data: combinedUserData
             });
-        } else {
+        } else if (state.startsWith('login')){
+             // Handle login callback
+             const user = await eicServices.getUserByEmail(email);
+             if (!user) {
+                 return res.status(401).json({
+                     message: 'User not found. Please sign up first.'
+                 });
+             }
+ 
+             // Generate tokens
+             const token = jwt.sign(
+                 tokens,
+                 process.env.JWT_SECRET,
+                 { expiresIn: '7d' }
+             );
+             // Clean up temporary data
+             deleteTempAdminData(state);
+            if (user.role == 'eb'){
+             //redirect to dashboard 
+            
+             res.redirect(`http://localhost:4000/eb/dashboard?token=${token}`);
+            }
+            else if(user.role == 'staff'){
+                res.redirect(`http://localhost:4000/staff/dashboard?token=${token}`);
+
+            }
+        }
+        else {
             res.status(400).json({
                 message: 'Invalid state parameter'
             });

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Extract the token from the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-
+    localStorage.setItem('token', token);
     if (token) {
         // Save the token to local storage
         localStorage.setItem('token', token);
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Use the token from local storage for fetching the user profile
     const storedToken = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/eb/profile', { // Update the port to 4000
+        const response = await fetch('http://localhost:3000/eb/profile', {
             headers: {
                 'Authorization': `Bearer ${storedToken}`
             }

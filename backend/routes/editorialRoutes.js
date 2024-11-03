@@ -1,10 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import editorialServices from '../services/editorialServices.js';
+import jwt from 'jsonwebtoken';
+
+
 
 dotenv.config();
+
 
 const eicRoutes = express.Router();
 eicRoutes.use(bodyParser.json());
@@ -18,17 +21,23 @@ eicRoutes.get('/profile', async (req, res) => {
             message: 'Authorization header missing'
         });
     }
+    
     const token = authHeader.split(' ')[1];
+    
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userProfile = await editorialServices.getEditorDetails(decoded.id);
-        const googleProfile = await editorialServices.getUserProfile(userProfile.accessToken);
-        res.status(200).json({
-            name: userProfile.name,
-            email: userProfile.email,
-            profileImage: googleProfile.photos[0].url 
-        });
         
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const userProfile = await editorialServices.getUserProfile(decoded);
+
+
+        console.log('User profile:', userProfile);
+        res.status(200).json({
+             name: userProfile.names[0].displayName,
+             email: userProfile.emailAddresses[0].value,
+            profileImage: userProfile.photos[0].url // Return the profile image
+        });
+
     } catch (error) {
         res.status(401).json({
             message: 'Invalid token',

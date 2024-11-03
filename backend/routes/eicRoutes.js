@@ -13,23 +13,28 @@ const eicRoutes = express.Router();
 eicRoutes.use(bodyParser.json());
 eicRoutes.use(bodyParser.urlencoded({ extended: true }));
 dotenv.config();
+
 // Initiate the OAuth flow
-eicRoutes.post('/add/admin', (req, res) => {
-    const adminData = req.body;
-    const state = `admin-${uuidv4()}`; // Generate a unique key
-    setTempAdminData(state, adminData); // Store the admin data temporarily
+eicRoutes.post('/add', (req, res) => {
+    const { email,password, role, type } = req.body;
+    const state = `${type}-${uuidv4()}`; // Generate a unique state with type
+    setTempAdminData(state, { email, password, role, type }); // Store the email, role, and type temporarily
+
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'
     ];
+
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: scopes,
         state: state // Pass the state parameter
     });
 
+    console.log(`OAuth URL for ${type} with email ${email}: ${url}`);
+
     res.status(200).json({
-        message: 'Redirecting to Google OAuth',
+        message: 'OAuth URL generated. Check the console for the URL.',
         url: url
     });
 });
@@ -39,21 +44,20 @@ eicRoutes.use('/oauth', oauthRoutes);
 
 // Existing Routes
 eicRoutes.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-        const token = await eicServices.authenticateAdmin(username, password);
+        const token = await eicServices.authenticateAdmin(email, password);
         res.status(200).json({
             message: 'Admin authenticated successfully',
-            token: token // Return the token in the response
+            token: token ,// Return the token in the response
         });
     } catch (error) {
         res.status(401).json({
-            message: 'Invalid username or password',
+            message: 'Invalid email or password',
             error: error.message
         });
     }
 });
-
 // User profile route
 eicRoutes.get('/profile', async (req, res) => {
     const authHeader = req.headers.authorization;
@@ -70,7 +74,7 @@ eicRoutes.get('/profile', async (req, res) => {
         res.status(200).json({
             name: userProfile.name,
             email: userProfile.email,
-            profileImage: googleProfile.photos[0].url 
+            profileImage: googleProfile.photos[0].url // Return the profile image
         });
     } catch (error) {
         res.status(401).json({
@@ -103,31 +107,7 @@ eicRoutes.get('/:id', async (req, res) => {
     }
 });
 
-// Example additional route
-eicRoutes.post('/add/user', (req, res) => {
-    const { email, role } = req.body;
-   
-    const state = `user-${uuidv4()}`; // Generate a unique key
-    setTempAdminData(state, { email, role }); // Store the email temporarily
 
-    const scopes = [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ];
-
-    const url = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: scopes,
-        state: state // Pass the state parameter
-    });
-
-    console.log(`OAuth URL for user with email ${email}: ${url}`);
-
-    res.status(200).json({
-        message: 'OAuth URL generated. Check the console for the URL.',
-        url: url
-    });
-});
 
 
 export default eicRoutes;

@@ -1,38 +1,16 @@
-import admin from 'firebase-admin';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
 import oauth2Client from '../utils/oauthClient.js'; // Ensure shared OAuth client is imported
+import db from '../utils/firestoreClient.js'; // Ensure shared Firestore client is imported
 
 dotenv.config();
 
-// Initialize Firebase Admin SDK
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            type: process.env.FIREBASE_TYPE,
-            project_id: process.env.FIREBASE_PROJECT_ID,
-            private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-            private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-            client_email: process.env.FIREBASE_CLIENT_EMAIL,
-            client_id: process.env.FIREBASE_CLIENT_ID,
-            auth_uri: process.env.FIREBASE_AUTH_URI,
-            token_uri: process.env.FIREBASE_TOKEN_URI,
-            auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-            client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL
-        }),
-        databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
-        ignoreUndefinedProperties: true // Enable ignoring undefined properties
-    });
-}
-
-const db = admin.firestore();
 
 // Function to get user profile information from Google People API
 export async function getUserProfile(accessToken) {
     try {
-        oauth2Client.setCredentials({ access_token: accessToken });
+        oauth2Client.setCredentials(accessToken);
         const people = google.people({ version: 'v1', auth: oauth2Client });
         const response = await people.people.get({
             resourceName: 'people/me',
@@ -68,11 +46,11 @@ export async function getUserByEmail(email) {
 
 // Function to get details of an admin user
 export async function getEditorDetails(editorId) {
-    const adminDoc = await db.collection('users').doc(editorId).get();
-    if (!adminDoc.exists) {
-        throw new Error('Admin not found');
+    const userDoc = await db.collection('users').doc(editorId).get();
+    if (!userDoc.exists) {
+        throw new Error('User not found');
     }
-    return adminDoc.data();
+    return userDoc.data();
 }
 
 
