@@ -75,7 +75,7 @@ export async function createAdmin(adminData) {
     const token = jwt.sign(
         { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '7d' }
     );
     return { status: 201, message: 'Admin created successfully', token };
 }

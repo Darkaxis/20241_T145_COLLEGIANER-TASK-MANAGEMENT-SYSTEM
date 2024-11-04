@@ -2,7 +2,7 @@ import express from 'express';
 //import { google } from 'googleapis';
 import dotenv from 'dotenv';
 import eicServices from '../services/eicServices.js';
-import { oauth2Client } from '../utils/oauth2Client.js';
+import oauth2Client  from '../utils/oauthClient.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
