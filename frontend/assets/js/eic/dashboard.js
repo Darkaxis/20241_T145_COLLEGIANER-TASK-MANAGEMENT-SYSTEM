@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('Stored Token:', storedToken);
     // Use the token from local storage for fetching the user profile
     try {
-        let response = await fetch('http://localhost:3000/eic/profile', { // Update the port to 4000
+        let response = await fetch('http://localhost:3000/eic/profile', { 
             headers: {
                 'Authorization': `Bearer ${storedToken}`
             }
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const dropdownProfileImage = document.getElementById('dropdownProfileImage');
 
             profileName.textContent = result.name;
-            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // Use default image if none provided
+            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // change later
             dropdownProfileImage.src = result.profileImage || '/assets/images/customer02.jpg';
 
             // const userProfile = document.getElementById('userProfile');

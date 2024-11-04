@@ -1,7 +1,8 @@
 import express from 'express';
-import { google } from 'googleapis';
+//import { google } from 'googleapis';
 import dotenv from 'dotenv';
 import eicServices from '../services/eicServices.js';
+import { oauth2Client } from '../utils/oauth2Client.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
@@ -11,11 +12,6 @@ dotenv.config();
 const oauthRoutes = express.Router();
 
 // Initialize OAuth2 client
-const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URL
-);
 
 // Generate the URL for the Google OAuth2 consent page
 oauthRoutes.get('/auth', (req, res) => {

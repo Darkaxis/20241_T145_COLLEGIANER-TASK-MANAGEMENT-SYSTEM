@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const dropdownProfileImage = document.getElementById('dropdownProfileImage');
 
             profileName.textContent = result.name;
-            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // Use default image if none provided
+            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // Change Later
             dropdownProfileImage.src = result.profileImage || '/assets/images/customer02.jpg';
 
             const userProfile = document.getElementById('userProfile');

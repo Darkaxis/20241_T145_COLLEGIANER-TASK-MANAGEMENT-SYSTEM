@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
     
         try {
-            const response = await fetch('http://localhost:3000/eic/login', { // Use the full URL of the back-end server
+            const response = await fetch('http://localhost:3000/eic/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -36,6 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Google login button click handler
     const googleLoginButton = document.getElementById('googleLoginButton');
     googleLoginButton.addEventListener('click', () => {
-        window.location.href = 'http://localhost:3000/google/oauth2/auth'; // Redirect to the OAuth URL
+        window.location.href = 'http://localhost:3000/google/oauth2/auth'; // Redirect 
     });
 });

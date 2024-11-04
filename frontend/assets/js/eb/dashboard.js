@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Extract the token from the URL query parameters
+    
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     localStorage.setItem('token', token);
     if (token) {
-        // Save the token to local storage
+        
         localStorage.setItem('token', token);
         // Remove the token from the URL
         window.history.replaceState({}, document.title, window.location.pathname);
     } else {
-        // Get the token from local storage if not in the URL
+        
         const storedToken = localStorage.getItem('token');
         if (!storedToken) {
             alert('You are not logged in!');
