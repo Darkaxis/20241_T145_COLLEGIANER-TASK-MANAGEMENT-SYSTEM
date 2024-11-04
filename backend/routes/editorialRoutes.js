@@ -1,75 +1,72 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 import editorialServices from '../services/editorialServices.js';
-import taskServices from '../services/taskServices.js';
+import jwt from 'jsonwebtoken';
 
-const editorialRoutes = express.Router();
 
-editorialRoutes.post('/login', (req, res) => {
-    //handle user login
-});
 
-editorialRoutes.post('/logout', (req, res) => {
-    //handle user logout
-    try {
-        editorialServices.logoutUser();
-        res.status(200).json({
-            message: 'User logged out successfully'
+dotenv.config();
+
+
+const eicRoutes = express.Router();
+eicRoutes.use(bodyParser.json());
+eicRoutes.use(bodyParser.urlencoded({ extended: true }));
+
+// User profile route
+eicRoutes.get('/profile', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({
+            message: 'Authorization header missing'
         });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    
+    try {
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const userProfile = await editorialServices.getUserProfile(decoded);
+
+
+        console.log('User profile:', userProfile);
+        res.status(200).json({
+             name: userProfile.names[0].displayName,
+             email: userProfile.emailAddresses[0].value,
+            profileImage: userProfile.photos[0].url // Return the profile image
+        });
+
     } catch (error) {
-        res.status(400).json({
-            message: 'User logout failed'
+        res.status(401).json({
+            message: 'Invalid token',
+            error: error.message
         });
     }
 });
 
-editorialRoutes.get('/:id', (req, res) => {
-    //handle getting user ID
+eicRoutes.post('/logout', (req, res) => { 
+    // Implement logout functionality if necessary
+    res.status(200).json({
+        message: 'Admin logged out successfully'
+    });
+});
+
+eicRoutes.get('/:id', async (req, res) => {
+    const editorId = req.params.id;
     try {
-        const userId = req.params.id;
-        const user = editorialServices.getUserDetails(userId);
+        const editor = await editorialServices.getEditorDetails(editorId);
         res.status(200).json({
-            message: 'User details retrieved successfully',
-            data: user
+            message: 'Editor details retrieved successfully',
+            data: editor
         });
     } catch (error) {
         res.status(404).json({
-            message: 'User not found'
+            message: 'Editor not found',
+            error: error.message
         });
     }
 });
 
-editorialRoutes.get('/tasks/:id', (req, res) => {
-    //handle getting user tasks
-    try {
-        const userId = req.params.id;
-        const tasks = taskServices.getAllTasks(userId);
-        res.status(200).json(tasks);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-editorialRoutes.post('/tasks/:taskId/submit', async (req, res) => {
-    //handle submitting assigned task
-    try {
-        const taskId = req.params.taskId;
-        const submissionData = req.body; // Data related to the task submission
-        const result = await taskServices.submitTask(taskId, submissionData);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-editorialRoutes.post('/tasks/create', async (req, res) => {
-    //handle creating a task
-    try {
-        const taskData = req.body;
-        const newTask = await taskServices.createTask(taskData);
-        res.status(201).send(newTask);
-    } catch (error) {
-        res.status(400).send(error.message);
-    }
-});
-
-export default editorialRoutes;
+export default eicRoutes;
