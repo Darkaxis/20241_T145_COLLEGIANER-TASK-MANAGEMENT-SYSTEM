@@ -16,7 +16,7 @@ document.getElementById('addUserButton').addEventListener('click', async () => {
 
             if (response.ok) {
                 alert('OAuth URL generated. Check the console for the URL.');
-                console.log(`OAuth URL for user with email ${email}: ${result.url}`);
+                console.log(`OAuth URL for user with email ${email}: ${result.url}`);// pretend this is an email
             } else {
                 alert(`Failed to generate OAuth URL: ${result.message}`);
             }
