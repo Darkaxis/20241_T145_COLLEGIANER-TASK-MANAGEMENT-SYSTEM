@@ -15,11 +15,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Use the admin routes
-app.use('/eic', eicRoutes);
-app.use('/eb', editorialRoutes);
+app.use('/api/v1/eic', eicRoutes);
+app.use('api/v1/eb', editorialRoutes);
 
 // Use the OAuth2 routes
-app.use('/google/oauth2', oauthRoutes);
+app.use('api/v1/google/oauth2', oauthRoutes);
 
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`);

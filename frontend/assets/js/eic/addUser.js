@@ -4,7 +4,7 @@ document.getElementById('addUserButton').addEventListener('click', async () => {
 
     if (email && role) {
         try {
-            const response = await fetch('http://localhost:3000/eic/add/user', {
+            const response = await fetch('http://localhost:3000/eic/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

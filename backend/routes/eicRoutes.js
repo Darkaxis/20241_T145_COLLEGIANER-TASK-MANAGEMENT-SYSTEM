@@ -17,6 +17,7 @@ dotenv.config();
 // Initiate the OAuth flow
 eicRoutes.post('/add', (req, res) => {
     const { email,password, role, type } = req.body;
+    console.log(`Adding ${type} with email ${email} and role ${role}`);
     const state = `${type}-${uuidv4()}`; // Generate a unique state with type
     setTempAdminData(state, { email, password, role, type }); // Store the email, role, and type temporarily
 

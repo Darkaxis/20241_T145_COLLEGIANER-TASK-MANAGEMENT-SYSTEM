@@ -1,4 +1,3 @@
-//const db = require('../db'); // Import the Firestore instance from db.js
 
 // Function to create a new task
 async function createTask(taskData) {
