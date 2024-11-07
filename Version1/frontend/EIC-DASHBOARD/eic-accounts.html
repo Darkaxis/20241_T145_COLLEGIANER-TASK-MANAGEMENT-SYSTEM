@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Canterbury&display=swap">
     <link rel="stylesheet" href="css/eic.css">
+    <link rel="stylesheet" href="css/eic-account.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
@@ -19,7 +20,7 @@
             <img src="images/unnamed (1).png" alt="Profile Picture" class="brand-logo" style="max-width: 60px; margin-top: 10px;">
             <div class="ms-3">
                 <span class="collegianer">Collegianer</span><br>
-                <p class="task-management-system" style="font-weight: 100; margin: 0; font-size: 12px; width: 15vw; letter-spacing: 1.5px;">Task Management System</p>
+                <p class="task-management-system">Task Management System</p>
             </div>
         </div>
         <hr class="sidebar-divider">
@@ -81,49 +82,68 @@
         <div class="dashboard container mt-4">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="card text-center mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-user-shield"></i> Total Admin</h5>
-                            <p class="card-text" id="totalAdmins">0</p>
+                    <div class="dashboard-card admin-card">
+                        <div class="card-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="card-content">
+                            <h5>Total Admin</h5>
+                            <p class="count" id="totalAdmins">0</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card text-center mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-user-edit"></i> Total Editorial Board</h5>
-                            <p class="card-text" id="totalEditorials">0</p>
+                    <div class="dashboard-card editorial-card">
+                        <div class="card-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="card-content">
+                            <h5>Total Editorial Board</h5>
+                            <p class="count" id="totalEditorials">0</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card text-center mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-users"></i> Total Staff</h5>
-                            <p class="card-text" id="totalStaff">0</p>
+                    <div class="dashboard-card staff-card">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <h5>Total Staff</h5>
+                            <p class="count" id="totalStaff">0</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- User Information Table -->
-            <h3 class="mt-4">User Information</h3>
-            <table class="table user-table mt-2">
-                <thead>
-                    <tr>
-                        <th>Lastname</th>
-                        <th>Firstname</th>
-                        <th>Middlename</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="userTableBody">
-                    <!-- User accounts will be added here -->
-                </tbody>
-            </table>
-            <button class="btn btn-primary mt-2" onclick="openAddUserModal()">Add User</button>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h3 class="card-title text-primary fw-bold mb-0">User Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-4">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="fw-semibold">Lastname</th>
+                                    <th class="fw-semibold">Firstname</th>
+                                    <th class="fw-semibold">Middlename</th>
+                                    <th class="fw-semibold">Email</th>
+                                    <th class="fw-semibold">Role</th>
+                                    <th class="fw-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- User accounts will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary px-4 shadow-sm" onclick="openAddUserModal()">
+                        <i class="fas fa-plus-circle me-2"></i>Add User
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

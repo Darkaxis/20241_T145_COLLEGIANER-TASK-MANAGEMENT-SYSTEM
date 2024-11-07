@@ -63,7 +63,7 @@ function createTaskCard(taskData) {
     const taskCard = document.createElement('div');
     taskCard.className = 'task-card';
     taskCard.draggable = true;
-    taskCard.id = 'task-' + Date.now();
+    taskCard.id = 'task-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 
     // Store all task data in dataset
     taskCard.dataset.title = taskData.title || '';

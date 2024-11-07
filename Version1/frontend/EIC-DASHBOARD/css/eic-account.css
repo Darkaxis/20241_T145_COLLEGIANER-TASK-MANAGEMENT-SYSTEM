@@ -29,6 +29,8 @@ body {
 .sidebar-head {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
 }
 
 .brand-logo {
@@ -38,9 +40,12 @@ body {
 }
 
 .collegianer {
-    font-weight: bold;
-    font-size: 24px;
-    /* Increased font size for title */
+    font-family: 'Old English Text MT', serif;
+    font-size: 35px;
+    font-weight: normal;
+    margin-left: -15px;
+    text-align: left;
+    padding-left: 0;
 }
 
 .sidebar-divider {
@@ -78,21 +83,9 @@ body {
     /* Spacing below the navbar */
 }
 
-.dashboard {
-    padding: 20px;
-    background-color: #ffffff;
-    /* White background for dashboard */
-    border-radius: 8px;
-    /* Rounded corners for dashboard */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* Soft shadow for depth */
-}
-
 .card {
-    border: 1px solid #e0e0e0;
-    /* Light border for cards */
-    border-radius: 8px;
-    /* Rounded corners for cards */
+    border: none;
+    border-radius: 10px;
 }
 
 .card-title {
@@ -118,6 +111,7 @@ body {
     /* Primary button color */
     border-color: #007bff;
     /* Primary button border */
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
@@ -125,6 +119,8 @@ body {
     /* Darker blue on hover */
     border-color: #0056b3;
     /* Darker border on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .profile-button {
@@ -162,15 +158,12 @@ body {
 
 .task-management-system {
     font-weight: 100;
-    /* Light font weight */
     margin: 0;
-    /* No margin */
     font-size: 12px;
-    /* Smaller font size for subtitle */
     width: 15vw;
-    /* Width for subtitle */
     letter-spacing: 1.5px;
-    /* Letter spacing for subtitle */
+    margin-left: -15px;
+    text-align: left;
 }
 
 .sidebar-section {
@@ -191,4 +184,134 @@ body {
 .icon:hover {
     color: #007bff;
     /* Change icon color on hover */
+}
+
+
+/* User Information Table Styles */
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+}
+
+.table thead th {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+
+/* Table Container Styles */
+
+.table-responsive {
+    max-height: 250px;
+    /* Increased from 250px to show more users */
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+
+/* Modal Styles */
+
+#addUserModal .modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#addUserModal .modal-header {
+    background-color: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+    padding: 1.5rem;
+}
+
+#addUserModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #05274B;
+}
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+#addUserModal .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    padding: 0.75rem;
+}
+
+#addUserModal .input-group-text i {
+    color: #6c757d;
+}
+
+#addUserModal .form-control,
+#addUserModal .form-select {
+    border-left: none;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+}
+
+#addUserModal .form-control:focus,
+#addUserModal .form-select:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#addUserModal .modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+}
+
+#addUserModal .btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+#addUserModal .btn-light {
+    background-color: #e9ecef;
+    border: none;
+}
+
+#addUserModal .btn-light:hover {
+    background-color: #dee2e6;
+}
+
+#addUserModal .btn-primary {
+    background-color: #05274B;
+    border: none;
+}
+
+#addUserModal .btn-primary:hover {
+    background-color: #031b33;
 }
