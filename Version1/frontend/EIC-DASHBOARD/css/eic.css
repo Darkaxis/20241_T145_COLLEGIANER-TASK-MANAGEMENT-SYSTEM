@@ -1615,3 +1615,284 @@ body.modal-open {
 #addTaskModal .btn-primary:hover {
     background-color: #031b33;
 }
+
+
+/* Error message styles */
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.input-error {
+    border-color: red !important;
+}
+
+
+/* Form validation error styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* Adjust input group margins */
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Form validation error styles */
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Input group validation styling */
+
+.input-group .form-control.is-invalid,
+.input-group .form-select.is-invalid {
+    z-index: 2;
+}
+
+.input-group .form-control.is-invalid:focus,
+.input-group .form-select.is-invalid:focus {
+    z-index: 3;
+}
+
+
+/* Form validation error styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+    padding-left: 2rem;
+    /* Align with input text (accounting for icon width) */
+}
+
+
+/* Adjust input groups */
+
+.d-flex.align-items-center {
+    margin-bottom: 0.25rem;
+}
+
+
+/* Ensure form groups have proper spacing */
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Specific alignment for icons */
+
+.d-flex i {
+    width: 2rem;
+    /* Fixed width for icons to ensure consistent alignment */
+    text-align: center;
+}
+
+
+/* Adjust spacing for columns */
+
+.row .col-md-6 {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Ensure error messages in columns align with inputs */
+
+.row .col-md-6 .error-message {
+    padding-left: 10px;
+    /* Match the input text alignment */
+}
+
+
+/* Input validation styling */
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* General error message styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+    padding-left: 2rem;
+}
+
+
+/* Specific styling for assign to error message */
+
+#taskAssignInput~.error-message {
+    padding-left: 2rem;
+    position: absolute;
+    margin-left: 10vw;
+}
+
+
+/* Specific styling for assignee error message */
+
+#taskAssigneeInput~.error-message {
+    padding-left: 2rem;
+    position: absolute;
+    margin-left: 10vw;
+}
+
+
+/* Adjust column spacing */
+
+.row .col-md-6 {
+    position: relative;
+    margin-bottom: 2rem;
+    /* Increased to accommodate error messages */
+}
+
+
+/* Input validation styling */
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* Ensure proper icon alignment */
+
+.d-flex i {
+    width: 2rem;
+    text-align: center;
+}
+
+
+/* Adjust input groups in columns */
+
+.row .col-md-6 .d-flex.align-items-center {
+    margin-bottom: 0.25rem;
+}
+
+
+/* Row spacing in the modal */
+
+.modal-body .row {
+    margin-bottom: 1rem;
+    /* Reduce space between Status/Privacy and Assign to/Assigned by rows */
+}
+
+
+/* Column spacing */
+
+.row .col-md-6 {
+    position: relative;
+    margin-bottom: 1rem;
+    /* Reduce bottom margin of columns */
+}
+
+
+/* Input group container */
+
+.d-flex.align-items-center {
+    margin-bottom: 0.25rem;
+}
+
+
+/* Error message alignment for assign fields */
+
+#taskAssignInput~.error-message,
+#taskAssigneeInput~.error-message {
+    padding-left: 2rem;
+    /* Align with input text */
+    position: absolute;
+    margin-top: 0.25rem;
+}
+
+
+/* Form group spacing */
+
+.modal-body .mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Input field labels */
+
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+
+/* Icon alignment */
+
+.d-flex i {
+    width: 2rem;
+    text-align: center;
+}
+
+
+/* Input validation styling */
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* General error message styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    font-family: "Quicksand", sans-serif;
+}

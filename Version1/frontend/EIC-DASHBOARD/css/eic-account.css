@@ -315,3 +315,99 @@ body {
 #addUserModal .btn-primary:hover {
     background-color: #031b33;
 }
+
+
+/* Form validation error styles */
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* Adjust input group margins */
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Modal form styling */
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Input group validation styling */
+
+.input-group .form-control.is-invalid,
+.input-group .form-select.is-invalid {
+    z-index: 2;
+}
+
+.input-group .form-control.is-invalid:focus,
+.input-group .form-select.is-invalid:focus {
+    z-index: 3;
+}
+
+
+/* Modal form styling */
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+#addUserModal .d-flex i {
+    color: #6c757d;
+    width: 16px;
+    text-align: center;
+}
