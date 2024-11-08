@@ -1896,3 +1896,198 @@ body.modal-open {
     font-size: 0.875rem;
     font-family: "Quicksand", sans-serif;
 }
+
+
+/* Submit button styling */
+
+#submitTaskButton {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#submitTaskButton:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+
+/* Submission select styling */
+
+#submitToInput {
+    background-color: #fff;
+}
+
+#submitToInput:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+}
+
+.submit-section .row {
+    margin: 0;
+}
+
+.submit-section .btn-success {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+
+/* Form control consistency */
+
+.form-select,
+.form-control {
+    border-radius: 0.375rem;
+}
+
+
+/* Icon alignment in buttons */
+
+.btn i {
+    font-size: 0.875rem;
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+}
+
+.submit-section .row {
+    margin: 0;
+}
+
+.submit-section .btn-success {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Description textarea styling */
+
+#taskDescription {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* Form group spacing */
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+
+/* View Task Modal Styling */
+
+#taskDetailModal {
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskDetailModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 600;
+}
+
+#taskDetailModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    color: #333;
+}
+
+#taskDetailModal .form-select,
+#taskDetailModal .form-control,
+#taskDetailModal input,
+#taskDetailModal textarea,
+#taskDetailModal select {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    font-family: "Quicksand", sans-serif;
+}
+
+.submit-section .form-label {
+    font-weight: 500;
+}
+
+#submitToInput {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+#submitAndMarkDoneBtn {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+
+/* Comment section styling */
+
+.comment-section {
+    font-family: "Quicksand", sans-serif;
+}
+
+.comment-section h6 {
+    font-weight: 600;
+}
+
+.comment-textarea {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+
+/* Modal footer buttons */
+
+.modal-footer .btn {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}

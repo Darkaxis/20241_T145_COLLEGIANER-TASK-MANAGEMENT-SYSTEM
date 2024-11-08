@@ -319,14 +319,40 @@
         function updateCounters(oldRole, newRole) {
             if (oldRole) {
                 // Decrease old role counter
-                const oldCounter = document.getElementById(`total${oldRole.replace(/\s+/g, '')}s`);
+                let oldCounterId;
+                switch (oldRole) {
+                    case 'Admin':
+                        oldCounterId = 'totalAdmins';
+                        break;
+                    case 'Editorial Board':
+                        oldCounterId = 'totalEditorials';
+                        break;
+                    case 'Staff':
+                        oldCounterId = 'totalStaff';
+                        break;
+                }
+
+                const oldCounter = document.getElementById(oldCounterId);
                 if (oldCounter) {
                     oldCounter.textContent = Math.max(0, parseInt(oldCounter.textContent) - 1);
                 }
             }
 
             // Increase new role counter
-            const newCounter = document.getElementById(`total${newRole.replace(/\s+/g, '')}s`);
+            let newCounterId;
+            switch (newRole) {
+                case 'Admin':
+                    newCounterId = 'totalAdmins';
+                    break;
+                case 'Editorial Board':
+                    newCounterId = 'totalEditorials';
+                    break;
+                case 'Staff':
+                    newCounterId = 'totalStaff';
+                    break;
+            }
+
+            const newCounter = document.getElementById(newCounterId);
             if (newCounter) {
                 newCounter.textContent = parseInt(newCounter.textContent) + 1;
             }

@@ -83,10 +83,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body d-flex">
-
                         <!-- Task Details Section -->
                         <div class="task-details" style="flex: 2; padding-right: 20px; border-right: 1px solid #e9ecef;">
-                            <!-- Task Summary Section -->
+                            <!-- Status and Privacy Section -->
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Status</label>
@@ -108,6 +107,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Hide From Section -->
                             <div id="hideInputContainerView" class="col-12 mb-3" style="display: none;">
                                 <label class="form-label">Hide From</label>
                                 <div class="d-flex align-items-center">
@@ -115,17 +116,7 @@
                                     <input type="text" class="form-control" id="hideUserView" placeholder="Enter names to hide">
                                 </div>
                             </div>
-                            <!-- Date and Category Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Date</label>
-                                    <input type="date" id="taskDate" class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Category</label>
-                                    <input type="text" id="taskCategory" class="form-control">
-                                </div>
-                            </div>
+
                             <!-- Assign Section -->
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -137,6 +128,19 @@
                                     <input type="text" id="taskAssignee" class="form-control">
                                 </div>
                             </div>
+
+                            <!-- Date and Category Section -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" id="taskDate" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" id="taskCategory" class="form-control">
+                                </div>
+                            </div>
+
                             <!-- Link Section -->
                             <div class="mb-3">
                                 <div class="col-md-6">
@@ -144,10 +148,36 @@
                                     <input type="url" id="taskLink" class="form-control">
                                 </div>
                             </div>
-                            <!-- Task Description Section -->
-                            <div class="mb-3">
+
+                            <!-- Description Section -->
+                            <div class="mb-4">
                                 <label class="form-label">Description</label>
                                 <textarea id="taskDescription" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <!-- Submit Section -->
+                            <div class="submit-section">
+                                <div class="row align-items-end">
+                                    <div class="col-md-8">
+                                        <label for="submitToInput" class="form-label">Submit to</label>
+                                        <div class="d-flex align-items-center">
+
+                                            <select class="form-select" id="submitToInput">
+                                                <option value="" selected disabled>Select person to submit to...</option>
+                                                <option value="editor1">John Doe (Editor-in-Chief)</option>
+                                                <option value="editor2">Jane Smith (Associate Editor)</option>
+                                                <option value="editor3">Mike Johnson (Managing Editor)</option>
+                                                <option value="editor4">Sarah Wilson (Copy Editor)</option>
+                                            </select>
+                                        </div>
+                                        <div class="error-message"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-success w-100" id="submitAndMarkDoneBtn">
+                                            <i class="fas fa-check-circle me-2"></i>Mark as Done
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -166,7 +196,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
