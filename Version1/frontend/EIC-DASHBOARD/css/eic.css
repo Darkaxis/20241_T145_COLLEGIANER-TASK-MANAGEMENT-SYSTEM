@@ -2091,3 +2091,61 @@ body.modal-open {
     font-family: "Quicksand", sans-serif;
     font-weight: 500;
 }
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+}
+
+.task-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.task-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.task-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.task-card i {
+    margin-right: 5px;
+    width: 16px;
+}
+
+.task-column {
+    min-height: 100px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.task-card-content {
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskTitle {
+    border: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 100%;
+    margin-right: 20px;
+}
+
+#taskTitle:focus {
+    outline: none;
+    border-bottom: 2px solid #007bff;
+}
