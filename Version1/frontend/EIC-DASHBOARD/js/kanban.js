@@ -618,8 +618,6 @@ function updateTaskCard(taskCard) {
     const date = taskCard.dataset.date;
     const privacy = taskCard.dataset.privacy;
     const hideFrom = taskCard.dataset.hideFrom;
-    const submittedTo = taskCard.dataset.submittedTo;
-    const category = taskCard.dataset.category;
 
     let privacyIcon = privacy === 'Public' ? 'fa-globe' : 'fa-lock';
     let privacyText = privacy;
@@ -634,16 +632,9 @@ function updateTaskCard(taskCard) {
             <p><i class="fa-regular fa-user"></i> ${assignTo}</p>
             <p><i class="fa-regular fa-calendar"></i> ${date}</p>
             <p><i class="fas ${privacyIcon}"></i> ${privacyText}</p>
-            <p><i class="fas fa-tag"></i> ${category}</p>
+        </div>
     `;
-
-    if (submittedTo) {
-        cardContent += `
-            <p><i class="fas fa-paper-plane"></i> Submitted to: ${getSubmitToName(submittedTo)}</p>
-        `;
-    }
-
-    cardContent += `</div>`;
+    
     taskCard.innerHTML = cardContent;
 }
 

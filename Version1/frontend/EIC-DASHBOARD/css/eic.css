@@ -2139,7 +2139,7 @@ body.modal-open {
 
 #taskTitle {
     border: none;
-    font-size: 1.25rem;
+    font-size: 20px;
     font-weight: bold;
     width: 100%;
     margin-right: 20px;
@@ -2148,4 +2148,25 @@ body.modal-open {
 #taskTitle:focus {
     outline: none;
     border-bottom: 2px solid #007bff;
+}
+
+#taskDetailModal #taskTitle {
+    width: 400px !important;
+    max-width: 90% !important;
+    margin-right: 20px;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+#taskDetailModal #taskTitle:focus {
+    outline: none;
+    border-bottom: 2px solid #007bff;
+}
+
+#taskDetailModal #taskLink {
+    width: 450px !important;
+    max-width: 95% !important;
+    display: block;
+    word-break: break-all;
 }
