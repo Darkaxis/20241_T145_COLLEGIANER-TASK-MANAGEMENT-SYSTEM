@@ -47,7 +47,6 @@ export async function getUserByEmail(email) {
 }
 
 // Function to create a new admin user
-// Function to create a new admin user
 export async function createAdmin(adminData) {
     if (!adminData || !adminData.email || !adminData.password) {
         return { status: 400, message: 'adminData, email, and password are required' };

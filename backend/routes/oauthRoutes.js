@@ -17,7 +17,7 @@ const oauthRoutes = express.Router();
 oauthRoutes.get('/auth', (req, res) => {
     const state = `login-${uuidv4()}`; // Generate a unique state
     setTempAdminData(state, { type: 'login' }); // Store the state temporarily
-
+   
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'
@@ -28,7 +28,6 @@ oauthRoutes.get('/auth', (req, res) => {
         scope: scopes,
         state: state // Pass the state parameter
     });
-
     res.redirect(url);
 });
 
@@ -129,6 +128,7 @@ oauthRoutes.get('/callback', async (req, res) => {
         } else if (state.startsWith('login')){
              // Handle login callback
              const user = await eicServices.getUserByEmail(email);
+             
              if (!user) {
                  return res.status(401).json({
                      message: 'User not found. Please sign up first.'
@@ -146,10 +146,10 @@ oauthRoutes.get('/callback', async (req, res) => {
             if (user.role == 'eb'){
              //redirect to dashboard 
             
-             res.redirect(`http://localhost:4000/eb/dashboard?token=${token}`);
+             res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
             }
             else if(user.role == 'staff'){
-                res.redirect(`http://localhost:4000/staff/dashboard?token=${token}`);
+                res.redirect(`https://localhost:4000/staff/dashboard?token=${token}`);
 
             }
         }
