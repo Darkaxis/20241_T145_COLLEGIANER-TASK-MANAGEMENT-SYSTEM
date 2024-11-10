@@ -6,6 +6,7 @@ import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../util
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 
+
 dotenv.config();
 
 const oauthRoutes = express.Router();
@@ -49,10 +50,8 @@ oauthRoutes.post('/add/user', (req, res) => {
         state: state // Pass the state parameter
     });
 
-    res.status(200).json({
-        message: 'OAuth URL generated. Check the console for the URL.',
-        url: url
-    });
+  
+
 });
 
 // Handle the OAuth callback

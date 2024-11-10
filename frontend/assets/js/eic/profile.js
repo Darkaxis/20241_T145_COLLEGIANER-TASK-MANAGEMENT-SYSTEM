@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const logoutButton = document.getElementById('logoutButton');
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
         window.location.href = '/';
     });
 });

@@ -6,6 +6,7 @@ import { google } from "googleapis";
 import oauth2Client from "../utils/oauthClient.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
 
+
 dotenv.config();
 
 // Function to get user profile information from Google People API

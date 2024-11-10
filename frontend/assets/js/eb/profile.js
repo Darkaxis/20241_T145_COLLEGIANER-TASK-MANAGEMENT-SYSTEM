@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.history.replaceState({}, document.title, window.location.pathname);
     } else {
         const storedToken = localStorage.getItem('token');
-        if (!storedToken) {
+        if (storedToken == 'null' || !storedToken) {
             alert('You are not logged in!');
             window.location.href = '/';
             return;

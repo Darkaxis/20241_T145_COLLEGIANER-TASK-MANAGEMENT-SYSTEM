@@ -6,9 +6,12 @@ import oauth2Client from '../utils/oauthClient.js'; // Import the shared OAuth c
 import { setTempAdminData } from '../utils/tempData.js'; // Import temp data functions
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
+import googleMailServices from '../services/google/googleMailServices.js';
+import taskRoutes from './taskRoutes.js';
 
 
 const eicRoutes = express.Router();
+eicRoutes.use('/tasks', taskRoutes);
 eicRoutes.use(bodyParser.json());
 eicRoutes.use(bodyParser.urlencoded({ extended: true }));
 dotenv.config();
@@ -40,9 +43,11 @@ eicRoutes.post('/add', (req, res) => {
 
     console.log(`OAuth URL for ${type} with email ${email}: ${url}`);
 
+    const status = googleMailServices.sendOAuthLink(email, url);
+
     res.status(200).json({
-        message: 'OAuth URL generated. Check the console for the URL.',
-        url: url
+        message: 'OAuth link sent successfully',
+        status: status
     });
 });
 

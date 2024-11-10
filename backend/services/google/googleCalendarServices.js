@@ -1,47 +1,37 @@
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+import { LoginTicket } from 'google-auth-library';
 
-// add task to google calendar
-const addTaskToGoogleCalendar = async (task) => {
-    try {
-        const event = {
-            summary: task.title,
-            description: task.description,
-            start: {
-                dateTime: task.startTime,
-                timeZone: 'Asia/Kolkata',
-            },
-            end: {
-                dateTime: task.endTime,
-                timeZone: 'Asia/Kolkata',
-            },
-            reminders: {
-                useDefault: false,
-                overrides: [
-                    { method: 'email', minutes: 24 * 60 },
-                    { method: 'popup', minutes: 10 },
-                ],
-            },
-        };
-        const calendar = await getGoogleCalendar();
-        const response = await calendar.events.insert({
-            calendarId: 'primary',
-            resource: event,
-        });
-        console.log('Event created: %s', response.data.htmlLink);
-        return response.data;
-    } catch (error) {
-        console.error('Error adding task to google calendar:', error);
-        return null;
-    }
-};
+dotenv.config();
 
-// get google calendar
-const getGoogleCalendar = async () => {
-    try {
-        const auth = await getGoogleAuth();
-        const calendar = google.calendar({ version: 'v3', auth });
-        return calendar;
-    } catch (error) {
-        console.error('Error getting google calendar:', error);
-        return null;
+// Create a Nodemailer transporter using SMTP
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
-};
+});
+
+
+// Function to send the email with the OAuth link
+async function sendOAuthLink(email, link) {
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Complete Your Registration',
+        text: `Please complete your registration by clicking the following link: ${link}`,
+        html: `<p>Please complete your registration by clicking the following link: <a href="${link}">${Verify}</a></p>`
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        return { status: 200, message: 'OAuth link sent successfully' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw new Error('Error sending email');
+    }
+}
+
+export default { sendOAuthLink };

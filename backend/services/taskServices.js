@@ -1,8 +1,6 @@
 import admin from "firebase-admin"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js";
 
-const db = admin.firestore();
-
 // Function to create a new task
 async function createTask(taskData) {
     try {
@@ -34,9 +32,9 @@ async function getTask(taskId) {
 }
 
 // Function to get all tasks for a specific user
-async function getAllTasks(userId) {
+async function getAllTasks() {
     try {
-        const tasksSnapshot = await db.collection('tasks').where('userId', '==', userId).get();
+        const tasksSnapshot = await db.collection('tasks').get();
         const tasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         return { status: 200, message: 'Tasks retrieved successfully', tasks: tasks };
     } catch (error) {
