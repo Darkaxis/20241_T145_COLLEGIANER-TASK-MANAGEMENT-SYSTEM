@@ -411,3 +411,56 @@ body {
     width: 16px;
     text-align: center;
 }
+
+
+/* Profile Dropdown */
+
+.profile-dropdown {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+}
+
+.profile-button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.profile-img {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+}
+
+
+/* Dropdown menu item */
+
+.dropdown-item {
+    padding: 10px 15px;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+
+/* Profile image and text alignment in dropdown */
+
+.dropdown-item.d-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Animation for profile image on hover */
+
+.profile-button:hover .profile-img {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
