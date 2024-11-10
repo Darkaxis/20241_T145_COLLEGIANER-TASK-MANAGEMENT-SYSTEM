@@ -1,8 +1,7 @@
 import express from 'express';
-//import { google } from 'googleapis';
 import dotenv from 'dotenv';
+import oauth2Client from '../utils/oauthClient.js';
 import eicServices from '../services/eicServices.js';
-import oauth2Client  from '../utils/oauthClient.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
@@ -11,13 +10,11 @@ dotenv.config();
 
 const oauthRoutes = express.Router();
 
-// Initialize OAuth2 client
-
 // Generate the URL for the Google OAuth2 consent page
 oauthRoutes.get('/auth', (req, res) => {
     const state = `login-${uuidv4()}`; // Generate a unique state
     setTempAdminData(state, { type: 'login' }); // Store the state temporarily
-   
+
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'
@@ -34,21 +31,23 @@ oauthRoutes.get('/auth', (req, res) => {
 // Generate the URL for adding a user via Google OAuth2 consent page
 oauthRoutes.post('/add/user', (req, res) => {
     const { email, role } = req.body;
-    const state = `user-${uuidv4()}`; // Generate a unique state
-    setTempAdminData(state, { email, role }); // Store the email and role temporarily
+    let state = '';
 
-    const scopes = [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ];
+    if (role === "eic") {
+         state = `admin-${uuidv4()}`; // Generate a unique state
+    }
+    else if (role === "staff" || role === "eb") {
+         state = `user-${uuidv4()}`; // Generate a unique state
+    }
 
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
-        scope: scopes,
+        scope: [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email'
+        ],
         state: state // Pass the state parameter
     });
-
-    console.log(`OAuth URL for user with email ${email}: ${url}`);
 
     res.status(200).json({
         message: 'OAuth URL generated. Check the console for the URL.',
@@ -60,6 +59,7 @@ oauthRoutes.post('/add/user', (req, res) => {
 oauthRoutes.get('/callback', async (req, res) => {
     const code = req.query.code;
     const state = req.query.state; // Retrieve the state parameter
+
     if (!state) {
         return res.status(400).json({
             message: 'Missing state parameter'
@@ -77,23 +77,26 @@ oauthRoutes.get('/callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
-        // Fetch user profile information
-        const userProfile = await eicServices.getUserProfile(tokens.access_token);
-        
 
+        // Fetch user profile information
+        const userProfile = await eicServices.getUserProfile(tokens);
         // Extract user information
         const name = userProfile.names && userProfile.names[0] ? userProfile.names[0].displayName : 'No Name';
         const email = userProfile.emailAddresses && userProfile.emailAddresses[0] ? userProfile.emailAddresses[0].value : 'No Email';
-
-        // Determine if the callback is for admin or user
+        const profile = userProfile.photos && userProfile.photos[0] ? userProfile.photos[0].url : 'No Profile';
+        
+        // Determine if the callback is for admin, user, or login
         if (state.startsWith('admin')) {
             // Handle admin callback
             const combinedAdminData = {
                 email: email,
                 name: name,
+                profile: profile,
+                //accessToken: tokens.accessToken,
                 password: tempData.password,
-                accessToken: tokens.access_token,
+               
             };
+            
 
             // Call createAdmin function from eicServices
             const createAdminResponse = await eicServices.createAdmin(combinedAdminData);
@@ -103,7 +106,7 @@ oauthRoutes.get('/callback', async (req, res) => {
 
             res.status(createAdminResponse.status).json({
                 message: createAdminResponse.message,
-                data: combinedAdminData
+               
             });
         } else if (state.startsWith('user')) {
             // Handle user callback
@@ -112,7 +115,7 @@ oauthRoutes.get('/callback', async (req, res) => {
                 email: email,
                 name: name,
                 role: role,
-                accessToken: tokens.access_token,
+                profile: profile,
             };
 
             // Call addUser function from eicServices
@@ -123,37 +126,31 @@ oauthRoutes.get('/callback', async (req, res) => {
 
             res.status(addUserResponse.status).json({
                 message: addUserResponse.message,
-                data: combinedUserData
             });
-        } else if (state.startsWith('login')){
-             // Handle login callback
-             const user = await eicServices.getUserByEmail(email);
-             
-             if (!user) {
-                 return res.status(401).json({
-                     message: 'User not found. Please sign up first.'
-                 });
-             }
- 
-             // Generate tokens
-             const token = jwt.sign(
-                 tokens,
-                 process.env.JWT_SECRET,
-                 { expiresIn: '7d' }
-             );
-             // Clean up temporary data
-             deleteTempAdminData(state);
-            if (user.role == 'eb'){
-             //redirect to dashboard 
+        } else if (state.startsWith('login')) {
+            // Handle login callback
+            const user = await eicServices.getUserByEmail(email);
+            if (!user) {
+                return res.status(401).json({
+                    message: 'User not found. Please sign up first.'
+                });
+            }
             
-             res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
+            // Generate tokens
+            const token = jwt.sign(
+                {name: user.name, email: user.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
+            );
+            console.log('Token:', token);
+            // Clean up temporary data
+            deleteTempAdminData(state);
+            if (user.role === 'eb'){
+            // Redirect to the dashboard with the token
+            res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
             }
-            else if(user.role == 'staff'){
-                res.redirect(`https://localhost:4000/staff/dashboard?token=${token}`);
-
-            }
-        }
-        else {
+            
+        } else {
             res.status(400).json({
                 message: 'Invalid state parameter'
             });

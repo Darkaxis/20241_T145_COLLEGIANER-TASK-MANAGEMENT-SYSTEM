@@ -605,6 +605,7 @@ function createTask(title, description, status, privacy, hideFrom, assignTo, ass
     // Add to appropriate column
     const columnId = status.toLowerCase().replace(' ', '-') + '-column';
     const column = document.getElementById(columnId);
+    
     if (column) {
         column.appendChild(taskCard);
         updateTaskCounts();

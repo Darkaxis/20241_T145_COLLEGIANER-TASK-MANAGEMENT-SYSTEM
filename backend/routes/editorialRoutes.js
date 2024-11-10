@@ -25,17 +25,14 @@ eicRoutes.get('/profile', async (req, res) => {
     const token = authHeader.split(' ')[1];
     
     try {
-        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        const userProfile = await editorialServices.getUserProfile(decoded);
-
-
-        console.log('User profile:', userProfile);
+        const userProfile = await editorialServices.getUserByEmail(decoded.email);
         res.status(200).json({
-             name: userProfile.names[0].displayName,
-             email: userProfile.emailAddresses[0].value,
-            profileImage: userProfile.photos[0].url // Return the profile image
+            name: userProfile.name,
+            email: userProfile.email,
+            profileImage: userProfile.profile // Return the profile image
+            
         });
 
     } catch (error) {
