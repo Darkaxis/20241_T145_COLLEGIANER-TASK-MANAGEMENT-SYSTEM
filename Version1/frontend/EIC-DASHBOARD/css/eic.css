@@ -156,6 +156,8 @@ body {
     overflow-y: auto;
     font-family: "Quicksand", sans-serif;
     font-optical-sizing: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .task-board {
@@ -165,6 +167,8 @@ body {
     background-color: #f8f9fc;
     font-family: "Quicksand", sans-serif;
     font-optical-sizing: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .task-column {
@@ -191,6 +195,8 @@ body {
     margin-bottom: 15px;
     font-family: "Quicksand", sans-serif;
     font-optical-sizing: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .plus-icon {
@@ -2644,4 +2650,155 @@ body.modal-open {
     .profile-name {
         font-size: 1.3rem;
     }
+}
+
+
+/* Add these styles to make the button clickable */
+
+button {
+    cursor: pointer !important;
+    z-index: 1000 !important;
+    position: relative !important;
+}
+
+.fa-plus {
+    pointer-events: none;
+}
+
+
+/* Search Bar Styles */
+
+.search-container {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    z-index: 10;
+}
+
+.search-container input {
+    padding-left: 35px;
+    background: transparent;
+}
+
+.search-container input:focus {
+    box-shadow: none;
+    background: transparent;
+}
+
+
+/* Task Board Header Styles */
+
+.task-header h3 {
+    position: relative;
+    z-index: 1;
+    /* Lower z-index for task headers */
+}
+
+
+/* Dropdown Styles */
+
+.dropdown-menu {
+    z-index: 1050;
+    /* Higher z-index for dropdowns */
+}
+
+
+/* Task Board Layout */
+
+.task-dashboard {
+    position: relative;
+    z-index: 1;
+}
+
+.task-board {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* Navbar Elements */
+
+.navbar .dropdown {
+    position: relative;
+    z-index: 1060;
+    /* Highest z-index for navbar dropdowns */
+}
+
+.notification-dropdown {
+    z-index: 1060;
+    /* Match navbar dropdown z-index */
+}
+
+
+/* Optional: Add if you have any modals */
+
+.modal {
+    z-index: 1070;
+    /* Highest z-index for modals */
+}
+
+.profile-header {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.close-profile {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-profile:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.close-profile i {
+    color: #666;
+    font-size: 16px;
+}
+
+
+/* Animation keyframes */
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.profile-card.show .profile-card-content {
+    animation: slideInRight 0.3s ease forwards;
+}
+
+.profile-card .profile-card-content {
+    animation: slideOutRight 0.3s ease forwards;
 }
