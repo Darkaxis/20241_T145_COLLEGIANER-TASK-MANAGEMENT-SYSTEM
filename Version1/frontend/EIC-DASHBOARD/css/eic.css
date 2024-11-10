@@ -2170,3 +2170,399 @@ body.modal-open {
     display: block;
     word-break: break-all;
 }
+
+.activity-log-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #333;
+    transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Create task */
+.activity-icon.create {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* Delete task */
+.activity-icon.delete {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+/* Modify task */
+.activity-icon.modify {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+/* Move task */
+.activity-icon.move {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+/* Add user */
+.activity-icon.user-add {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-text {
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.activity-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 30px;
+    min-width: 120px;
+}
+
+.user-info, .timestamp-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-name {
+    color: #333;
+    font-weight: 500;
+}
+
+.user-label, .timestamp-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 2px;
+}
+
+.activity-timestamp {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 30px;
+    min-width: 120px;
+}
+
+.activity-view {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-view i {
+    color: #666;
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.activity-view:hover i {
+    color: #007bff;
+}
+
+/* Scrollbar styling */
+.activity-log-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activity-log-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.activity-log-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.activity-log-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Activity Icons and Colors */
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.activity-icon.create {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.activity-icon.delete {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.activity-icon.modify {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.activity-icon.move {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.activity-icon.user-add {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+/* Activity Item Layout */
+.activity-item {
+    display: grid;
+    grid-template-columns: auto 1fr 150px 180px;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.activity-details {
+    padding-right: 20px;
+}
+
+.activity-text {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* User Info Styles */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.user-label {
+    font-size: 0.8em;
+    color: #666;
+}
+
+/* Timestamp Styles */
+.timestamp-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.timestamp-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 2px;
+}
+
+.timestamp-info span:first-child {
+    white-space: nowrap;  /* Prevents line breaks */
+    font-size: 0.9rem;
+}
+
+/* Enhanced Profile Card Styles */
+.profile-card {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 380px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+.profile-card.show {
+    right: 0;
+}
+
+.profile-card-header {
+    padding: 20px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+}
+
+.profile-card-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.close-profile {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.close-profile:hover {
+    color: #475569;
+}
+
+.profile-card-content {
+    position: relative;
+}
+
+.profile-banner {
+    height: 140px;
+    background: linear-gradient(135deg, #1976d2, #64b5f6);
+}
+
+.profile-image {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: -60px auto 0;
+    background: #fff;
+    border-radius: 50%;
+    padding: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.profile-image i {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: #64748b;
+    background: #f8fafc;
+    border-radius: 50%;
+}
+
+.online-status {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background: #22c55e;
+    border: 3px solid #fff;
+    border-radius: 50%;
+}
+
+.profile-details {
+    padding: 20px 30px;
+    text-align: center;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.profile-position {
+    display: inline-block;
+    padding: 5px 15px;
+    background: #1976d2;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    margin-bottom: 25px;
+}
+
+.profile-info-section {
+    margin-top: 30px;
+}
+
+.profile-field {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+}
+
+.profile-field:last-child {
+    border-bottom: none;
+}
+
+.field-icon {
+    width: 35px;
+    height: 35px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.field-icon i {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.field-content {
+    flex: 1;
+}
+
+.field-content label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 3px;
+}
+
+.field-content p {
+    color: #1e293b;
+    font-size: 1rem;
+    margin: 0;
+}
