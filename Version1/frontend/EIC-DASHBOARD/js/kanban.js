@@ -379,28 +379,80 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the modal close handler
     document.getElementById('taskDetailModal').addEventListener('hide.bs.modal', function() {
         if (currentTaskCard) {
-            // Save all changes before closing
+            // Get all current values from the modal
             const title = document.getElementById('taskTitle').value;
             const description = document.getElementById('taskDescription').value;
-            const status = document.getElementById('taskStatus').value;
+            // IMPORTANT: Use the current status from the card if not changed in modal
+            const status = document.getElementById('taskStatus').value || currentTaskCard.dataset.status;
             const privacy = document.getElementById('taskPrivacy').value;
             const hideFrom = document.getElementById('hideUserView').value;
             const assignTo = document.getElementById('taskAssign').value;
             const date = document.getElementById('taskDate').value;
+            const category = document.getElementById('taskCategory').value;
             const link = document.getElementById('taskLink').value;
 
             // Update all task card data
             currentTaskCard.dataset.title = title;
             currentTaskCard.dataset.description = description;
-            currentTaskCard.dataset.status = status;
+            currentTaskCard.dataset.status = status; // This preserves the Done status
             currentTaskCard.dataset.privacy = privacy;
             currentTaskCard.dataset.hideFrom = hideFrom;
             currentTaskCard.dataset.assign = assignTo;
             currentTaskCard.dataset.date = date;
+            currentTaskCard.dataset.category = category;
             currentTaskCard.dataset.link = link;
+
+            // Only move to a new column if the status actually changed
+            const currentColumn = currentTaskCard.parentElement.id;
+            const targetColumnId = status.toLowerCase().replace(' ', '-') + '-column';
+
+            if (currentColumn !== targetColumnId) {
+                const newColumn = document.getElementById(targetColumnId);
+                if (newColumn) {
+                    newColumn.appendChild(currentTaskCard);
+                    updateTaskCounts();
+                }
+            }
 
             // Update the card display
             updateTaskCard(currentTaskCard);
+        }
+    });
+
+    document.getElementById('markAsDoneBtn').addEventListener('click', function() {
+        if (!currentTaskCard) return;
+
+        // Update task status to "Done"
+        currentTaskCard.dataset.status = 'Done';
+
+        // Move task to Done column
+        const doneColumn = document.getElementById('done-column');
+        if (doneColumn) {
+            doneColumn.appendChild(currentTaskCard);
+
+            // Update the status in the modal dropdown
+            const statusDropdown = document.getElementById('taskStatus');
+            if (statusDropdown) {
+                statusDropdown.value = 'Done';
+            }
+
+            // Update the counts and card display
+            updateTaskCounts();
+            updateTaskCard(currentTaskCard);
+
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
+            if (modal) {
+                modal.hide();
+            }
+        }
+    });
+
+    // Add this to ensure the dropdown resets after modal closes
+    document.getElementById('taskDetailModal').addEventListener('hidden.bs.modal', function() {
+        const actionDropdown = document.getElementById('taskActionDropdown');
+        if (actionDropdown) {
+            actionDropdown.value = '';
         }
     });
 });
@@ -408,6 +460,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // Drag and Drop functions
 function allowDrop(ev) {
     ev.preventDefault();
+    // Add visual feedback for drop target (optional)
+    const dropZone = ev.target.closest('.task-column');
+    if (dropZone) {
+        dropZone.style.backgroundColor = '#f0f0f0';
+    }
 }
 
 function drag(ev) {
@@ -418,15 +475,26 @@ function drop(ev) {
     ev.preventDefault();
     const data = ev.dataTransfer.getData("text");
     const draggedElement = document.getElementById(data);
-    const dropZone = ev.target.closest('.task-column');
+
+    // Find the nearest task-column parent
+    let dropZone = ev.target;
+    while (dropZone && !dropZone.classList.contains('task-column')) {
+        dropZone = dropZone.parentElement;
+    }
 
     if (dropZone && draggedElement) {
-        dropZone.appendChild(draggedElement);
-        // Update task status based on column
-        const newStatus = dropZone.id.replace('-column', '').split('-')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+        // Get the new status from the column ID
+        const newStatus = dropZone.id.split('-')[0].charAt(0).toUpperCase() +
+            dropZone.id.split('-')[0].slice(1);
+
+        // Update the task's status
         draggedElement.dataset.status = newStatus;
+
+        // Move the card to the new column
+        dropZone.appendChild(draggedElement);
+
+        // Update the task card display and counts
+        updateTaskCard(draggedElement);
         updateTaskCounts();
     }
 }
@@ -587,6 +655,9 @@ function createTask(title, description, status, privacy, hideFrom, assignTo, ass
 
 // Update the task card display function
 function updateTaskCard(taskCard) {
+    // Store the current status before updating the card
+    const currentStatus = taskCard.dataset.status;
+
     let privacyIcon = taskCard.dataset.privacy === 'Public' ? 'fa-globe' : 'fa-lock';
     let privacyText = taskCard.dataset.privacy;
     
@@ -603,6 +674,9 @@ function updateTaskCard(taskCard) {
             <p><i class="fas ${privacyIcon}"></i> ${privacyText}</p>
         </div>
     `;
+
+    // Don't automatically move the card - only update its content
+    taskCard.dataset.status = currentStatus;
 }
 
 // Add this event listener to update the card when privacy changes
@@ -742,6 +816,14 @@ function openTaskDetails(taskCard) {
     document.getElementById('taskCategory').value = taskCard.dataset.category;
     document.getElementById('taskLink').value = taskCard.dataset.link;
 
+    // Show/hide Mark as Done button based on current status
+    const markAsDoneBtn = document.getElementById('markAsDoneBtn');
+    if (taskCard.dataset.status === 'Done') {
+        markAsDoneBtn.style.display = 'none';
+    } else {
+        markAsDoneBtn.style.display = 'block';
+    }
+
     // Handle hide from field for Private Except
     const hideContainer = document.getElementById('hideInputContainerView');
     if (taskCard.dataset.privacy === 'Private Except') {
@@ -802,4 +884,35 @@ document.getElementById('saveTaskButton').addEventListener('click', function() {
         document.getElementById('addTaskForm').reset();
         clearErrors();
     }
+});
+
+// Helper function to get column ID from status
+function getColumnId(status) {
+    switch(status.toLowerCase()) {
+        case 'done':
+            return 'done-column';
+        case 'in progress':
+            return 'in-progress-column';
+        case 'checking':
+            return 'checking-column';
+        case 'to do':
+        default:
+            return 'todo-column';
+    }
+}
+
+// Helper function to standardize status formatting
+function formatStatus(status) {
+    return status.split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+}
+
+// Add dragend event to remove visual feedback
+document.addEventListener('dragend', function(ev) {
+    // Remove visual feedback from all columns
+    const columns = document.querySelectorAll('.task-column');
+    columns.forEach(column => {
+        column.style.backgroundColor = '';
+    });
 });

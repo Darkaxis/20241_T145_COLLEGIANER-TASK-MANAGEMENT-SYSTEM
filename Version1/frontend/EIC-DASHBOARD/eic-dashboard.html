@@ -232,29 +232,22 @@
                                         <div class="error-message"></div>
                                     </div>
                                     <div class="col-md-4">
-                                        <button type="button" class="btn btn-success w-100" id="submitAndMarkDoneBtn">
-                                            <i class="fas fa-check-circle me-2"></i>Mark as Done
-                                        </button>
+                                        <select id="taskActionDropdown" class="form-select me-2" style="width: auto;">
+                                            <option value="">Choose Action</option>
+                                            <option value="done">Mark as Done</option>
+                                            <option value="delete">Delete Task</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Comment Section -->
-                        <div class="comment-section" style="flex: 1; padding-left: 20px;">
-                            <h6>Comments</h6>
-                            <div class="comments-list" id="commentsList">
-                                <!-- Comments will be added here dynamically -->
-                            </div>
-                            <div class="comment-input-container position-relative">
-                                <textarea class="form-control comment-textarea" id="newComment" rows="3" placeholder="Add a comment..."></textarea>
-                                <button class="btn btn-primary comment-send-btn" id="sendCommentBtn">
-                                    Send
-                                </button>
-                            </div>
-                        </div>
+
                     </div>
                     <div class="modal-footer">
+                        <button id="markAsDoneBtn" class="btn btn-success">
+                            <i class="fas fa-check"></i> Mark as Done
+                        </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -396,19 +389,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="eic-mytask.html">My Tasks<span class="underline"></span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="eic-news.html">News<span class="underline"></span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="eic-feature.html">Feature<span class="underline"></span></a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center">
-                            <a class="nav-link" href="eic-literary.html">Literary<span class="underline"></span></a>
-                            <!-- Plus button added outside of the nav-link, so it's unaffected by animation -->
-                            <button class="btn btn-link p-0 ms-1 plus-button" title="Add Literary" style="text-decoration: none;">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                        </li>
+
                     </ul>
                 </div>
             </div>
