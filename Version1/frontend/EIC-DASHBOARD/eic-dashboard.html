@@ -180,28 +180,28 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Assign to</label>
-                                    <input type="text" id="taskAssign" class="form-control">
+                                    <select id="taskAssign" class="form-select">
+                                        <option value="" selected disabled>Select person to assign...</option>
+                                        <option value="john_doe">John Doe (Editor-in-Chief)</option>
+                                        <option value="jane_smith">Jane Smith (Associate Editor)</option>
+                                        <option value="mike_johnson">Mike Johnson (Managing Editor)</option>
+                                        <option value="sarah_wilson">Sarah Wilson (Copy Editor)</option>
+                                        <option value="alex_brown">Alex Brown (Staff Writer)</option>
+                                        <option value="emily_davis">Emily Davis (Feature Writer)</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Assigned by</label>
-                                    <input type="text" id="taskAssignee" class="form-control">
-                                </div>
-                            </div>
-
-                            <!-- Date and Category Section -->
-                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Deadline</label>
                                     <input type="date" id="taskDate" class="form-control">
                                 </div>
+                            </div>
+
+                            <!-- Category and Link Section -->
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Category</label>
                                     <input type="text" id="taskCategory" class="form-control">
                                 </div>
-                            </div>
-
-                            <!-- Link Section -->
-                            <div class="mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Link</label>
                                     <input type="url" id="taskLink" class="form-control">
@@ -332,28 +332,27 @@
                                     <label for="taskAssignInput" class="form-label">Assign to</label>
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-user me-2"></i>
-                                        <input type="text" class="form-control" id="taskAssignInput" placeholder="Enter the person assigned">
+                                        <select class="form-select" id="taskAssignInput">
+                                            <option value="" selected disabled>Select person to assign...</option>
+                                            <option value="john_doe">John Doe (Editor-in-Chief)</option>
+                                            <option value="jane_smith">Jane Smith (Associate Editor)</option>
+                                            <option value="mike_johnson">Mike Johnson (Managing Editor)</option>
+                                            <option value="sarah_wilson">Sarah Wilson (Copy Editor)</option>
+                                            <option value="alex_brown">Alex Brown (Staff Writer)</option>
+                                            <option value="emily_davis">Emily Davis (Feature Writer)</option>
+                                        </select>
                                     </div>
                                     <div class="error-message"></div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="taskAssigneeInput" class="form-label">Assigned by</label>
+                                    <label for="taskDateInput" class="form-label">Deadline</label>
                                     <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-tie me-2"></i>
-                                        <input type="text" class="form-control" id="taskAssigneeInput" placeholder="Enter the person assigning">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        <input type="date" class="form-control" id="taskDateInput">
                                     </div>
                                     <div class="error-message"></div>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="taskDateInput" class="form-label">Deadline</label>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-calendar-alt me-2"></i>
-                                    <input type="date" class="form-control" id="taskDateInput">
-                                </div>
-                                <div class="error-message"></div>
                             </div>
 
                             <div class="mb-3">
@@ -481,6 +480,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="js/kanban.js"></script>
+
     <script src="js/profile.js"></script>
 </body>
 

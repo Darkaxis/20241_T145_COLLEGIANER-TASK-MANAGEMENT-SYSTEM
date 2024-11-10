@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const privacy = document.getElementById('taskPrivacyInput').value;
         const hideFrom = document.getElementById('hideUserInput').value.trim();
         const assignTo = document.getElementById('taskAssignInput').value.trim();
-        const assignedBy = document.getElementById('taskAssigneeInput').value.trim();
         const date = document.getElementById('taskDateInput').value;
         const category = document.getElementById('taskCategoryInput').value.trim();
         const link = document.getElementById('taskLinkInput').value.trim();
@@ -41,10 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (!assignTo) {
             showErrorMessage('taskAssignInput', 'Please enter assign to');
-            hasErrors = true;
-        }
-        if (!assignedBy) {
-            showErrorMessage('taskAssigneeInput', 'Please enter assigned by');
             hasErrors = true;
         }
         if (!date) {
@@ -81,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
         taskCard.dataset.privacy = privacy;
         taskCard.dataset.hideFrom = hideFrom;
         taskCard.dataset.assign = assignTo;
-        taskCard.dataset.assignee = assignedBy;
         taskCard.dataset.date = date;
         taskCard.dataset.category = category;
         taskCard.dataset.link = link;
@@ -206,14 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Assigned by change handler
-    document.getElementById('taskAssignee').addEventListener('input', function() {
-        if (currentTaskCard) {
-            currentTaskCard.dataset.assignee = this.value;
-            updateTaskCard(currentTaskCard);
-        }
-    });
-
     // Date change handler
     document.getElementById('taskDate').addEventListener('change', function() {
         if (currentTaskCard) {
@@ -248,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('taskStatus').value = taskCard.dataset.status; // This will show current status
         document.getElementById('taskPrivacy').value = taskCard.dataset.privacy;
         document.getElementById('taskAssign').value = taskCard.dataset.assign;
-        document.getElementById('taskAssignee').value = taskCard.dataset.assignee;
         document.getElementById('taskDate').value = taskCard.dataset.date;
         document.getElementById('taskCategory').value = taskCard.dataset.category;
         document.getElementById('taskLink').value = taskCard.dataset.link;
@@ -367,14 +352,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Assigned by change
-    document.getElementById('taskAssignee').addEventListener('input', function() {
-        if (currentTaskCard) {
-            currentTaskCard.dataset.assignee = this.value;
-            updateTaskCard(currentTaskCard);
-        }
-    });
-
     // Date change
     document.getElementById('taskDate').addEventListener('change', function() {
         if (currentTaskCard) {
@@ -409,9 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const privacy = document.getElementById('taskPrivacy').value;
             const hideFrom = document.getElementById('hideUserView').value;
             const assignTo = document.getElementById('taskAssign').value;
-            const assignedBy = document.getElementById('taskAssignee').value;
             const date = document.getElementById('taskDate').value;
-            const category = document.getElementById('taskCategory').value;
             const link = document.getElementById('taskLink').value;
 
             // Update all task card data
@@ -421,9 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentTaskCard.dataset.privacy = privacy;
             currentTaskCard.dataset.hideFrom = hideFrom;
             currentTaskCard.dataset.assign = assignTo;
-            currentTaskCard.dataset.assignee = assignedBy;
             currentTaskCard.dataset.date = date;
-            currentTaskCard.dataset.category = category;
             currentTaskCard.dataset.link = link;
 
             // Update the card display
@@ -450,7 +423,9 @@ function drop(ev) {
     if (dropZone && draggedElement) {
         dropZone.appendChild(draggedElement);
         // Update task status based on column
-        const newStatus = dropZone.id.replace('-column', '');
+        const newStatus = dropZone.id.replace('-column', '').split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
         draggedElement.dataset.status = newStatus;
         updateTaskCounts();
     }
@@ -496,7 +471,6 @@ function saveTaskChanges() {
 
         currentTaskCard.dataset.date = document.getElementById('taskDate').value;
         currentTaskCard.dataset.assign = document.getElementById('taskAssign').value;
-        currentTaskCard.dataset.assignee = document.getElementById('taskAssignee').value;
         currentTaskCard.dataset.category = document.getElementById('taskCategory').value;
         currentTaskCard.dataset.link = document.getElementById('taskLink').value;
 
@@ -611,31 +585,24 @@ function createTask(title, description, status, privacy, hideFrom, assignTo, ass
     }
 }
 
-// Update the updateTaskCard function
+// Update the task card display function
 function updateTaskCard(taskCard) {
-    const title = taskCard.dataset.title;
-    const assignTo = taskCard.dataset.assign;
-    const date = taskCard.dataset.date;
-    const privacy = taskCard.dataset.privacy;
-    const hideFrom = taskCard.dataset.hideFrom;
-
-    let privacyIcon = privacy === 'Public' ? 'fa-globe' : 'fa-lock';
-    let privacyText = privacy;
-    if (privacy === 'Private Except') {
+    let privacyIcon = taskCard.dataset.privacy === 'Public' ? 'fa-globe' : 'fa-lock';
+    let privacyText = taskCard.dataset.privacy;
+    
+    if (taskCard.dataset.privacy === 'Private Except') {
         privacyIcon = 'fa-user-secret';
-        privacyText = `Private Except: ${hideFrom}`;
+        privacyText = `Private Except: ${taskCard.dataset.hideFrom}`;
     }
 
-    let cardContent = `
+    taskCard.innerHTML = `
         <div class="task-card-content">
-            <h3>${title}</h3>
-            <p><i class="fa-regular fa-user"></i> ${assignTo}</p>
-            <p><i class="fa-regular fa-calendar"></i> ${date}</p>
+            <h3>${taskCard.dataset.title}</h3>
+            <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assign}</p>
+            <p><i class="fa-regular fa-calendar"></i> ${taskCard.dataset.date}</p>
             <p><i class="fas ${privacyIcon}"></i> ${privacyText}</p>
         </div>
     `;
-    
-    taskCard.innerHTML = cardContent;
 }
 
 // Add this event listener to update the card when privacy changes
@@ -698,9 +665,7 @@ document.getElementById('taskDetailModal').addEventListener('hide.bs.modal', fun
         const privacy = document.getElementById('taskPrivacy').value;
         const hideFrom = document.getElementById('hideUserView').value;
         const assignTo = document.getElementById('taskAssign').value;
-        const assignedBy = document.getElementById('taskAssignee').value;
         const date = document.getElementById('taskDate').value;
-        const category = document.getElementById('taskCategory').value;
         const link = document.getElementById('taskLink').value;
 
         // Update all task card data
@@ -710,12 +675,131 @@ document.getElementById('taskDetailModal').addEventListener('hide.bs.modal', fun
         currentTaskCard.dataset.privacy = privacy;
         currentTaskCard.dataset.hideFrom = hideFrom;
         currentTaskCard.dataset.assign = assignTo;
-        currentTaskCard.dataset.assignee = assignedBy;
         currentTaskCard.dataset.date = date;
-        currentTaskCard.dataset.category = category;
         currentTaskCard.dataset.link = link;
 
         // Update the card display
         updateTaskCard(currentTaskCard);
+    }
+});
+
+// Function to create task card
+function createTaskCard(task) {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.id = task.id;
+    card.draggable = true;
+
+    // Set all data attributes
+    card.dataset.title = task.title;
+    card.dataset.description = task.description || '';
+    card.dataset.status = task.status;
+    card.dataset.privacy = task.privacy;
+    card.dataset.assign = task.assignTo;
+    card.dataset.date = task.deadline;
+    card.dataset.category = task.category || '';
+    card.dataset.link = task.link || '';
+    card.dataset.hideFrom = task.hideFrom || '';
+
+    // Add event listeners
+    card.addEventListener('dragstart', drag);
+    card.addEventListener('click', function() {
+        openTaskDetails(this);
+    });
+
+    // Create card content
+    let privacyIcon = task.privacy === 'Public' ? 'fa-globe' : 'fa-lock';
+    let privacyText = task.privacy;
+    if (task.privacy === 'Private Except') {
+        privacyIcon = 'fa-user-secret';
+        privacyText = `Private Except: ${task.hideFrom}`;
+    }
+
+    card.innerHTML = `
+        <div class="task-card-content">
+            <h3>${task.title}</h3>
+            <p><i class="fa-regular fa-user"></i> ${task.assignTo || 'Unassigned'}</p>
+            <p><i class="fa-regular fa-calendar"></i> ${task.deadline || 'No deadline'}</p>
+            <p><i class="fas ${privacyIcon}"></i> ${privacyText}</p>
+            ${task.category ? `<p><i class="fas fa-tag"></i> ${task.category}</p>` : ''}
+        </div>
+    `;
+
+    return card;
+}
+
+// Function to open task details
+function openTaskDetails(taskCard) {
+    currentTaskCard = taskCard;
+
+    // Populate modal fields
+    document.getElementById('taskTitle').value = taskCard.dataset.title;
+    document.getElementById('taskDescription').value = taskCard.dataset.description;
+    document.getElementById('taskStatus').value = taskCard.dataset.status;
+    document.getElementById('taskPrivacy').value = taskCard.dataset.privacy;
+    document.getElementById('taskAssign').value = taskCard.dataset.assign;
+    document.getElementById('taskDate').value = taskCard.dataset.date;
+    document.getElementById('taskCategory').value = taskCard.dataset.category;
+    document.getElementById('taskLink').value = taskCard.dataset.link;
+
+    // Handle hide from field for Private Except
+    const hideContainer = document.getElementById('hideInputContainerView');
+    if (taskCard.dataset.privacy === 'Private Except') {
+        hideContainer.style.display = 'block';
+        document.getElementById('hideUserView').value = taskCard.dataset.hideFrom;
+    } else {
+        hideContainer.style.display = 'none';
+    }
+
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+    modal.show();
+}
+
+// Save task button click handler
+document.getElementById('saveTaskButton').addEventListener('click', function() {
+    // Get all the input values
+    const title = document.getElementById('taskTitleInput').value;
+    const description = document.getElementById('taskDescriptionInput').value;
+    const status = document.getElementById('taskStatusInput').value;
+    const privacy = document.getElementById('taskPrivacyInput').value;
+    const assignTo = document.getElementById('taskAssignInput').value;
+    const deadline = document.getElementById('taskDateInput').value;
+    const category = document.getElementById('taskCategoryInput').value;
+    const link = document.getElementById('taskLinkInput').value;
+    const hideFrom = document.getElementById('hideUserInput')?.value || '';
+
+    // Validate required fields
+    if (!title) {
+        showError('taskTitleInput', 'Title is required');
+        return;
+    }
+
+    // Create task card
+    const taskCard = createTaskCard({
+        id: 'task-' + Date.now(),
+        title: title,
+        description: description,
+        status: status,
+        privacy: privacy,
+        assignTo: assignTo,
+        deadline: deadline,
+        category: category,
+        link: link,
+        hideFrom: hideFrom
+    });
+
+    // Add to appropriate column
+    const columnId = status.toLowerCase().replace(' ', '-') + '-column';
+    const column = document.getElementById(columnId);
+    if (column) {
+        column.appendChild(taskCard);
+        updateTaskCounts();
+
+        // Close modal and reset form
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+        modal.hide();
+        document.getElementById('addTaskForm').reset();
+        clearErrors();
     }
 });
