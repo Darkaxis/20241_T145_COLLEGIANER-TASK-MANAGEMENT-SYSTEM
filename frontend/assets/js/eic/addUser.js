@@ -53,7 +53,12 @@ function saveUser() {
 
     // Get form values
     const email = document.getElementById('email').value.trim();
-    const role = document.getElementById('role').value;
+    const userRole = document.getElementById('role').value;
+    let role;
+    if (userRole === 'Editorial Board'){
+
+        role = 'eb';
+    }
     const editUserIndex = document.getElementById('editUserIndex').value;
     
     // Validate inputs
@@ -73,7 +78,8 @@ function saveUser() {
     }
     //send to backend
     const userData = { email, role };
-    fetch('https://localhost:3000/api/v1/google/oauth2/add/user', {
+    console.log(userData)
+    fetch('https://localhost:3000/api/v1/eic/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -81,13 +87,6 @@ function saveUser() {
         body: JSON.stringify(userData)
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.message === 'OAuth URL generated. Check the console for the URL.') {
-            console.log(data.url);
-        } else {
-            alert(`Failed to add user: ${data.message}`);
-        }
-    })
     .catch(error => {
         console.error('Error adding user:', error);
         alert('An error occurred while adding the user. Please try again.');
@@ -111,26 +110,6 @@ function saveUser() {
 
         // Update counters
         updateCounters(oldRole, role);
-    } else {
-        // Add new user
-
-        const userTableBody = document.getElementById('userTableBody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>-</td>
-            <td>-</td>
-            <td>${email}</td>
-            <td>${role}</td>
-            <td>
-                <button class="btn btn-sm btn-warning" onclick="openAddUserModal(true, this.parentNode.parentNode.rowIndex - 1)">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </td>
-        `;
-        userTableBody.appendChild(newRow);
-
-        // Update counter for new role
-        updateCounters(null, role);
     }
 
     // Close modal
