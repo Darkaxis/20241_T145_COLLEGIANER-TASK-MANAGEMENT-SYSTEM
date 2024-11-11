@@ -4,21 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-    
+
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/login', {
+            const response = await fetch('https://localhost:3000/api/v1/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }),
+                credentials: 'include' // Include cookies in the request
             });
 
             const result = await response.json();
             console.log(result);
             if (response.ok) {
-                // Store the token in local storage
-                localStorage.setItem('token', result.token);
                 alert('Login successful!');
                 // Redirect to the dashboard page
                 window.location.href = '/eic/dashboard';

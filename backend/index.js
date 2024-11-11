@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import eicRoutes from './routes/eicRoutes.js'; // Import the admin routes
 import editorialRoutes from './routes/editorialRoutes.js'; // Import the editorial routes
 import oauthRoutes from './routes/oauthRoutes.js'; // Import the OAuth2 routes
+import loginRoutes from './routes/loginRoutes.js';
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Use the admin routes
 app.use('/api/v1/eic', eicRoutes);
 app.use('/api/v1/eb', editorialRoutes);
+app.use('/api/v1/login', loginRoutes);
 
 // Use the OAuth2 routes
 app.use('/api/v1/google/oauth2', oauthRoutes);

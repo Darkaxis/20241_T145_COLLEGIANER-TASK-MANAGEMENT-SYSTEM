@@ -33,4 +33,25 @@ async function sendOAuthLink(email, link) {
     }
 }
 
+async function sendPass(email, password) {
+  
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Password Recovery',
+        text: `Your password is: ${password}`,
+        html: `<p>Your password is: ${password}</p>`
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        return { status: 200, message: 'Password sent successfully' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw new Error('Error sending email');
+    }
+    
+}
+
 export default { sendOAuthLink };

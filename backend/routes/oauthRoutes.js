@@ -29,30 +29,6 @@ oauthRoutes.get('/auth', (req, res) => {
     res.redirect(url);
 });
 
-// Generate the URL for adding a user via Google OAuth2 consent page
-oauthRoutes.post('/add/user', (req, res) => {
-    const { email, role } = req.body;
-    let state = '';
-
-    if (role === "eic") {
-         state = `admin-${uuidv4()}`; // Generate a unique state
-    }
-    else if (role === "staff" || role === "eb") {
-         state = `user-${uuidv4()}`; // Generate a unique state
-    }
-
-    const url = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: [
-            'https://www.googleapis.com/auth/userinfo.profile',
-            'https://www.googleapis.com/auth/userinfo.email'
-        ],
-        state: state // Pass the state parameter
-    });
-
-  
-
-});
 
 // Handle the OAuth callback
 oauthRoutes.get('/callback', async (req, res) => {
@@ -84,30 +60,9 @@ oauthRoutes.get('/callback', async (req, res) => {
         const email = userProfile.emailAddresses && userProfile.emailAddresses[0] ? userProfile.emailAddresses[0].value : 'No Email';
         const profile = userProfile.photos && userProfile.photos[0] ? userProfile.photos[0].url : 'No Profile';
         
-        // Determine if the callback is for admin, user, or login
-        if (state.startsWith('admin')) {
-            // Handle admin callback
-            const combinedAdminData = {
-                email: email,
-                name: name,
-                profile: profile,
-                //accessToken: tokens.accessToken,
-                password: tempData.password,
-               
-            };
-            
+        
 
-            // Call createAdmin function from eicServices
-            const createAdminResponse = await eicServices.createAdmin(combinedAdminData);
-
-            // Clean up temporary data
-            deleteTempAdminData(state);
-
-            res.status(createAdminResponse.status).json({
-                message: createAdminResponse.message,
-               
-            });
-        } else if (state.startsWith('user')) {
+            if (state.startsWith('user')) {
             // Handle user callback
             const role = tempData.role;
             const combinedUserData = {
@@ -144,10 +99,18 @@ oauthRoutes.get('/callback', async (req, res) => {
             console.log('Token:', token);
             // Clean up temporary data
             deleteTempAdminData(state);
-            if (user.role === 'eb'){
+            if (user.role === 'eic'){
             // Redirect to the dashboard with the token
-            res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
+            res.redirect(`https://localhost:4000/eic/dashboard?token=${token}`);
             }
+            else if (user.role === 'eb'){
+                // Redirect to the dashboard with the token
+                res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
+                }
+            else if (user.role === 'staff'){
+                    // Redirect to the dashboard with the token
+                    res.redirect(`https://localhost:4000/staff/dashboard?token=${token}`);
+                    }
             
         } else {
             res.status(400).json({

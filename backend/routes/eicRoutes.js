@@ -19,16 +19,10 @@ dotenv.config();
 // Initiate the OAuth flow
 eicRoutes.post('/add', (req, res) => {
     const { email,password, role } = req.body;
-    let type = '';
-    if (role === 'eic'){
-        type = 'admin';
-    }
-    else if (role === 'staff' || role === 'eb'){
-        type = 'user';
-    }
-    console.log(`Adding ${type} with email ${email} and role ${role}`);
-    const state = `${type}-${uuidv4()}`; // Generate a unique state with type
-    setTempAdminData(state, { email, password, role, type }); // Store the email, role, and type temporarily
+
+    console.log(`Adding ${role} with email ${email} and role ${role}`);
+    const state = `user-${uuidv4()}`; // Generate a unique state with type
+    setTempAdminData(state, {email, password, role}); // Store the email, role, and type temporarily
 
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -53,22 +47,6 @@ eicRoutes.post('/add', (req, res) => {
 
 
 
-// Existing Routes
-eicRoutes.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const token = await eicServices.authenticateAdmin(email, password);
-        res.status(200).json({
-            message: 'Admin authenticated successfully',
-            token: token ,// Return the token in the response
-        });
-    } catch (error) {
-        res.status(401).json({
-            message: 'Invalid email or password',
-            error: error.message
-        });
-    }
-});
 // User profile route
 eicRoutes.get('/profile', async (req, res) => {
     const authHeader = req.headers.authorization;
