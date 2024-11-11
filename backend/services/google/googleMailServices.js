@@ -24,7 +24,8 @@ async function sendOAuthLink(email, link) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
         return { status: 200, message: 'OAuth link sent successfully' };
     } catch (error) {
         console.error('Error sending email:', error);
