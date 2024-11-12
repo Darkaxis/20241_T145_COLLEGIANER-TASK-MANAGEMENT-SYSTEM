@@ -7,31 +7,7 @@ import db from '../utils/firestoreClient.js'; // Ensure shared Firestore client 
 dotenv.config();
 
 
-// Function to get user profile information from Google People API
-export async function getUserProfile(accessToken) {
-    try {
-        oauth2Client.setCredentials(accessToken);
-        const people = google.people({ version: 'v1', auth: oauth2Client });
-        const response = await people.people.get({
-            resourceName: 'people/me',
-            personFields: 'names,emailAddresses,photos'
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-        
-            const people = google.people({ version: 'v1', auth: oauth2Client });
-            const response = await people.people.get({
-                resourceName: 'people/me',
-                personFields: 'names,emailAddresses,photos'
-            });
-            return response.data;
-        } else {
-            console.error('Error fetching user profile:', error);
-            throw new Error('Error fetching user profile from Google People API');
-        }
-    }
-}
+
 
 // Function to get user by email
 export async function getUserByEmail(email) {
@@ -58,7 +34,6 @@ export async function getEditorDetails(editorId) {
 
 export default {
     getEditorDetails,
-    getUserProfile,
     getUserByEmail,
     
 };
