@@ -55,13 +55,13 @@ taskRoutes.delete('/delete/:id', async (req, res) => {
     }
 });
 
-taskRoutes.post('/submit', async (req, res) => {
+taskRoutes.get('/get/:id', async (req, res) => {
     try {
-        const taskId = req.body.taskId;
-        const submittedTask = await taskService.submitTask(taskId, submission);
-        res.status(200).send(submittedTask);
+        const taskId = req.params.id;
+        const task = await taskService.getTask(taskId);
+        res.status(200).send(task);
     } catch (error) {
-        res.status(400).send(error.message);
+        res.status(404).send(error.message);
     }
 });
 

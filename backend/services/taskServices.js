@@ -25,7 +25,7 @@ async function getAllTasks() {
     try {
         const tasksSnapshot = await db.collection('tasks').get();
         const tasks = [];
-        tasksSnapshot.forEach(doc => tasks.push(doc.data()));
+        tasksSnapshot.forEach(doc => tasks.push({ id: doc.id, ...doc.data() }));
         return { status: 200, message: 'Tasks retrieved successfully', tasks };
     } catch (error) {
         console.error('Error getting tasks:', error);
@@ -41,16 +41,18 @@ async function getTasksForUser(email) {
         const visibleTasksSnapshot = await db.collection('tasks').where('visibleTo', 'array-contains', email).get();
         const assignedTasksSnapshot = await db.collection('tasks').where('assignedTo', '==', email).get();
 
-
+        // Use a Set to avoid duplicate tasks
         const taskSet = new Set();
 
         visibleTasksSnapshot.forEach(doc => taskSet.add(doc.id));
         assignedTasksSnapshot.forEach(doc => taskSet.add(doc.id));
+
+        // Convert the Set to an array of task data
         const tasks = [];
         for (const taskId of taskSet) {
             const taskDoc = await db.collection('tasks').doc(taskId).get();
             if (taskDoc.exists) {
-                tasks.push(taskDoc.data());
+                tasks.push({ id: taskDoc.id, ...taskDoc.data() });
             }
         }
 
@@ -60,7 +62,7 @@ async function getTasksForUser(email) {
         throw new Error('Error getting tasks for user');
     }
 }
-async function editTask(taskId, taskData){
+async function editTask(taskId, taskData) {
     try {
         // Validate taskData
         if (!taskData.taskName || !taskData.description || !taskData.deadline || !taskData.status || !taskData.assignedTo || !taskData.assignee || !taskData.link || !taskData.privacy || !Array.isArray(taskData.visibleTo)) {
@@ -71,6 +73,7 @@ async function editTask(taskId, taskData){
             ...taskData,
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
         };
+
         await db.collection('tasks').doc(taskId).update(updatedTask);
         return { status: 200, message: 'Task updated successfully' };
     } catch (error) {
@@ -88,9 +91,24 @@ async function deleteTask(taskId) {
     }
 }
 
+async function getTask(taskId) {
+    try {
+        const taskDoc = await db.collection('tasks').doc(taskId).get();
+        if (taskDoc.exists) {
+            return { status: 200, message: 'Task retrieved successfully', task: { id:
+            taskDoc.id, ...taskDoc.data() } };
+            } else {
+                return { status: 404, message: 'Task not found' };
+                }
+    } catch (error) {
+        console.error('Error getting task:', error);
+        throw new Error('Error getting task');
+    }
+    
+}
 
 
-export default { createTask,getAllTasks ,getTasksForUser, editTask, deleteTask
+export default { createTask,getAllTasks ,getTasksForUser, editTask, deleteTask, getTask 
 
 
 
