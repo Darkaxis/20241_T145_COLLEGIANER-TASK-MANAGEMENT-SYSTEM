@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'GET',
                     credentials: 'include' // Include cookies in the request
                 });
+                
                 const userResult = await userResponse.json();
 
                 if (userResponse.ok) {

@@ -4,6 +4,11 @@ import db from "../utils/firestoreClient.js";
 // Function to create a new task
 async function createTask(taskData) {
     try {
+        // Validate taskData
+        if (!taskData.taskName || !taskData.description || !taskData.deadline || !taskData.status || !taskData.assignedTo || !taskData.assignee || !taskData.link || !taskData.privacy || !Array.isArray(taskData.visibleTo)) {
+            throw new Error('Invalid task data');
+        }
+
         const newTask = {
             ...taskData,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -16,36 +21,52 @@ async function createTask(taskData) {
         throw new Error('Error creating task');
     }
 }
-
-// Function to get details of a task
-async function getTask(taskId) {
-    try {
-        const taskDoc = await db.collection('tasks').doc(taskId).get();
-        if (!taskDoc.exists) {
-            throw new Error('Task not found');
-        }
-        return { status: 200, message: 'Task retrieved successfully', task: taskDoc.data() };
-    } catch (error) {
-        console.error('Error getting task:', error);
-        throw new Error('Error getting task');
-    }
-}
-
-// Function to get all tasks for a specific user
 async function getAllTasks() {
     try {
         const tasksSnapshot = await db.collection('tasks').get();
-        const tasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        return { status: 200, message: 'Tasks retrieved successfully', tasks: tasks };
+        const tasks = [];
+        tasksSnapshot.forEach(doc => tasks.push(doc.data()));
+        return { status: 200, message: 'Tasks retrieved successfully', tasks };
     } catch (error) {
         console.error('Error getting tasks:', error);
         throw new Error('Error getting tasks');
     }
 }
 
-// Function to update a task
-async function updateTask(taskId, taskData) {
+
+// Function to get tasks for a specific user
+async function getTasksForUser(email) {
     try {
+        // Check visible and assigned tasks
+        const visibleTasksSnapshot = await db.collection('tasks').where('visibleTo', 'array-contains', email).get();
+        const assignedTasksSnapshot = await db.collection('tasks').where('assignedTo', '==', email).get();
+
+
+        const taskSet = new Set();
+
+        visibleTasksSnapshot.forEach(doc => taskSet.add(doc.id));
+        assignedTasksSnapshot.forEach(doc => taskSet.add(doc.id));
+        const tasks = [];
+        for (const taskId of taskSet) {
+            const taskDoc = await db.collection('tasks').doc(taskId).get();
+            if (taskDoc.exists) {
+                tasks.push(taskDoc.data());
+            }
+        }
+
+        return { status: 200, message: 'Tasks retrieved successfully', tasks };
+    } catch (error) {
+        console.error('Error getting tasks for user:', error);
+        throw new Error('Error getting tasks for user');
+    }
+}
+async function editTask(taskId, taskData){
+    try {
+        // Validate taskData
+        if (!taskData.taskName || !taskData.description || !taskData.deadline || !taskData.status || !taskData.assignedTo || !taskData.assignee || !taskData.link || !taskData.privacy || !Array.isArray(taskData.visibleTo)) {
+            throw new Error('Invalid task data');
+        }
+
         const updatedTask = {
             ...taskData,
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
@@ -57,8 +78,6 @@ async function updateTask(taskId, taskData) {
         throw new Error('Error updating task');
     }
 }
-
-// Function to delete a task
 async function deleteTask(taskId) {
     try {
         await db.collection('tasks').doc(taskId).delete();
@@ -69,4 +88,10 @@ async function deleteTask(taskId) {
     }
 }
 
-export default { createTask, getTask, getAllTasks, updateTask, deleteTask };
+
+
+export default { createTask,getAllTasks ,getTasksForUser, editTask, deleteTask
+
+
+
+ };

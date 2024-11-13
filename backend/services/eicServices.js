@@ -37,13 +37,15 @@ export async function getUserProfile(accessToken) {
 // Function to get user by email
 export async function getUserByEmail(email) {
   const userSnapshot = await db
-    .collection("users")
-    .where("email", "==", email)
-    .get();
-  if (userSnapshot.empty) {
-    return null;
-  }
-  return userSnapshot.docs[0].data();
+      .collection("users")
+      .where("email", "==", email)
+      .get();
+      if (userSnapshot.empty) {
+        throw new Error("User not found");
+      }
+      
+  return { id: userSnapshot.docs[0].id, ...userSnapshot.docs[0].data() };
+
 }
 
 
