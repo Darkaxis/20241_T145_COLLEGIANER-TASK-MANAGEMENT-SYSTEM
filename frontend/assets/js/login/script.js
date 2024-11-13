@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
 
         try {
-            const response = await fetch('https://localhost:3000/api/v1/login', {
+            const response = await fetch('https://localhost:3000/api/v1/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -19,8 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(result);
             if (response.ok) {
                 alert('Login successful!');
-                // Redirect to the dashboard page
-                window.location.href = '/eic/dashboard';
+                // Fetch user information
+                const userResponse = await fetch('https://localhost:3000/api/v1/login/verify-token', {
+                    method: 'GET',
+                    credentials: 'include' // Include cookies in the request
+                });
+                const userResult = await userResponse.json();
+                console.log('User:', userResult);
+
+                if (userResponse.ok) {
+                    const role = userResult.user.role;
+
+                    // Redirect based on the role
+                    if (role === 'eic') {
+                        window.location.href = 'https://localhost:4000/eic/dashboard';
+                    } else if (role === 'eb') {
+                        window.location.href = 'https://localhost:4000/staff/dashboard';
+                    } else if (role === 'staff') {
+                        window.location.href = 'https://localhost:4000/staff/dashboard';
+                    }
+                } else {
+                    console.error('Error verifying token:', userResult.message);
+                    alert('Error verifying token. Please try again.');
+                }
             } else {
                 alert(`Login failed: ${result.message}`);
             }

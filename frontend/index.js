@@ -5,6 +5,7 @@ import { dirname } from 'path';
 import dotenv from 'dotenv';
 import https from 'https';
 import fs from 'fs';
+import cors from 'cors';
 dotenv.config();
 
 const httpsOptions = {
@@ -17,7 +18,7 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
+app.use(cors());
 // Serve static files from the frontend folder
 app.use(express.static(path.join(__dirname, '/assets')));
 

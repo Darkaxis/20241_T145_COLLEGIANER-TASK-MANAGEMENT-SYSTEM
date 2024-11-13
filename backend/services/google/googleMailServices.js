@@ -54,4 +54,4 @@ async function sendPass(email, password) {
     
 }
 
-export default { sendOAuthLink };
+export default { sendOAuthLink, sendPass };

@@ -12,12 +12,13 @@ dotenv.config();
 
 export async function authenticateUser(email, password) {
     const userSnapshot = await db
-      .collection("user")
+      .collection("users")
       .where("email", "==", email)
       .get();
     if (userSnapshot.empty) {
       throw new Error("User not found");
     }
+    
     const userData = userSnapshot.docs[0].data();
     const isPasswordValid = await bcrypt.compare(password, userData.password);
     if (!isPasswordValid) {
@@ -33,7 +34,6 @@ export async function authenticateUser(email, password) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    console.log("Token:", token);
     return token;
   }
 
@@ -41,8 +41,5 @@ export async function authenticateUser(email, password) {
 
   
 export default{
-
-
-
     authenticateUser
 }

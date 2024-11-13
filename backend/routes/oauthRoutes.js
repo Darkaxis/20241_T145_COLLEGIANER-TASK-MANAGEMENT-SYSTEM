@@ -5,6 +5,7 @@ import eicServices from '../services/eicServices.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
+import googleMailServices from '../services/google/googleMailServices.js';
 
 
 dotenv.config();
@@ -63,15 +64,23 @@ oauthRoutes.get('/callback', async (req, res) => {
         
 
             if (state.startsWith('user')) {
+            //generate a random password 
+            const password = Math.random().toString(36).slice(-8);
+            console.log('   Password:', password);
+        
+            const status = googleMailServices.sendPass(email, password);
+            console.log(`Password sent to ${email} with status: ${status.status}`); 
+            
             // Handle user callback
             const role = tempData.role;
             const combinedUserData = {
                 email: email,
                 name: name,
                 role: role,
+                password: password,
                 profile: profile,
             };
-
+            
             // Call addUser function from eicServices
             const addUserResponse = await eicServices.addUser(combinedUserData);
 

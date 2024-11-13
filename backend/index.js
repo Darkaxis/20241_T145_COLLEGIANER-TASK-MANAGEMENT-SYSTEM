@@ -10,8 +10,12 @@ import fs from 'fs';
 const app = express();
 const port = process.env.PORT;
 
+const corsOptions = {
+    origin: 'https://localhost:4000', 
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+};
 // Enable CORS
-app.use(cors());
+app.use(cors(corsOptions));
 const options = {
     key: fs.readFileSync('./certs/localhost-key.pem'),
     cert: fs.readFileSync('./certs/localhost-cert.pem')

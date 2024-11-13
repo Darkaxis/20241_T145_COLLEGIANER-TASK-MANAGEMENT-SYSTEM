@@ -18,11 +18,11 @@ dotenv.config();
 
 // Initiate the OAuth flow
 eicRoutes.post('/add', (req, res) => {
-    const { email,password, role } = req.body;
+    const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
     const state = `user-${uuidv4()}`; // Generate a unique state with type
-    setTempAdminData(state, {email, password, role}); // Store the email, role, and type temporarily
+    setTempAdminData(state, {email, role}); // Store the email, role, and type temporarily
 
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -35,7 +35,7 @@ eicRoutes.post('/add', (req, res) => {
         state: state // Pass the state parameter
     });
 
-    console.log(`OAuth URL for ${type} with email ${email}: ${url}`);
+    console.log(`OAuth URL for ${role} with email ${email}: ${url}`);
 
     const status = googleMailServices.sendOAuthLink(email, url);
 
