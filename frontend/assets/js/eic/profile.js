@@ -1,49 +1,46 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // Extract the token from the URL query parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const userResponse = await fetch(
+      "https://localhost:3000/api/v1/login/verify-token",
+      {
+        method: "GET",
+        credentials: "include", // Include cookies in the request
+      }
+    );
 
-    // Get the token from local storage
-    let storedToken = localStorage.getItem('token');
-    
-    if (!storedToken) {
-        alert('You are not logged in!');
-        window.location.href = '/';
-        return;
+    if (!userResponse.ok) {
+      // If the response is not OK, redirect to the login page
+      window.location.href = 'https://localhost:4000/';
+      return;
     }
 
-    console.log('Stored Token:', storedToken);
+    const userResult = await userResponse.json();
+
     // Use the token from local storage for fetching the user profile
-    try {
-        let response = await fetch('https://localhost:3000/api/v1/eic/profile', { 
-            headers: {
-                'Authorization': `Bearer ${storedToken}`
-            }
-        });
+    const profileinfo = userResult.user;
+   
 
+    const profileName = document.getElementById("profileName");
+    const profileImage = document.getElementById("profileImage");
+    const dropdownProfileImage = document.getElementById("dropdownProfileImage");
 
-        const result = await response.json();
-        if (response.ok) {
-            const profileName = document.getElementById('profileName');
-            const profileImage = document.getElementById('profileImage');
-            const dropdownProfileImage = document.getElementById('dropdownProfileImage');
+    profileName.textContent = profileinfo.name;
+    profileImage.src = profileinfo.profile || "/assets/images/customer02.jpg"; // change later
+    dropdownProfileImage.src = profileinfo.profile || "/assets/images/customer02.jpg";
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    alert("An error occurred while fetching the user profile. Please try again.");
+  }
+  const googleLoginButton = document.getElementById('logout');
+  googleLoginButton.addEventListener('click', () => {
+     fetch(
+        "https://localhost:3000/api/v1/login/logout",
+        {
+          method: "POST",
+          credentials: "include", // Include cookies in the request
+        })
+      window.location.href = 'https://localhost:4000/'; // Redirect 
+  });
 
-            profileName.textContent = result.name;
-            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // change later
-            dropdownProfileImage.src = result.profileImage || '/assets/images/customer02.jpg';
-
-        } else {
-            alert(`Failed to load user profile: ${result.message}`);
-        }
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-        alert('An error occurred while fetching the user profile. Please try again.');
-    }
-
-    // Logout functionality
-    const logoutButton = document.getElementById('logoutButton');
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = '/';
-    });
+  
 });

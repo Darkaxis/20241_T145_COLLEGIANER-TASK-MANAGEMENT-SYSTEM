@@ -9,7 +9,6 @@ import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client 
 
 dotenv.config();
 
-
 export async function authenticateUser(email, password) {
     const userSnapshot = await db
       .collection("users")
@@ -24,11 +23,13 @@ export async function authenticateUser(email, password) {
     if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
+    console.log(userData);
     const token = jwt.sign(
       {
-          id: userSnapshot.docs[0].id,
-          name: userData.name,
+        id: userSnapshot.docs[0].id,
+        name: userData.name,
         email: userData.email,
+        profile: userData.profile,
         role: userData.role, 
       },
       process.env.JWT_SECRET,

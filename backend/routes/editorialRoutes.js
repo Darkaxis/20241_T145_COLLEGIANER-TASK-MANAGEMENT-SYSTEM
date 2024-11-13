@@ -43,12 +43,6 @@ eicRoutes.get('/profile', async (req, res) => {
     }
 });
 
-eicRoutes.post('/logout', (req, res) => { 
-    // Implement logout functionality if necessary
-    res.status(200).json({
-        message: 'Admin logged out successfully'
-    });
-});
 
 eicRoutes.get('/:id', async (req, res) => {
     const editorId = req.params.id;

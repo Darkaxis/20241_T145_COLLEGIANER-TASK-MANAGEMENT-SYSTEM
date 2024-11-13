@@ -54,11 +54,7 @@ function saveUser() {
     // Get form values
     const email = document.getElementById('email').value.trim();
     const userRole = document.getElementById('role').value;
-    let role;
-    if (userRole === 'Editorial Board'){
 
-        role = 'eb';
-    }
     const editUserIndex = document.getElementById('editUserIndex').value;
     
     // Validate inputs
@@ -71,13 +67,13 @@ function saveUser() {
         showErrorMessage('email', 'Please enter valid email');
         hasErrors = true;
     }
-
+    console.log(userRole);
     if (!role) {
         showErrorMessage('role', 'Please select role');
         hasErrors = true;
     }
     //send to backend
-    const userData = { email, role };
+    const userData = { email, role: userRole };
     console.log(userData)
     fetch('https://localhost:3000/api/v1/eic/add', {
         method: 'POST',
@@ -151,18 +147,17 @@ function updateCounters(oldRole, newRole) {
 
     // Increase new role counter
     let newCounterId;
-    let role;
+
     switch (newRole) {
         case 'Admin':
             newCounterId = 'totalAdmins';
-            role = 'eic';
+         
             break;
         case 'Editorial Board':
             newCounterId = 'totalEditorials';
-            role = 'eb';
+         
             break;
         case 'Staff':
-            role = 'staff';
             newCounterId = 'totalStaff';
             break;
     }

@@ -11,14 +11,23 @@ loginRoutes.use(cookieParser());
 loginRoutes.post('/',  async (req, res) => {
     const { email, password } = req.body;
     // Authenticate user and generate toke
-    const token = await loginServices.authenticateUser(email,password) // Replace with your token generation logic
-    // Set the token in an HTTP-only cookie
+
+    try{
+    const token = await loginServices.authenticateUser(email,password);
     res.cookie('token', token, {
         httpOnly: true,
-        secure: true, // Set to true if using HTTPS
-        sameSite: 'Strict' // Adjust based on your requirements
+        secure: true, 
+        sameSite: 'Strict' 
     });
-    res.status(200).json({ message: 'Login successful' ,});
+    res.status(200).json({ message: 'Login successful' ,}); 
+    // Set the token in an HTTP-only cookie
+    }
+    catch(error){
+        res.status(401).json({ message: error.message });
+    }
+
+
+
 });
 
 
@@ -28,9 +37,9 @@ loginRoutes.get('/verify-token', (req, res) => {
         return res.status(401).json({ message: 'No token provided' });
     }
     try {
-        console.log('Token:', token);
+    
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('Decoded:', decoded);
+      
         res.status(200).json({ user: decoded });
     } catch (error) {
         res.status(401).json({ message: 'Invalid token' });

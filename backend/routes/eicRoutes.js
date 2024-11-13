@@ -73,12 +73,7 @@ eicRoutes.get('/profile', async (req, res) => {
     }
 });
 
-eicRoutes.post('/logout', (req, res) => { 
-    eicServices.logoutAdmin();
-    res.status(200).json({
-        message: 'Admin logged out successfully'
-    });
-});
+
 
 eicRoutes.get('/users', async (req, res) => {
     const authHeader = req.headers.authorization;
