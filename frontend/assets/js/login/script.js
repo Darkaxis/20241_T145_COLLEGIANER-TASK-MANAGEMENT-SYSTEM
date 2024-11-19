@@ -73,7 +73,7 @@ async function checkTokenAndRedirect() {
             const role = userResult.user.role;
 
             // Redirect based on the role
-            if (role === 'Admin') { 
+            if (role === 'Editor in Charge') { 
                 window.location.href = 'https://localhost:4000/eic/dashboard';
             } else if (role === 'Editorial Board') {
                 window.location.href = 'https://localhost:4000/eb/dashboard';

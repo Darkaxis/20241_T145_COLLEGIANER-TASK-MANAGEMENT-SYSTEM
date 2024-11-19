@@ -39,7 +39,7 @@
     /* Content Styling */
     
     .content {
-        padding: 7rem 0;
+        padding: 3rem 0;
     }
     
     h2 {
@@ -66,29 +66,51 @@
     /* Logo Styling */
     
     .logo {
-        position: absolute;
+        position: relative;
+        margin: 0 auto;
+        width: 100%;
     }
     
-    .logo img {
-        width: 80px;
-        height: 80px;
-        margin-top: -50px;
+    .logo-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        width: 100%;
+        padding-left: 60%;
+    }
+    
+    .logo-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: -30px;
+    }
+    
+    .collegianer-logo {
+        width: 60px;
+        height: 60px;
+        margin-top: 20px;
         filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
     }
     
-    .logo p {
-        margin-top: -3vh;
-        letter-spacing: 0.03em;
-        line-height: 25.2px;
-        white-space: pre-wrap;
-        display: block;
-        width: 100%;
-        margin-left: 26vw;
-        font-size: 12px;
-        font-weight: 100;
+    .collegianer-text {
+        width: 180px;
+        height: auto;
+        margin-bottom: -10px;
+        filter: brightness(0) drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+    }
+    
+    .task-management {
+        font-size: 13px;
+        font-weight: 600;
         color: #555;
-        margin-bottom: 10px;
-        text-align: center;
+        margin: 0;
+        margin-top: 1px;
+        margin-left: 100px;
+        filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.1));
+        letter-spacing: 0.03em;
+        position: relative;
     }
     /* Input Field with Icon */
     
@@ -194,7 +216,7 @@
     /* Layout Adjustment */
     
     .move-down {
-        padding-top: 60px;
+        margin-top: -10px;
     }
     /* Form Group */
     
@@ -344,4 +366,89 @@
     .login-btn,
     .google button {
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    
+    .collegianer-logo {
+        width: auto;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+    
+    .collegianer-text {
+        width: 17vw;
+        height: 50px;
+        filter: brightness(0) drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+        margin: 10px 0;
+    }
+    /* Add responsive adjustments if needed */
+    
+    @media (max-width: 768px) {
+        .logo-section {
+            padding-left: 40%;
+        }
+        .collegianer-logo {
+            width: 50px;
+            height: 50px;
+        }
+        .collegianer-text {
+            width: 150px;
+        }
+        .task-management {
+            padding-left: 65px;
+        }
+        .content {
+            padding: 2rem 0;
+        }
+        .login-image {
+            margin-left: -10vw;
+            max-width: 80vw;
+        }
+    }
+    
+    .login-image {
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+        margin-top: -150px;
+        margin-left: -14vw;
+        max-width: 60vw;
+    }
+    /* Update image container styles */
+    
+    .col-md-6 {
+        margin-top: 0;
+    }
+    /* Update image styles */
+    
+    .login-image {
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+        margin-top: -50px;
+        margin-left: -14vw;
+        max-width: 60vw;
+    }
+    /* Keep content padding smaller */
+    
+    .content {
+        padding: 3rem 0;
+    }
+    /* Responsive adjustments */
+    
+    @media (max-width: 768px) {
+        .col-md-6 {
+            margin-top: 0;
+        }
+        .login-image {
+            margin-top: -100px;
+            margin-left: -10vw;
+            max-width: 80vw;
+        }
+        .content {
+            padding: 2rem 0;
+        }
     }

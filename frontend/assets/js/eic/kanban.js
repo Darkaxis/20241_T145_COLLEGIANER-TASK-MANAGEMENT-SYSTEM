@@ -3,6 +3,13 @@ let currentTaskCard = null;
 
 // Initialize event listeners when document is ready
 document.addEventListener('DOMContentLoaded', function() {
+
+    
+    if (tasks.ok) {
+        tasksResult.data.forEach(task => {
+            createTask(task.title, task.description, task.status, task.privacy, task.hideFrom, task.assignTo, task.assignedBy, task.date, task.category, task.link);
+        });
+    }
     // Event listener for saving new task
     document.getElementById('saveTaskButton').addEventListener('click', function() {
         clearErrorMessages();

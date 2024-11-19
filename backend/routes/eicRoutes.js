@@ -8,12 +8,15 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import googleMailServices from '../services/google/googleMailServices.js';
 import taskRoutes from './taskRoutes.js';
+import cookieParser from 'cookie-parser';
+
 
 
 const eicRoutes = express.Router();
 eicRoutes.use('/tasks', taskRoutes);
 eicRoutes.use(bodyParser.json());
 eicRoutes.use(bodyParser.urlencoded({ extended: true }));
+eicRoutes.use(cookieParser());
 dotenv.config();
 
 // Initiate the OAuth flow
@@ -76,13 +79,12 @@ eicRoutes.get('/profile', async (req, res) => {
 
 
 eicRoutes.get('/users', async (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    const token = req.cookies.token;
+    if (!token) {
         return res.status(401).json({
-            message: 'Authorization header missing'
+            message: 'No token provided'
         });
     }
-    const token = authHeader.split(' ')[1];
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
