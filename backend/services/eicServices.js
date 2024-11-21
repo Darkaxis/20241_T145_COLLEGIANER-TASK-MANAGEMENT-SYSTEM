@@ -71,6 +71,7 @@ export async function addUser(userData) {
     name,
     role,
     password: hashedPassword,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
     profile,
   };
   await db.collection("users").add(newUser);

@@ -22,7 +22,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error fetching users:', error);
     }
-
+    
+    const myTask = document.getElementById('myTask');
+    myTask.addEventListener('click', async () => {
+        try {
+            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/user', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in the request
+            });
+            const tasks = await response.json();
+            document.querySelectorAll('.task-card').forEach(card => card.remove());
+            tasks.tasks.forEach(task => createTask(task));
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    });
+    const allTask = document.getElementById('allTask');
+    allTask.addEventListener('click', async () => {
+        try {
+            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in the request
+            });
+            const tasks = await response.json();
+            document.querySelectorAll('.task-card').forEach(card => card.remove());
+            tasks.tasks.forEach(task => createTask(task));
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    });
 });
 
 function createTask(formData) {
@@ -289,9 +317,13 @@ function handleMarkAsDone(taskCard) {
 }
 
 // Add this new consolidated function for moving tasks to Done
-function moveTaskToDone(taskCard) {
+async function moveTaskToDone(taskCard) {
     // Update the task's status
     taskCard.dataset.status = 'Done';
+   
+   
+
+
     console.log('Status updated to Done');
 
     // Move to Done column

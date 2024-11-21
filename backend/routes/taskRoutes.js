@@ -31,10 +31,13 @@ taskRoutes.get('/get/all', async (req, res) => {
 //get task by user email
 taskRoutes.get('/get/user', async (req, res) => {
 
+
     try {
-        const email = req.body.email;
-        console.log(email);
-        const tasks = await taskService.getTasksForUser(email);
+        const token = req.cookies.token;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const name = decoded.name;
+        console.log(name);
+        const tasks = await taskService.getTasksForUser(name);
         res.status(200).send(tasks);
     } catch (error) {
         res.status(400).send(error.message);

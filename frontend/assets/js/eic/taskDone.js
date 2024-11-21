@@ -18,9 +18,24 @@ function initializeMarkAsDone() {
     }
 }
 
-function moveTaskToDone(taskCard) {
+async function moveTaskToDone(taskCard) {
+
+
+    
     // Update the task's status
     taskCard.dataset.status = 'Done';
+
+
+    const taskData = taskCard.dataset
+    const taskId = taskCard.dataset.taskId;
+    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData),
+        credentials: 'include'
+    });
     console.log('Status updated to Done');
 
     // Move to Done column

@@ -41,8 +41,8 @@ function openAddUserModal(isEdit = false, rowIndex = null) {
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
     if (isEdit) {
         const row = document.getElementById('userTableBody').rows[rowIndex];
-        document.getElementById('email').value = row.cells[3].textContent;
-        document.getElementById('role').value = row.cells[4].textContent;
+        document.getElementById('userEmail').value = row.cells[2].textContent;
+        document.getElementById('userRole').value = row.cells[3].textContent;
     } else {
         document.getElementById('addUserForm').reset();
     }

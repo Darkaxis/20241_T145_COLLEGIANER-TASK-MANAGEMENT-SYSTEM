@@ -40,16 +40,16 @@ async function getAllTasks() {
 }
 
 // Function to get tasks for a specific user
-async function getTasksForUser(email) {
+async function getTasksForUser(name) {
   try {
     // Check visible and assigned tasks
     const visibleTasksSnapshot = await db
       .collection("tasks")
-      .where("visibleTo", "array-contains", email)
+      .where("visibleTo", "array-contains", name)
       .get();
     const assignedTasksSnapshot = await db
       .collection("tasks")
-      .where("assignedTo", "==", email)
+      .where("assignedTo", "==", name)
       .get();
 
     // Use a Set to avoid duplicate tasks
