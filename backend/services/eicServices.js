@@ -81,25 +81,24 @@ export async function getAllUsers(email) {
   //get both users and admin except the current user
   const adminSnapshot = await db
     .collection("admins")
-    .where("email", "!=", email)
     .get();
   const usersSnapshot = await db.collection("users").get();
   if (usersSnapshot.empty) {
     return [];
   }
+  //exlude password from the response
 
-  const allUsers = [];
-
-  adminSnapshot.forEach((doc) => {
-    allUsers.push({ id: doc.id, ...doc.data() });
+  const allUsers = usersSnapshot.docs.map((doc) => {
+    const user = doc.data();
+    delete user.password;
+    return { id: doc.id, ...user };
   });
-
-  usersSnapshot.forEach((doc) => {
-    if (doc.data().email !== email) {
-      allUsers.push({ id: doc.id, ...doc.data()});
-    }
+  const allAdmins = adminSnapshot.docs.map((doc) => {
+    const admin = doc.data();
+    delete admin.password;
+    return { id: doc.id, ...admin };
   });
-
+  allUsers.push(...allAdmins);
   return allUsers;
 }
 

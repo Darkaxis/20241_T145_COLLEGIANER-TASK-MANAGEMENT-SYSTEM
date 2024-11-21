@@ -4,12 +4,12 @@ function validateFormData(formData) {
 
     // Required fields validation
     const requiredFields = {
-        'taskTitleInput': 'title',
+        'taskTitleInput': 'taskName',
         'taskDescriptionInput': 'description',
         'taskStatusInput': 'status',
         'taskPrivacyInput': 'privacy',
-        'taskAssignInput': 'assignTo',
-        'taskDateInput': 'date',
+        'taskAssignInput': 'assignedTo',
+        'taskDateInput': 'deadline',
         'taskLinkInput': 'link'
     };
 

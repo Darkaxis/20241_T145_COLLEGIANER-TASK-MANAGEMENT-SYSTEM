@@ -54,6 +54,17 @@ oauthRoutes.get('/callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
+        if (tokens.refresh_token) {
+            const envPath = path.resolve(__dirname, '.env');
+            fs.appendFile(envPath, `\nGOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`, (err) => {
+              if (err) {
+                console.error('Error writing to .env file', err);
+              } else {
+                console.log('Refresh token stored in .env file');
+              }
+            });
+          }
+        
 
         // Fetch user profile information
         const userProfile = await eicServices.getUserProfile(tokens);

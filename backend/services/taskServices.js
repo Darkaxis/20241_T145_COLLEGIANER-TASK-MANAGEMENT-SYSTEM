@@ -1,5 +1,8 @@
 import admin from "firebase-admin"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js";
+import oauth2Client from "../utils/oauthClient.js";
+import addTaskToGoogleTasks from "./google/googleTaskServices.js";
+
 
 // Function to create a new task
 async function createTask(taskData) {
@@ -13,6 +16,7 @@ async function createTask(taskData) {
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
     const taskRef = await db.collection("tasks").add(newTask);
+    await addTaskToGoogleTasks(taskData);
     return {
       status: 201,
       message: "Task created successfully",

@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded',  function() {
+
+document.addEventListener('DOMContentLoaded',  async function() {
     // Initialize Mark as Done button handler
     const markAsDoneBtn = document.getElementById('markAsDoneBtn');
     if (markAsDoneBtn) {
@@ -9,7 +10,28 @@ document.addEventListener('DOMContentLoaded',  function() {
                 moveTaskToDone(taskCard);
             }
         });
+
+        
     }
+
+    //fetch all user names
+    const response = await fetch('https://localhost:3000/api/v1/eic/users', {
+        method: 'GET',
+        credentials: 'include'
+    })
+    const data = await response.json();
+    
+    console.log(data);
+        const users = data.data;
+        const assignInput = document.getElementById('taskAssignInput');
+        if (assignInput) {
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.name;
+                option.text = user.name;
+                assignInput.appendChild(option);
+            });
+        }
 
     // Add Task button click handler
     const addTaskBtn = document.querySelector('.add-task-btn');
@@ -28,19 +50,18 @@ document.addEventListener('DOMContentLoaded',  function() {
 
             // Get form values
             const formData = {
-                title: document.getElementById('taskTitleInput').value.trim(),
+                taskName: document.getElementById('taskTitleInput').value.trim(),
                 description: document.getElementById('taskDescriptionInput').value.trim(),
                 status: document.getElementById('taskStatusInput').value,
                 privacy: document.getElementById('taskPrivacyInput').value,
                 hideFrom: document.getElementById('hideUserInput').value.trim(),
-                assignTo: document.getElementById('taskAssignInput').value.trim(),
-                date: document.getElementById('taskDateInput').value,
+                assignedTo: document.getElementById('taskAssignInput').value.trim(),
+                deadline: document.getElementById('taskDateInput').value,
                 link: document.getElementById('taskLinkInput').value.trim()
             };
 
             if (validateFormData(formData)) {
                 //send to server
-                formData.date = new Date(formData.date).toISOString();
                 const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {    
                     method: 'POST',
                     include: 'credentials',

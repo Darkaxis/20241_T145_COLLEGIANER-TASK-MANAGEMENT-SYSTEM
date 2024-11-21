@@ -18,6 +18,8 @@ taskRoutes.post('/create', async (req, res) => {
     }
 });
 
+
+
 taskRoutes.get('/get/all', async (req, res) => {
     try {
         const tasks = await taskService.getAllTasks();

@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", async() => {
         const dropdownProfileImage = document.getElementById("dropdownProfileImage");
         const sidebarprofileName = document.getElementById("sidebarprofileName");
         const sidebarprofileImage = document.getElementById("sidebarprofileImage");
-        const email = document.getElementById("email");
-        const role = document.getElementById("role");
+        const email = document.getElementById("sidebarEmail");
+        const role = document.getElementById("sidebarRole");
 
 
         profileName.textContent = profileinfo.name;
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
     } catch (error) {
         console.error("Error fetching user profile:", error);
-        alert("An error occurred while fetching the user profile. Please try again.");
+        //alert("An error occurred while fetching the user profile. Please try again.");
     }
     const googleLoginButton = document.getElementById('logout');
     googleLoginButton.addEventListener('click', () => {

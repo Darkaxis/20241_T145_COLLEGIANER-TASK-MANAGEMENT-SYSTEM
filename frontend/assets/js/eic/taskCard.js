@@ -17,11 +17,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             credentials: 'include' // Include cookies in the request
         });
         let usersData = await usersResponse.json();
-        users = usersData.data.map(user => user.email);
-        console.log(users); // Log the users array to see its structure
+        users = usersData.data.map(user => user.name);
+       
     } catch (error) {
         console.error('Error fetching users:', error);
     }
+
 });
 
 function createTask(formData) {
