@@ -79,16 +79,16 @@ eicRoutes.get('/profile', async (req, res) => {
 
 
 eicRoutes.get('/users', async (req, res) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({
-            message: 'No token provided'
-        });
-    }
+    // const token = req.cookies.token;
+    // if (!token) {
+    //     return res.status(401).json({
+    //         message: 'No token provided'
+    //     });
+    // }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        const users = await eicServices.getAllUsers(decoded.email);
+        const users = await eicServices.getAllUsers();
         res.status(200).json({
             message: 'Users retrieved successfully',
             data: users
