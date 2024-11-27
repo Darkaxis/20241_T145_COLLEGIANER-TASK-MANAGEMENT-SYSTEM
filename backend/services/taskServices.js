@@ -151,6 +151,29 @@ async function deleteTask(taskId) {
   }
 }
 
+async function approveTask(taskId) { 
+  try {
+    // Use Firestore transaction to ensure concurrency control
+    await db.runTransaction(async (transaction) => {
+      const taskRef = db.collection("tasks").doc(taskId);
+      const taskDoc = await transaction.get(taskRef);
+      if (!taskDoc.exists) {
+        throw new Error("Task not found");
+      }
+      const taskData = taskDoc.data();
+      if (taskData.status !== "Checking") {
+        throw new Error("Task is not pending approval");
+      }
+      transaction.update(taskRef, { status: "Done" });
+    });
+
+    return { status: 200, message: "Task approved successfully" };
+  } catch (error) {
+    console.error("Error approving task:", error);
+    throw new Error("Error approving task");
+  }
+}
+
 
 export default {
   createTask,
@@ -159,4 +182,5 @@ export default {
   editTask,
   deleteTask,
   getTask,
+  approveTask,
 };

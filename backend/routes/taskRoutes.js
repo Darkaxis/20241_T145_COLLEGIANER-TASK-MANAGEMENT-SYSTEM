@@ -81,6 +81,17 @@ taskRoutes.get('/get/:id', async (req, res) => {
     }
 });
 
+taskRoutes.post('/approve/:id', async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        const task = await taskService.approveTask(taskId);
+        res.status(200).send(task);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+}
+);
 
 
 export default taskRoutes;
+
