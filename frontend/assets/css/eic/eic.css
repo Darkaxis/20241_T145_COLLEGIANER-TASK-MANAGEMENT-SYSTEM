@@ -101,6 +101,21 @@ body {
     overflow: hidden;
 }
 
+.sidebar-section {
+    margin-top: 20px;
+    /* Space above sidebar section */
+}
+
+.sidebar-section a .icon {
+    margin-right: 10px;
+    /* Spacing between icon and text */
+}
+
+.icon {
+    color: white;
+    /* Icon color */
+}
+
 
 /* Navbar Styles */
 
@@ -218,6 +233,8 @@ body {
     transition: box-shadow 0.3s ease;
     font-family: "Quicksand", sans-serif;
     font-optical-sizing: auto;
+    position: relative;
+    transition: transform 0.2s ease;
 }
 
 .task-card:hover {
@@ -226,6 +243,29 @@ body {
 
 .task-card:active {
     cursor: grabbing;
+}
+
+.task-card.dragging {
+    opacity: 0.5;
+    cursor: move;
+}
+
+.task-card.drag-over {
+    border: 2px dashed #666;
+}
+
+.task-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.task-card.drag-over::after {
+    background-color: #666;
 }
 
 
@@ -299,102 +339,150 @@ body {
 
 /* Task Detail Modal Styling */
 
+#taskDetailModal {
+    font-family: "Quicksand", sans-serif;
+}
+
 #taskDetailModal .modal-dialog {
-    margin-top: 50px;
-    max-width: 1000px;
-    height: 85vh;
+    max-width: 800px;
 }
 
 #taskDetailModal .modal-content {
-    border: none;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
 }
 
 #taskDetailModal .modal-header {
-    border-bottom: none;
-    padding: 1.5rem;
-    border-radius: 12px 12px 0 0;
-}
-
-#taskDetailModal .modal-footer {
-    border-top: none;
-}
-
-#taskDetailModal .modal-body {
-    height: 70vh;
-    /* Set the height to 70% of the viewport height */
-    overflow-y: auto;
-    /* Allow vertical scrolling if content overflows */
-    padding: 1.5rem;
-    /* Add padding for better appearance */
-    margin-top: 10px;
-    /* Add extra padding to move content down */
-}
-
-#taskDetailModal .form-label {
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-#taskDetailModal .form-control-plaintext {
-    padding: 8px 12px;
     background-color: #f8f9fa;
-    border-radius: 6px;
-    border: none;
-    min-height: 38px;
-    display: flex;
-    align-items: center;
-}
-
-#taskDetailModal .task-details {
-    padding-right: 30px;
-}
-
-#taskDetailModal .comment-section {
-    flex: 1;
-    padding-left: 30px;
-}
-
-#taskDetailModal .comments-list {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-}
-
-#taskDetailModal .comment-item {
-    padding: 10px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-#taskDetailModal .comment-item:last-child {
-    border-bottom: none;
-}
-
-#taskDetailModal textarea.form-control {
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-}
-
-#taskDetailModal .btn-primary {
-    background-color: #0d6efd;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0;
+    padding: 1rem 1.5rem;
 }
 
 #taskDetailModal .modal-title {
     font-weight: 600;
     color: #333;
+    font-size: 1.25rem;
 }
 
-#taskDetailModal #taskDescription {
-    padding: 8px 12px;
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    border: none;
-    min-height: 38px;
+#taskDetailModal .modal-body {
+    padding: 1.5rem;
+}
+
+#taskDetailModal .form-group label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+#taskDetailModal .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskDetailModal .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+
+/* Comments Section Styling */
+
+.comments-section {
+    margin-top: 2rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem;
+}
+
+.comments-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1rem;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.comment-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.comment-user {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.comment-text {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.comment-input-container {
+    margin-top: 1rem;
+}
+
+#commentInput {
+    resize: none;
+    border-radius: 8px;
+    font-family: "Quicksand", sans-serif;
+}
+
+#addCommentBtn {
+    float: right;
+    font-family: "Quicksand", sans-serif;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+
+/* Modal Footer */
+
+#taskDetailModal .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+#taskDetailModal .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-family: "Quicksand", sans-serif;
+}
+
+#markAsDoneBtn {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+#markAsDoneBtn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
 }
 
 
@@ -1766,134 +1854,6 @@ body.modal-open {
 .error-message {
     color: #dc3545;
     font-size: 0.875rem;
-    margin-top: 0.25rem;
-    font-family: "Quicksand", sans-serif;
-    padding-left: 2rem;
-}
-
-
-/* Specific styling for assign to error message */
-
-#taskAssignInput~.error-message {
-    padding-left: 2rem;
-    position: absolute;
-    margin-left: 10vw;
-}
-
-
-/* Specific styling for assignee error message */
-
-#taskAssigneeInput~.error-message {
-    padding-left: 2rem;
-    position: absolute;
-    margin-left: 10vw;
-}
-
-
-/* Adjust column spacing */
-
-.row .col-md-6 {
-    position: relative;
-    margin-bottom: 2rem;
-    /* Increased to accommodate error messages */
-}
-
-
-/* Input validation styling */
-
-.form-control.is-invalid,
-.form-select.is-invalid {
-    border-color: #dc3545;
-    margin-bottom: 0.25rem;
-}
-
-
-/* Ensure proper icon alignment */
-
-.d-flex i {
-    width: 2rem;
-    text-align: center;
-}
-
-
-/* Adjust input groups in columns */
-
-.row .col-md-6 .d-flex.align-items-center {
-    margin-bottom: 0.25rem;
-}
-
-
-/* Row spacing in the modal */
-
-.modal-body .row {
-    margin-bottom: 1rem;
-    /* Reduce space between Status/Privacy and Assign to/Assigned by rows */
-}
-
-
-/* Column spacing */
-
-.row .col-md-6 {
-    position: relative;
-    margin-bottom: 1rem;
-    /* Reduce bottom margin of columns */
-}
-
-
-/* Input group container */
-
-.d-flex.align-items-center {
-    margin-bottom: 0.25rem;
-}
-
-
-/* Error message alignment for assign fields */
-
-#taskAssignInput~.error-message,
-#taskAssigneeInput~.error-message {
-    padding-left: 2rem;
-    /* Align with input text */
-    position: absolute;
-    margin-top: 0.25rem;
-}
-
-
-/* Form group spacing */
-
-.modal-body .mb-3 {
-    margin-bottom: 1.5rem !important;
-}
-
-
-/* Input field labels */
-
-.form-label {
-    margin-bottom: 0.5rem;
-}
-
-
-/* Icon alignment */
-
-.d-flex i {
-    width: 2rem;
-    text-align: center;
-}
-
-
-/* Input validation styling */
-
-.form-control.is-invalid,
-.form-select.is-invalid {
-    border-color: #dc3545;
-    margin-bottom: 0.25rem;
-}
-
-
-/* General error message styles */
-
-.error-message {
-    color: #dc3545;
-    font-size: 0.875rem;
     font-family: "Quicksand", sans-serif;
 }
 
@@ -2139,9 +2099,9 @@ body.modal-open {
 
 #taskTitle {
     border: none;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: bold;
-    width: 100%;
+    width: 65%;
     margin-right: 20px;
 }
 
@@ -2150,23 +2110,719 @@ body.modal-open {
     border-bottom: 2px solid #007bff;
 }
 
-#taskDetailModal #taskTitle {
-    width: 400px !important;
-    max-width: 90% !important;
-    margin-right: 20px;
-    border: none;
-    font-size: 1rem;
+
+/* Style for task detail modal input fields */
+
+#taskDetailModal .form-control {
+    font-size: 14px;
+    padding: 6px 10px;
+    height: 32px;
+}
+
+#taskDetailModal textarea.form-control {
+    height: auto;
+    min-height: 80px;
+}
+
+#taskDetailModal select.form-control {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Style for task title in modal */
+
+#taskTitle {
+    font-size: 16px;
     font-weight: bold;
+    height: 36px;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    width: 300px !important;
+    /* Set specific width */
+    max-width: 80%;
+    /* Ensure it doesn't get too wide on larger screens */
 }
 
-#taskDetailModal #taskTitle:focus {
+
+/* Style for labels in modal */
+
+#taskDetailModal label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+
+/* Style for modal content padding */
+
+#taskDetailModal .modal-body {
+    padding: 15px 20px;
+}
+
+
+/* Style for form groups in modal */
+
+#taskDetailModal .form-group {
+    margin-bottom: 12px;
+}
+
+
+/* Style for date input specific */
+
+#taskDetailModal input[type="date"] {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Style for select dropdowns */
+
+#taskDetailModal select {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Status Card Styling */
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.status-card i {
+    font-size: 18px;
+}
+
+.status-todo {
+    background: #6c757d;
+}
+
+.status-progress {
+    background: rgb(255, 94, 0);
+}
+
+.status-checking {
+    background: rgb(255, 193, 7);
+}
+
+.status-done {
+    background: #28a745;
+}
+
+
+/* Task Count Styling */
+
+.task-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+
+/* Task Header Layout */
+
+.task-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+
+/* Plus Icon Styling */
+
+.plus-icon {
+    background: #f8f9fa;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #6c757d;
+}
+
+.plus-icon:hover {
+    background: #e9ecef;
+    transform: rotate(90deg);
+}
+
+
+/* Hover effects for status cards */
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Comments Section Styling */
+
+.comments-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.comments-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.comment-user {
+    font-weight: 500;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: #444;
+}
+
+.comment-input-container {
+    margin-top: 15px;
+}
+
+#commentInput {
+    resize: none;
+    border-radius: 6px;
+}
+
+#addCommentBtn {
+    float: right;
+}
+
+
+/* Common Label Styling for both Add Task and View Task modals */
+
+#addTaskModal .form-group label,
+#taskDetailModal .form-group label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+
+/* Form Control styling for both modals */
+
+#addTaskModal .form-control,
+#taskDetailModal .form-control {
+    font-family: "Quicksand", sans-serif;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+
+/* Modal styling for both */
+
+#addTaskModal .modal-title,
+#taskDetailModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+}
+
+
+/* Add Task Modal Label Styling */
+
+#addTaskModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 800 !important;
+    /* Extra bold */
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+
+/* Add Task Modal Form Control Styling */
+
+#addTaskModal .form-control,
+#addTaskModal .form-select {
+    font-family: "Quicksand", sans-serif;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+
+/* Add Task Modal Icons */
+
+#addTaskModal .fas {
+    color: #6c757d;
+    width: 20px;
+    text-align: center;
+}
+
+
+/* Add Task Modal Title */
+
+#addTaskModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 800;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+
+/* Error Message Styling */
+
+#addTaskModal .error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Modal Body Scrollbar Styling */
+
+#addTaskModal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+/* Add styles for edit mode */
+
+.form-control:not([readonly]) {
+    background-color: #fff;
+    border-color: #80bdff;
+}
+
+.form-control:not([readonly]):focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+#saveEditButton {
+    margin-right: 5px;
+}
+
+.task-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-card .view-details {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+}
+
+.task-card-content {
+    padding: 15px;
+}
+
+
+/* Style for the modal inputs when in view mode */
+
+.modal input[readonly],
+.modal textarea[readonly] {
+    background-color: #f8f9fa;
+    cursor: default;
+}
+
+
+/* Style for the modal inputs when in edit mode */
+
+.modal input.editable,
+.modal textarea.editable {
+    background-color: #fff;
+    cursor: text;
+}
+
+
+/* Add these styles for the task info layout */
+
+.task-info {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.task-info p {
+    margin: 0;
+    flex: 1;
+}
+
+
+/* Update task card styling */
+
+.task-card-content {
+    padding: 15px;
+}
+
+.task-card-content h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.task-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.task-info-container p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.task-info-container i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+
+/* Add styles for the select dropdowns */
+
+.form-select,
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.25rem;
+}
+
+.form-select:disabled,
+select.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+
+/* Style for the dropdown options */
+
+.form-select option,
+select.form-control option {
+    padding: 8px 12px;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Search Box Styles */
+
+.search-box {
+    position: relative;
+    margin-bottom: 30px;
+    max-width: 400px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.search-box input {
+    padding-left: 40px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.search-box input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+
+/* Navbar Search Box Styles */
+
+.navbar .search-box {
+    position: relative;
+    width: 300px;
+    margin-bottom: 0;
+}
+
+.navbar .search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    z-index: 1;
+}
+
+.navbar .search-box input {
+    padding-left: 40px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+    height: 38px;
+}
+
+.navbar .search-box input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
     outline: none;
-    border-bottom: 2px solid #007bff;
 }
 
-#taskDetailModal #taskLink {
-    width: 450px !important;
-    max-width: 95% !important;
-    display: block;
-    word-break: break-all;
+
+/* Responsive adjustments */
+
+@media (max-width: 992px) {
+    .navbar .search-box {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+.task-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.task-card-body {
+    flex: 1;
+    padding-bottom: 10px;
+}
+
+.task-card-footer {
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.task-card-footer .btn {
+    font-size: 0.875rem;
+}
+
+.task-card-footer .dropdown-menu {
+    min-width: 200px;
+}
+
+
+/* Add these styles for the task detail modal buttons */
+
+.task-detail-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+#taskDetailModal .dropdown-menu {
+    width: 100%;
+}
+
+#taskDetailModal .btn {
+    padding: 8px 16px;
+}
+
+
+/* Sidebar Link Styles */
+
+.sidebar-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 6px 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+
+/* Icon styles */
+
+.sidebar-link .icon {
+    margin-right: 12px;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+
+/* Hover effect */
+
+.sidebar-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+
+
+/* Active state styling */
+
+.sidebar-link.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* Gradient border effect for active state */
+
+.sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient( 180deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.3) 100%);
+    border-radius: 0 4px 4px 0;
+    animation: borderPulse 2s infinite;
+}
+
+
+/* Subtle shine effect */
+
+.sidebar-link.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient( 90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shine 3s infinite;
+}
+
+
+/* Animations */
+
+@keyframes borderPulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+
+/* Icon animation for active state */
+
+.sidebar-link.active .icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.task-menu-item.delete-task-btn {
+    color: #dc3545;
+}
+
+.task-menu-item.delete-task-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+#deleteTaskButton {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    transition: all 0.3s ease;
+}
+
+#deleteTaskButton:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+.modal-footer .d-flex {
+    gap: 10px;
 }

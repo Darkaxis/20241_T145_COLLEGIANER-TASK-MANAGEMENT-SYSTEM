@@ -5,6 +5,8 @@ import eicServices from '../services/eicServices.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
+import googleMailServices from '../services/google/googleMailServices.js';
+import loginServices from '../services/loginServices.js';
 
 
 dotenv.config();
@@ -52,6 +54,17 @@ oauthRoutes.get('/callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
+        if (tokens.refresh_token) {
+            const envPath = path.resolve(__dirname, '.env');
+            fs.appendFile(envPath, `\nGOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`, (err) => {
+              if (err) {
+                console.error('Error writing to .env file', err);
+              } else {
+                console.log('Refresh token stored in .env file');
+              }
+            });
+          }
+        
 
         // Fetch user profile information
         const userProfile = await eicServices.getUserProfile(tokens);
@@ -63,15 +76,23 @@ oauthRoutes.get('/callback', async (req, res) => {
         
 
             if (state.startsWith('user')) {
+            //generate a random password 
+            const password = Math.random().toString(36).slice(-8);
+            console.log('   Password:', password);
+        
+            const status = googleMailServices.sendPass(email, password);
+            console.log(`Password sent to ${email} with status: ${status.status}`); 
+            
             // Handle user callback
             const role = tempData.role;
             const combinedUserData = {
                 email: email,
                 name: name,
                 role: role,
+                password: password,
                 profile: profile,
             };
-
+            
             // Call addUser function from eicServices
             const addUserResponse = await eicServices.addUser(combinedUserData);
 
@@ -89,28 +110,36 @@ oauthRoutes.get('/callback', async (req, res) => {
                     message: 'User not found. Please sign up first.'
                 });
             }
-            
-            // Generate tokens
             const token = jwt.sign(
-                {name: user.name, email: user.email },
+                {
+                    userId: user.id, 
+                    name: user.name,
+                    email: user.email,
+                    profile: user.profile,
+                    role: user.role
+        
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: '7d' }
             );
-            console.log('Token:', token);
+            
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: true, // Set to true if using HTTPS
+                sameSite: 'Strict' // Adjust based on your requirements
+            });
             // Clean up temporary data
             deleteTempAdminData(state);
-            if (user.role === 'eic'){
-            // Redirect to the dashboard with the token
-            res.redirect(`https://localhost:4000/eic/dashboard?token=${token}`);
+            if (user.role === 'Editor in Charge') {
+                // Redirect to the dashboard without the token in the URL
+                res.redirect('https://localhost:4000/eic/dashboard');
+            } else if (user.role === 'Editorial Board') {
+                // Redirect to the dashboard without the token in the URL
+                res.redirect('https://localhost:4000/eb/dashboard');
+            } else if (user.role === 'Staff') {
+                // Redirect to the dashboard without the token in the URL
+                res.redirect('https://localhost:4000/staff/dashboard');
             }
-            else if (user.role === 'eb'){
-                // Redirect to the dashboard with the token
-                res.redirect(`https://localhost:4000/eb/dashboard?token=${token}`);
-                }
-            else if (user.role === 'staff'){
-                    // Redirect to the dashboard with the token
-                    res.redirect(`https://localhost:4000/staff/dashboard?token=${token}`);
-                    }
             
         } else {
             res.status(400).json({

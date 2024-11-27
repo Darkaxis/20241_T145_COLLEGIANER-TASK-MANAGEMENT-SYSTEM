@@ -1,44 +1,46 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    if (token) {
-        localStorage.setItem('token', token);
-        // Remove the token from the URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken == 'null' || !storedToken) {
-            alert('You are not logged in!');
-            window.location.href = '/';
-            return;
-        }
-    }
-    
-    // Use the token from local storage for fetching the user profile
-    const storedToken = localStorage.getItem('token');
-        const response = await fetch('https://localhost:3000/api/v1/eb/profile', {
-            headers: {
-                'Authorization': `Bearer ${storedToken}`
-            }
-        });
-        const result = await response.json();
-       console.log(result);
-        if (response.ok) {
-            const profileName = document.getElementById('profileName');
-            const profileImage = document.getElementById('profileImage');
-            const dropdownProfileImage = document.getElementById('dropdownProfileImage');
-            profileName.textContent = result.name;
-            profileImage.src = result.profileImage || '/assets/images/customer02.jpg'; // Use default image if none provided
-            dropdownProfileImage.src = result.profileImage || '/assets/images/customer02.jpg';
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const userResponse = await fetch(
+      "https://localhost:3000/api/v1/login/verify-token",
+      {
+        method: "GET",
+        credentials: "include", // Include cookies in the request
+      }
+    );
 
-            
-        } else {
-            alert(`Failed to load user profile: ${result.message}`);
-        }
-    // Logout functionality
-    const logoutButton = document.getElementById('logoutButton');
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = '/';
-    });
+    if (!userResponse.ok) {
+      // If the response is not OK, redirect to the login page
+      window.location.href = 'https://localhost:4000/';
+      return;
+    }
+
+    const userResult = await userResponse.json();
+    console.log(userResult);
+    // Use the token from local storage for fetching the user profile
+    const profileinfo = userResult.user;
+   
+
+    const profileName = document.getElementById("profileName");
+    const profileImage = document.getElementById("profileImage");
+    const dropdownProfileImage = document.getElementById("dropdownProfileImage");
+
+    profileName.textContent = profileinfo.name;
+    profileImage.src = profileinfo.profile || "/assets/images/customer02.jpg"; // change later
+    dropdownProfileImage.src = profileinfo.profile || "/assets/images/customer02.jpg";
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    alert("An error occurred while fetching the user profile. Please try again.");
+  }
+  const googleLoginButton = document.getElementById('logout');
+  googleLoginButton.addEventListener('click', () => {
+     fetch(
+        "https://localhost:3000/api/v1/login/logout",
+        {
+          method: "POST",
+          credentials: "include", // Include cookies in the request
+        })
+      window.location.href = 'https://localhost:4000/'; // Redirect 
+  });
+
+  
 });

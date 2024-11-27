@@ -7,11 +7,17 @@ import loginRoutes from './routes/loginRoutes.js';
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 const app = express();
 const port = process.env.PORT;
 
+const corsOptions = {
+    origin: 'https://localhost:4000',
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+};
 // Enable CORS
-app.use(cors());
+app.use(cors(corsOptions));
 const options = {
     key: fs.readFileSync('./certs/localhost-key.pem'),
     cert: fs.readFileSync('./certs/localhost-cert.pem')
@@ -28,6 +34,16 @@ app.use('/api/v1/login', loginRoutes);
 
 // Use the OAuth2 routes
 app.use('/api/v1/google/oauth2', oauthRoutes);
+
+// Add security headers
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
 https.createServer(options, app).listen(port, () => {
     console.log(`Server is running on https://localhost:${port}`);

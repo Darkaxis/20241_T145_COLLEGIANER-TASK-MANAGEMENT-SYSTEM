@@ -131,12 +131,10 @@ body {
 }
 
 .profile-img {
-    width: 30px;
-    /* Profile image size */
-    height: 30px;
-    /* Profile image size */
     border-radius: 50%;
-    /* Round profile image */
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
 }
 
 .dropdown-menu {
@@ -410,4 +408,110 @@ body {
     color: #6c757d;
     width: 16px;
     text-align: center;
+}
+
+
+/* Add these responsive styles at the end of your file */
+
+
+/* Dashboard Cards Responsive */
+
+@media (max-width: 1200px) {
+    .dashboard-card {
+        padding: 1rem;
+    }
+    .card-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    .card-content h5 {
+        font-size: 1rem;
+    }
+    .count {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        width: 250px;
+    }
+    .collegianer {
+        font-size: 28px;
+    }
+    .task-management-system {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        position: fixed;
+        z-index: 1000;
+        transition: 0.3s;
+    }
+    .sidebar.active {
+        width: 250px;
+    }
+    .main-content {
+        padding: 15px;
+    }
+    .dashboard .row {
+        margin: 0 -10px;
+    }
+    .col-md-4 {
+        padding: 0 10px;
+        margin-bottom: 15px;
+    }
+    .table-responsive {
+        max-height: none;
+    }
+    .table thead th {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+    .table tbody td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+    .dashboard-card {
+        margin-bottom: 15px;
+    }
+    .card-header {
+        padding: 0.75rem;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+    /* Table Adjustments */
+    .table-responsive {
+        margin: 0 -10px;
+    }
+    .table {
+        font-size: 0.85rem;
+    }
+    /* Hide less important columns on mobile */
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none;
+    }
+    /* Modal Adjustments */
+    #addUserModal .modal-dialog {
+        margin: 0.5rem;
+    }
+    #addUserModal .modal-body {
+        padding: 1rem;
+    }
+    .btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+    }
 }

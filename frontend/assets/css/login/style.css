@@ -39,7 +39,7 @@
     /* Content Styling */
     
     .content {
-        padding: 7rem 0;
+        padding: 3rem 0;
     }
     
     h2 {
@@ -66,29 +66,51 @@
     /* Logo Styling */
     
     .logo {
-        position: absolute;
+        position: relative;
+        margin: 0 auto;
+        width: 100%;
     }
     
-    .logo img {
-        width: 80px;
-        height: 80px;
-        margin-top: -50px;
+    .logo-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        width: 100%;
+        padding-left: 60%;
+    }
+    
+    .logo-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: -30px;
+    }
+    
+    .collegianer-logo {
+        width: 60px;
+        height: 60px;
+        margin-top: 20px;
         filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
     }
     
-    .logo p {
-        margin-top: -3vh;
-        letter-spacing: 0.03em;
-        line-height: 25.2px;
-        white-space: pre-wrap;
-        display: block;
-        width: 100%;
-        margin-left: 26vw;
-        font-size: 12px;
-        font-weight: 100;
+    .collegianer-text {
+        width: 180px;
+        height: auto;
+        margin-bottom: -10px;
+        filter: brightness(0) drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+    }
+    
+    .task-management {
+        font-size: 13px;
+        font-weight: 600;
         color: #555;
-        margin-bottom: 10px;
-        text-align: center;
+        margin: 0;
+        margin-top: 1px;
+        margin-left: 100px;
+        filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.1));
+        letter-spacing: 0.03em;
+        position: relative;
     }
     /* Input Field with Icon */
     
@@ -166,7 +188,7 @@
         transition: background-color 0.3s ease;
         font-family: 'Poppins', sans-serif;
         padding: 10px;
-        margin: 15px 0;
+        margin-bottom: -10px;
     }
     
     .login-btn:hover {
@@ -182,7 +204,10 @@
         font-size: 14px;
         font-family: 'Poppins', sans-serif;
         text-align: center;
-        margin: 15px 0;
+        width: 90%;
+        margin: 0 auto;
+        padding: 5px 15px;
+        font-weight: bold;
     }
     
     .line {
@@ -190,11 +215,13 @@
         height: 1px;
         background-color: #ccc;
         margin: 0 10px;
+        width: 100%;
+        font-weight: bold;
     }
     /* Layout Adjustment */
     
     .move-down {
-        padding-top: 60px;
+        margin-top: -10px;
     }
     /* Form Group */
     
@@ -265,19 +292,28 @@
     }
     
     .google button {
-        width: 100%;
+        width: 90%;
         background-color: #fff;
         color: #a5a1a1;
         font-size: 16px;
         font-weight: bold;
+        border: 1px solid #ddd;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
         font-family: 'Poppins', sans-serif;
         padding: 8px 40px;
-        width: 90%;
         margin: 15px;
-        border: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: -5px;
+    }
+    
+    .google button:hover {
+        background-color: #f5f5f5;
     }
     /* Background Image Styling */
     
@@ -290,9 +326,9 @@
     }
     
     h1 {
-        margin: 30px 10px 30px;
+        margin: 0 10px 20px;
         padding-left: 10px;
-        font-size: 40px;
+        font-size: 30px;
         font-family: 'Poppins', sans-serif;
     }
     /* Style for input-icon div */
@@ -300,7 +336,7 @@
     .input-icon {
         position: relative;
         width: 90%;
-        margin: auto;
+        margin: 15px auto;
     }
     
     .input-icon span {
@@ -344,4 +380,237 @@
     .login-btn,
     .google button {
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    
+    .collegianer-logo {
+        width: auto;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+    
+    .collegianer-text {
+        width: 17vw;
+        height: 50px;
+        filter: brightness(0) drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+        margin: 10px 0;
+    }
+    /* Add responsive adjustments if needed */
+    
+    @media (max-width: 768px) {
+        .logo-section {
+            padding-left: 40%;
+        }
+        .collegianer-logo {
+            width: 50px;
+            height: 50px;
+        }
+        .collegianer-text {
+            width: 150px;
+        }
+        .task-management {
+            padding-left: 65px;
+        }
+        .content {
+            padding: 2rem 0;
+        }
+        .login-image {
+            margin-left: -10vw;
+            max-width: 80vw;
+        }
+    }
+    
+    .login-image {
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+        margin-top: -150px;
+        margin-left: -14vw;
+        max-width: 60vw;
+    }
+    /* Update image container styles */
+    
+    .col-md-6 {
+        margin-top: 0;
+    }
+    /* Update image styles */
+    
+    .login-image {
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+        margin-top: -50px;
+        margin-left: -14vw;
+        max-width: 60vw;
+    }
+    /* Keep content padding smaller */
+    
+    .content {
+        padding: 3rem 0;
+    }
+    /* Responsive adjustments */
+    
+    @media (max-width: 768px) {
+        .col-md-6 {
+            margin-top: 0;
+        }
+        .login-image {
+            margin-top: -100px;
+            margin-left: -10vw;
+            max-width: 80vw;
+        }
+        .content {
+            padding: 2rem 0;
+        }
+    }
+    /* Responsive Design */
+    
+    @media screen and (max-width: 768px) {
+        .container {
+            padding: 20px;
+        }
+        .logo-section {
+            text-align: center;
+            padding-left: 0;
+            align-items: center;
+        }
+        .collegianer-logo {
+            width: 50px;
+            height: 50px;
+        }
+        .collegianer-text {
+            width: 150px;
+        }
+        .task-management {
+            margin-left: 0;
+            text-align: center;
+        }
+        .login-image {
+            margin: 0 auto;
+            max-width: 90%;
+            margin-top: -50px;
+        }
+        .input-icon,
+        .login-btn,
+        .google button {
+            width: 100%;
+            margin: 15px 0;
+        }
+        .or {
+            width: 100%;
+            margin: 0;
+            padding: 5px 0;
+        }
+        .content {
+            padding: 2rem 1rem;
+        }
+        h1 {
+            font-size: 28px;
+            margin: 0 0 15px 0;
+            padding-left: 0;
+            text-align: left;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .content {
+            padding: 1rem;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .collegianer-logo {
+            width: 40px;
+            height: 40px;
+        }
+        .collegianer-text {
+            width: 120px;
+        }
+        .task-management {
+            font-size: 11px;
+        }
+        .g-recaptcha {
+            transform: scale(0.8);
+            transform-origin: left center;
+            margin-bottom: 10px;
+        }
+    }
+    /* reCAPTCHA alignment and sizing */
+    
+    .g-recaptcha {
+        width: 90%;
+        margin: 15px auto;
+        display: flex;
+        justify-content: flex-start;
+        transform: scale(0.92);
+        transform-origin: left center;
+    }
+    /* Responsive adjustments for reCAPTCHA */
+    
+    @media screen and (max-width: 768px) {
+        .g-recaptcha {
+            transform: scale(0.9);
+            transform-origin: left center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .g-recaptcha {
+            transform: scale(0.85);
+            transform-origin: left center;
+        }
+    }
+    
+    @media screen and (max-width: 320px) {
+        .g-recaptcha {
+            transform: scale(0.75);
+            transform-origin: left center;
+        }
+    }
+    /* Wrapper for reCAPTCHA to prevent layout shifts */
+    
+    #recaptcha-wrapper {
+        width: 90%;
+        margin: 15px auto;
+        min-height: 78px;
+        /* Height of reCAPTCHA */
+    }
+    /* Heading adjustments */
+    
+    h1 {
+        margin: 0 10px 20px;
+        /* Reduced top margin */
+        padding-left: 10px;
+        font-size: 30px;
+        font-family: 'Poppins', sans-serif;
+    }
+    /* Adjust spacing for elements below heading */
+    
+    .google {
+        margin-top: 10px;
+        /* Reduced top margin */
+    }
+    /* Responsive adjustments */
+    
+    @media screen and (max-width: 768px) {
+        h1 {
+            font-size: 28px;
+            margin: 0 0 15px 0;
+            /* Adjusted margins for mobile */
+            padding-left: 0;
+            text-align: left;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        h1 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
     }

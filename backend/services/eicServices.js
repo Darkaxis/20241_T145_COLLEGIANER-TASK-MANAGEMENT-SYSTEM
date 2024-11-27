@@ -21,12 +21,21 @@ export async function getUserProfile(accessToken) {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      const people = google.people({ version: "v1", auth: oauth2Client });
-      const response = await people.people.get({
-        resourceName: "people/me",
-        personFields: "names,emailAddresses,photos",
-      });
-      return response.data;
+      // Handle token expiration and refresh token logic here
+      console.error("Access token expired. Refreshing token...");
+      try {
+        const newTokens = await oauth2Client.refreshAccessToken();
+        oauth2Client.setCredentials(newTokens.credentials);
+        const people = google.people({ version: "v1", auth: oauth2Client });
+        const response = await people.people.get({
+          resourceName: "people/me",
+          personFields: "names,emailAddresses,photos",
+        });
+        return response.data;
+      } catch (refreshError) {
+        console.error("Error refreshing access token:", refreshError);
+        throw new Error("Error refreshing access token");
+      }
     } else {
       console.error("Error fetching user profile:", error);
       throw new Error("Error fetching user profile from Google People API");
@@ -36,152 +45,100 @@ export async function getUserProfile(accessToken) {
 
 // Function to get user by email
 export async function getUserByEmail(email) {
-  const userSnapshot = await db
-    .collection("users")
-    .where("email", "==", email)
-    .get();
-  if (userSnapshot.empty) {
-    return null;
+  try {
+    // Use Firestore transaction to ensure concurrency control
+    const user = await db.runTransaction(async (transaction) => {
+      const userSnapshot = await transaction.get(
+        db.collection("users").where("email", "==", email)
+      );
+      if (userSnapshot.empty) {
+        throw new Error("User not found");
+      }
+      const userDoc = userSnapshot.docs[0];
+      return { id: userDoc.id, ...userDoc.data() };
+    });
+
+    return user;
+  } catch (error) {
+    console.error("Error getting user by email:", error);
+    throw new Error("Error getting user by email");
   }
-  return userSnapshot.docs[0].data();
 }
 
-// Function to create a new admin user
-export async function createAdmin(adminData) {
-  if (!adminData || !adminData.email || !adminData.password) {
-    return {
-      status: 400,
-      message: "adminData, email, and password are required",
-    };
-  }
-
-  const { password, email, name, profile } = adminData;
-
-  // Check if the email already exists
-  const existingAdminSnapshot = await db
-    .collection("admins")
-    .where("email", "==", email)
-    .get();
-  if (!existingAdminSnapshot.empty) {
-    return { status: 400, message: "Email already exists" };
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newAdmin = {
-    password: hashedPassword,
-    email,
-    name,
-    profile,
-    //accessToken: adminData.accessToken,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
-  await db.collection("admins").add(newAdmin);
-
-  // Generate tokens
-  const token = jwt.sign(
-    { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
-  return { status: 201, message: "Admin created successfully", token };
-}
-
-// Function to authenticate an admin user
-export async function authenticateAdmin(email, password) {
-  const adminSnapshot = await db
-    .collection("admins")
-    .where("email", "==", email)
-    .get();
-  if (adminSnapshot.empty) {
-    throw new Error("Admin not found");
-  }
-  const adminData = adminSnapshot.docs[0].data();
-  const isPasswordValid = await bcrypt.compare(password, adminData.password);
-  if (!isPasswordValid) {
-    throw new Error("Invalid password");
-  }
-  const token = jwt.sign(
-    {
-      id: adminSnapshot.docs[0].id,
-      name: adminData.name,
-      email: adminData.email,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
-  console.log("Token:", token);
-  return token;
-}
-
-// Function to get details of an admin user
-export async function getAdminDetails(adminId) {
-  const adminDoc = await db.collection("admins").doc(adminId).get();
-  if (!adminDoc.exists) {
-    throw new Error("Admin not found");
-  }
-  return adminDoc.data();
-}
-
-// Function to add a new user
 export async function addUser(userData) {
-  const { email, name, role, profile } = userData;
+  const { email, name, role, profile, password } = userData;
 
-  // Check if the email already exists
-  const existingUserSnapshot = await db
-    .collection("users")
-    .where("email", "==", email)
-    .get();
-  if (!existingUserSnapshot.empty) {
-    return { status: 400, message: "Email already exists" };
-  }
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-  const newUser = {
-    email,
-    name,
-    role,
-    profile,
-  };
-  await db.collection("users").add(newUser);
-  return { status: 201, message: "User added successfully" };
-}
+  // Use Firestore transaction to ensure concurrency control
+  try {
+    await db.runTransaction(async (transaction) => {
+      // Check if the email already exists
+      const existingUserSnapshot = await transaction.get(
+        db.collection("users").where("email", "==", email)
+      );
+      if (!existingUserSnapshot.empty) {
+        throw new Error("Email already exists");
+      }
 
-export async function getAllUsers(email) {
-  //get both users and admin except the current user
-  const adminSnapshot = await db
-    .collection("admins")
-    .where("email", "!=", email)
-    .get();
-  const usersSnapshot = await db.collection("users").get();
-  if (usersSnapshot.empty) {
-    return [];
-  }
+      const newUser = {
+        email,
+        name,
+        role,
+        password: hashedPassword,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        profile,
+      };
 
-  const allUsers = [];
+      const userRef = db.collection("users").doc();
+      transaction.set(userRef, newUser);
+    });
 
-  adminSnapshot.forEach((doc) => {
-    allUsers.push({ id: doc.id, ...doc.data() });
-  });
-
-  usersSnapshot.forEach((doc) => {
-    if (doc.data().email !== email) {
-      allUsers.push({ id: doc.id, ...doc.data()});
+    return { status: 201, message: "User added successfully" };
+  } catch (error) {
+    console.error("Error adding user:", error);
+    if (error.message === "Email already exists") {
+      return { status: 400, message: "Email already exists" };
     }
-  });
-
-  return allUsers;
+    throw new Error("Error adding user");
+  }
 }
 
-export function logoutAdmin() {
-  // Implement token invalidation if necessary
+// Function to get all users
+export async function getAllUsers() {
+  try {
+    // Use Firestore transaction to ensure concurrency control
+    const users = await db.runTransaction(async (transaction) => {
+      const usersSnapshot = await transaction.get(db.collection("users"));
+      if (usersSnapshot.empty) {
+        return [];
+      }
+
+      // Exclude password from the response
+      return usersSnapshot.docs.map((doc) => {
+        const user = doc.data();
+        delete user.password;
+        return { id: doc.id, ...user };
+      });
+    });
+
+    return users;
+  } catch (error) {
+    console.error("Error getting users:", error);
+    throw new Error("Error getting users");
+  }
 }
+
+
+
+
 
 export default {
-  createAdmin,
-  authenticateAdmin,
-  getAdminDetails,
+
   getUserProfile,
   getUserByEmail,
   addUser,
-  getAllUsers,
-  logoutAdmin,
+getAllUsers,
+
 };

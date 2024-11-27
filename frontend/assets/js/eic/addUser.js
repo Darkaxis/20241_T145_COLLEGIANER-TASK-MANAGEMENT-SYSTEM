@@ -1,13 +1,48 @@
 
+//dom content load
+document.addEventListener('DOMContentLoaded', async () => {
+    const response = await fetch('https://localhost:3000/api/v1/eic/users', {
+        method: 'GET',
+        credentials: 'include' // Include cookies in the request
+    });
+
+
+    const users = await response.json();
+    const user = users.data;
+
+    const table = document.getElementById('userTableBody');
+    const totalAdmins = document.getElementById('totalAdmins');
+    const totalEditorials = document.getElementById('totalEditorials');
+    const totalStaff = document.getElementById('totalStaff');
+    user.forEach(user => {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+        <tr>
+            <td>${user.name}</td>
+            <td id="userEmail">${user.email}</td>
+            <td id="userRole">${user.role}</td>
+            <td>
+                <button class="btn btn-sm btn-warning" onclick="openAddUserModal(true, this.parentNode.parentNode.rowIndex - 1)">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </td>
+        </tr>
+       
+        `;
+        table.appendChild(newRow);
+    });
+});
+
+
+
 
 function openAddUserModal(isEdit = false, rowIndex = null) {
     document.getElementById('addUserModalLabel').textContent = isEdit ? 'Edit User' : 'Add User';
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
-
     if (isEdit) {
         const row = document.getElementById('userTableBody').rows[rowIndex];
-        document.getElementById('email').value = row.cells[3].textContent;
-        document.getElementById('role').value = row.cells[4].textContent;
+        document.getElementById('userEmail').value = row.cells[2].textContent;
+        document.getElementById('userRole').value = row.cells[3].textContent;
     } else {
         document.getElementById('addUserForm').reset();
     }
@@ -54,11 +89,6 @@ function saveUser() {
     // Get form values
     const email = document.getElementById('email').value.trim();
     const userRole = document.getElementById('role').value;
-    let role;
-    if (userRole === 'Editorial Board'){
-
-        role = 'eb';
-    }
     const editUserIndex = document.getElementById('editUserIndex').value;
     
     // Validate inputs
@@ -71,13 +101,13 @@ function saveUser() {
         showErrorMessage('email', 'Please enter valid email');
         hasErrors = true;
     }
-
+    console.log(userRole);
     if (!role) {
         showErrorMessage('role', 'Please select role');
         hasErrors = true;
     }
     //send to backend
-    const userData = { email, role };
+    const userData = { email, role: userRole };
     console.log(userData)
     fetch('https://localhost:3000/api/v1/eic/add', {
         method: 'POST',
@@ -151,18 +181,17 @@ function updateCounters(oldRole, newRole) {
 
     // Increase new role counter
     let newCounterId;
-    let role;
+
     switch (newRole) {
         case 'Admin':
             newCounterId = 'totalAdmins';
-            role = 'eic';
+         
             break;
         case 'Editorial Board':
             newCounterId = 'totalEditorials';
-            role = 'eb';
+         
             break;
         case 'Staff':
-            role = 'staff';
             newCounterId = 'totalStaff';
             break;
     }
@@ -176,32 +205,4 @@ function updateCounters(oldRole, newRole) {
 
 
 
-document.addEventListener('DOMContentLoaded', async () => {    
-    const userTableBody = document.getElementById('userTableBody');
-        const token = localStorage.getItem('token');
-        const response = await fetch('https://localhost:3000/api/v1/eic/users', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const users = await response.json();
-        users.data.forEach(user => {
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td>${user.role}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" onclick="openAddUserModal(true, this.parentNode.parentNode.rowIndex - 1)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </td>
-            `;
-            userTableBody.appendChild(newRow);
-        });
-        //updateCounters(oldRole, role);
-    
-    
-    
-    
-    });
+

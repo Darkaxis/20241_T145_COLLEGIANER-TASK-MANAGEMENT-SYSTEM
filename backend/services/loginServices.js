@@ -9,31 +9,32 @@ import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client 
 
 dotenv.config();
 
-
 export async function authenticateUser(email, password) {
     const userSnapshot = await db
-      .collection("user")
+      .collection("users")
       .where("email", "==", email)
       .get();
     if (userSnapshot.empty) {
       throw new Error("User not found");
     }
+    
     const userData = userSnapshot.docs[0].data();
     const isPasswordValid = await bcrypt.compare(password, userData.password);
     if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
+    console.log(userData);
     const token = jwt.sign(
       {
-          id: userSnapshot.docs[0].id,
-          name: userData.name,
+        id: userSnapshot.docs[0].id,
+        name: userData.name,
         email: userData.email,
+        profile: userData.profile,
         role: userData.role, 
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    console.log("Token:", token);
     return token;
   }
 
@@ -41,8 +42,5 @@ export async function authenticateUser(email, password) {
 
   
 export default{
-
-
-
     authenticateUser
 }

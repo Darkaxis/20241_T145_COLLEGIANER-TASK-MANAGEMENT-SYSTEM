@@ -8,21 +8,24 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import googleMailServices from '../services/google/googleMailServices.js';
 import taskRoutes from './taskRoutes.js';
+import cookieParser from 'cookie-parser';
+
 
 
 const eicRoutes = express.Router();
 eicRoutes.use('/tasks', taskRoutes);
 eicRoutes.use(bodyParser.json());
 eicRoutes.use(bodyParser.urlencoded({ extended: true }));
+eicRoutes.use(cookieParser());
 dotenv.config();
 
 // Initiate the OAuth flow
 eicRoutes.post('/add', (req, res) => {
-    const { email,password, role } = req.body;
+    const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
     const state = `user-${uuidv4()}`; // Generate a unique state with type
-    setTempAdminData(state, {email, password, role}); // Store the email, role, and type temporarily
+    setTempAdminData(state, {email, role}); // Store the email, role, and type temporarily
 
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -35,7 +38,7 @@ eicRoutes.post('/add', (req, res) => {
         state: state // Pass the state parameter
     });
 
-    console.log(`OAuth URL for ${type} with email ${email}: ${url}`);
+    console.log(`OAuth URL for ${role} with email ${email}: ${url}`);
 
     const status = googleMailServices.sendOAuthLink(email, url);
 
@@ -73,25 +76,19 @@ eicRoutes.get('/profile', async (req, res) => {
     }
 });
 
-eicRoutes.post('/logout', (req, res) => { 
-    eicServices.logoutAdmin();
-    res.status(200).json({
-        message: 'Admin logged out successfully'
-    });
-});
+
 
 eicRoutes.get('/users', async (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({
-            message: 'Authorization header missing'
-        });
-    }
-    const token = authHeader.split(' ')[1];
+    // const token = req.cookies.token;
+    // if (!token) {
+    //     return res.status(401).json({
+    //         message: 'No token provided'
+    //     });
+    // }
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        const users = await eicServices.getAllUsers(decoded.email);
+        const users = await eicServices.getAllUsers();
         res.status(200).json({
             message: 'Users retrieved successfully',
             data: users

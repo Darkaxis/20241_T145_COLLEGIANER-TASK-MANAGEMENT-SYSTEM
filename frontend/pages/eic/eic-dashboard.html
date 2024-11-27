@@ -12,7 +12,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/css/eic/notification.css">
+    <link rel="stylesheet" href="/css/eic/profile-card.css">
+    <link rel="stylesheet" href="/css/eic/mark.css">
+    <link rel="stylesheet" href="/css/eic/dashboard.css">
+    <link rel="stylesheet" href="/css/eic/search.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/eic/task-menu.css">
+    <!-- <link rel="stylesheet" href="css/transitions.css"> -->
+
 </head>
 
 
@@ -30,19 +38,19 @@
         <hr class="sidebar-divider">
 
         <div class="sidebar-section">
-            <a href="#">
+            <a href="#" class="sidebar-link active">
                 <span class="icon"><i class="fa-solid fa-house"></i></span> Home
             </a>
-            <a href="eic-projects.html">
+            <a href="/eic/projects" class="sidebar-link">
                 <span class="icon"><i class="fa-solid fa-folder"></i></span> Projects
             </a>
-            <a href="#">
-                <span class="icon"><i class="fa-solid fa-clock"></i></span> History
+            <a href="/eic/archive" class="sidebar-link">
+                <span class="icon"><i class="fa-solid fa-box-archive"></i></span> Archive
             </a>
-            <a href="#">
-                <span class="icon"><i class="fa-solid fa-user"></i></span> User Profile
+            <a href="/eic/activitylog" class="sidebar-link">
+                <span class="icon"><i class="fa-solid fa-user"></i></span> Activity Log
             </a>
-            <a href="/eic/accounts">
+            <a href="/eic/accounts" class="sidebar-link">
                 <span class="icon"><i class="fa-solid fa-users" style="margin-left: -5px;"></i></span> Accounts
             </a>
         </div>
@@ -50,154 +58,197 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="headerr" style="position: relative;">
-            <h1>PROJECT/2024-2025</h1>
-            <div class="dropdown profile-dropdown">
-                
-                <button class="btn profile-button dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img id="profileImage" src="/images/eic/user.png" alt="Profile Picture" class="profile-img" style="width: 50px; height: 50px;">
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li class="dropdown-item d-flex align-items-center">
-                        <img id="dropdownProfileImage" src="/images/eic/user.png" alt="Profile Picture" style="width: 30px; height: 30px; margin-right: 10px;">
-                        <span id="profileName"></span>
-                    </li>
-                    <li class="dropdown-item d-flex align-items-center">
-                        <i class="fas fa-volume-mute" style="margin-right: 10px;"></i> Mute notifications
-                    </li>
-                    <li class="dropdown-item d-flex align-items-center">
-                        <i class="fas fa-user" style="margin-right: 10px;"></i> Profile
-                    </li>
-                    <li class="dropdown-item d-flex align-items-center">
-                        <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i> Logout
-                    </li>
-                </ul>
-            </div>
-            <hr class="separator-line">
-        </div>
-
-        <!-- Task Detail Modal -->
-        <div id="taskDetailModal" class="modal fade" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <input type="text" class="form-control" id="taskTitle" style="font-weight: bold;">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex">
-                        <!-- Task Details Section -->
-                        <div class="task-details" style="flex: 2; padding-right: 20px; border-right: 1px solid #e9ecef;">
-                            <!-- Status and Privacy Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Status</label>
-                                    <select id="taskStatus" class="form-select">
-                                        <option value="To Do">To Do</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Checking">Checking</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Privacy</label>
-                                    <div class="d-flex align-items-center">
-                                        <select id="taskPrivacy" class="form-select" onchange="toggleHideInputView()">
-                                            <option value="Public">Public</option>
-                                            <option value="Private">Private</option>
-                                            <option value="Private Except">Private Except</option>
-                                        </select>
+        <!-- Navbar with notification and profile -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <h1 style="width: 100%;">Project 2024-2025</h1>
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="ms-auto d-flex align-items-center">
+                        <!-- Notification Dropdown -->
+                        <div class="dropdown me-3">
+                            <button class="btn notification-button" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end notification-menu" aria-labelledby="notificationDropdown">
+                                <!-- Fixed Header -->
+                                <div class="notification-header">
+                                    <div class="d-flex justify-content-between align-items-center px-3 py-2">
+                                        <span class="fw-bold">Notifications</span>
+                                        <a href="#" class="text-primary text-decoration-none small">Mark all as read</a>
                                     </div>
+                                    <hr class="dropdown-divider m-0">
                                 </div>
-                            </div>
 
-                            <!-- Hide From Section -->
-                            <div id="hideInputContainerView" class="col-12 mb-3" style="display: none;">
-                                <label class="form-label">Hide From</label>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-user-secret me-2"></i>
-                                    <input type="text" class="form-control" id="hideUserView" placeholder="Enter names to hide">
-                                </div>
-                            </div>
-
-                            <!-- Assign Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Assign to</label>
-                                    <input type="text" id="taskAssign" class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Assigned by</label>
-                                    <input type="text" id="taskAssignee" class="form-control">
-                                </div>
-                            </div>
-
-                            <!-- Date and Category Section -->
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Deadline</label>
-                                    <input type="date" id="taskDate" class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Category</label>
-                                    <input type="text" id="taskCategory" class="form-control">
-                                </div>
-                            </div>
-
-                            <!-- Link Section -->
-                            <div class="mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Link</label>
-                                    <input type="url" id="taskLink" class="form-control">
-                                </div>
-                            </div>
-
-                            <!-- Description Section -->
-                            <div class="mb-4">
-                                <label class="form-label">Description</label>
-                                <textarea id="taskDescription" class="form-control" rows="3"></textarea>
-                            </div>
-
-                            <!-- Submit Section -->
-                            <div class="submit-section">
-                                <div class="row align-items-end">
-                                    <div class="col-md-8">
-                                        <label for="submitToInput" class="form-label">Submit to</label>
-                                        <div class="d-flex align-items-center">
-
-                                            <select class="form-select" id="submitToInput">
-                                                <option value="" selected disabled>Select person to submit to...</option>
-                                                <option value="editor1">John Doe (Editor-in-Chief)</option>
-                                                <option value="editor2">Jane Smith (Associate Editor)</option>
-                                                <option value="editor3">Mike Johnson (Managing Editor)</option>
-                                                <option value="editor4">Sarah Wilson (Copy Editor)</option>
-                                            </select>
+                                <!-- Scrollable Content Area -->
+                                <div class="notification-scroll-area">
+                                    <!-- Today Section -->
+                                    <div class="notification-section">
+                                        <div class="notification-date px-3 py-1">Today</div>
+                                        <div class="notification-item unread">
+                                            <a class="dropdown-item py-2" href="#">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="notification-icon bg-primary">
+                                                        <i class="fas fa-tasks text-white"></i>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <div class="notification-text">New task assigned: Homepage Design</div>
+                                                        <div class="notification-time">2 minutes ago</div>
+                                                    </div>
+                                                    <div class="unread-indicator"></div>
+                                                </div>
+                                            </a>
                                         </div>
-                                        <div class="error-message"></div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button type="button" class="btn btn-success w-100" id="submitAndMarkDoneBtn">
-                                            <i class="fas fa-check-circle me-2"></i>Mark as Done
-                                        </button>
+
+                                    <!-- Yesterday Section -->
+                                    <div class="notification-section">
+                                        <div class="notification-date px-3 py-1">Yesterday</div>
+                                        <div class="notification-item">
+                                            <a class="dropdown-item py-2" href="#">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="notification-icon bg-success">
+                                                        <i class="fas fa-check-circle text-white"></i>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <div class="notification-text">Task completed: Database Setup</div>
+                                                        <div class="notification-time">1 day ago</div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Previous Section -->
+                                    <div class="notification-section">
+                                        <div class="notification-date px-3 py-1">Previous</div>
+                                        <div class="notification-item">
+                                            <a class="dropdown-item py-2" href="#">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="notification-icon bg-warning">
+                                                        <i class="fas fa-exclamation-circle text-white"></i>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <div class="notification-text">Deadline approaching: Frontend Development</div>
+                                                        <div class="notification-time">2 days ago</div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fixed Footer -->
+                                <div class="notification-footer">
+                                    <hr class="dropdown-divider m-0">
+                                    <div class="text-center p-2">
+                                        <a href="#" class="text-primary text-decoration-none">View all notifications</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Comment Section -->
-                        <div class="comment-section" style="flex: 1; padding-left: 20px;">
-                            <h6>Comments</h6>
-                            <div class="comments-list" id="commentsList">
-                                <!-- Comments will be added here dynamically -->
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn profile-button" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="profileImage" src="/images/eic/user.png" alt="Profile Picture" class="profile-img">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="overflow: hidden;">
+                                <li class="dropdown-item d-flex align-items-center">
+                                    <img id="dropdownProfileImage" src="/images/eic/user.png" alt="Profile Picture" style="width: 30px; height: 30px; margin-right: 10px; border-radius: 100%;">
+                                    <span id="profileName">Name</span>
+                                </li>
+                                <li class="dropdown-item d-flex align-items-center" id="viewProfile">
+                                    <i class="fas fa-user" style="margin-right: 10px;"></i>
+                                    <span id="profileText">Profile</span>
+                                </li>
+                                <li class="dropdown-item d-flex align-items-center" id="muteNotif">
+                                    <i class="fas fa-volume-mute" style="margin-right: 10px;"></i>
+                                    <span id="muteNotif">Mute notifications</span>
+                                </li>
+                                <li class="dropdown-item d-flex align-items-center" id="logout">
+                                    <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i>
+                                    <span id="logout">Logout</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Task Detail Modal -->
+        <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskDetailModalLabel">Task Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="taskTitle" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="taskDescription" rows="3" readonly></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <input type="text" class="form-control" id="taskStatus" readonly>
                             </div>
-                            <div class="comment-input-container position-relative">
-                                <textarea class="form-control comment-textarea" id="newComment" rows="3" placeholder="Add a comment..."></textarea>
-                                <button class="btn btn-primary comment-send-btn" id="sendCommentBtn">
-                                    Send
-                                </button>
+                            <div class="col-md-6">
+                                <label class="form-label">Privacy</label>
+                                <select class="form-control" id="taskPrivacy" disabled>
+                                    <option value="Private">Private</option>
+                                    <option value="Public">Public</option>
+                                    <option value="Private Except">Private Except</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="hideFromUsersContainer" style="display: none;">
+                            <label class="form-label">Hide From</label>
+                            <input type="text" class="form-control" id="hideFromUsers" readonly>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Assign To</label>
+                                <select class="form-control" id="taskAssignTo" readonly>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Deadline</label>
+                                <input type="date" class="form-control" id="taskDate" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Link</label>
+                            <input type="url" class="form-control" id="taskLink" readonly>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <label class="form-label" id="submitToLabel">Submit to</label>
+                                <select class="form-control" id="taskSubmitTo">
+                                    <option value="">Select user</option>
+                                    <option value="John Doe">John Doe</option>
+                                    <option value="Jane Smith">Jane Smith</option>
+                                    <option value="Mike Johnson">Mike Johnson</option>
+                                    <option value="Sarah Williams">Sarah Williams</option>
+                                    <option value="David Brown">David Brown</option>
+                                    <option value="Emily Davis">Emily Davis</option>
+                                    <option value="Chris Wilson">Chris Wilson</option>
+                                    <option value="Lisa Anderson">Lisa Anderson</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                        <button type="button" class="btn btn-primary" id="editTaskButton">Edit</button>
+                        <button type="button" class="btn btn-success" id="saveEditButton" style="display: none;">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -238,6 +289,7 @@
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-info-circle me-2"></i>
                                         <select class="form-select" id="taskStatusInput">
+                                            <option value="">Select Status</option>
                                             <option value="To Do">To Do</option>
                                             <option value="In Progress">In Progress</option>
                                             <option value="Checking">Checking</option>
@@ -271,40 +323,23 @@
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="taskAssignInput" class="form-label">Assign to</label>
+                                    <label for="taskAssignInput" class="form-label">Assign To</label>
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-user me-2"></i>
-                                        <input type="text" class="form-control" id="taskAssignInput" placeholder="Enter the person assigned">
+                                        <select class="form-select" id="taskAssignInput">
+                                            <option value="">Select Assignee</option>
+                                           
+                                           
+                                        </select>
                                     </div>
-                                    <div class="error-message"></div>
                                 </div>
-
                                 <div class="col-md-6">
-                                    <label for="taskAssigneeInput" class="form-label">Assigned by</label>
+                                    <label for="taskDateInput" class="form-label">Deadline</label>
                                     <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-tie me-2"></i>
-                                        <input type="text" class="form-control" id="taskAssigneeInput" placeholder="Enter the person assigning">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        <input type="date" class="form-control" id="taskDateInput">
                                     </div>
-                                    <div class="error-message"></div>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="taskDateInput" class="form-label">Deadline</label>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-calendar-alt me-2"></i>
-                                    <input type="date" class="form-control" id="taskDateInput">
-                                </div>
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Category</label>
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-tags me-2"></i>
-                                    <input type="text" class="form-control" id="taskCategoryInput" placeholder="Enter category">
-                                </div>
-                                <div class="error-message"></div>
                             </div>
 
                             <div class="mb-3">
@@ -334,25 +369,22 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="eic-dashboard.html">All Tasks<span class="underline"></span></a>
+                            <a class="nav-link" id = "allTask">All Tasks<span class="underline"></span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="eic-mytask.html">My Tasks<span class="underline"></span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="eic-news.html">News<span class="underline"></span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="eic-feature.html">Feature<span class="underline"></span></a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center">
-                            <a class="nav-link" href="eic-literary.html">Literary<span class="underline"></span></a>
-                            <!-- Plus button added outside of the nav-link, so it's unaffected by animation -->
-                            <button class="btn btn-link p-0 ms-1 plus-button" title="Add Literary" style="text-decoration: none;">
-                        <i class="fas fa-plus"></i>
-                    </button>
+                            <a class="nav-link" id="myTask">My Tasks<span class="underline"></span></a>
                         </li>
                     </ul>
+                    <!-- Add Search Bar -->
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks...">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary add-task-btn">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
                 </div>
             </div>
         </nav>
@@ -363,56 +395,48 @@
                 <!-- To Do Column -->
                 <div class="task-header">
                     <h3>
-                        <button class="btn btn-secondary" style="font-size: 18px;"><i class="fa-regular fa-circle" style="color: white;"></i> TO DO </button> <span class="task-count">0</span>
-                        <span class="plus-icon" style="cursor: pointer;"><i class="fas fa-plus"></i></span>
+                        <div class="status-card status-todo">
+                            <i class="fa-regular fa-circle"></i> TO DO
+                            <span class="task-count">0</span>
+                        </div>
                     </h3>
                     <div class="task-column" id="todo-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-
                     </div>
-                    <div>
-                        <div class="task-list">
-                            <!-- Placeholder for tasks in To Do column -->
-                        </div>
-                    </div>
-
                 </div>
 
                 <!-- In Progress Column -->
                 <div class="task-header">
                     <h3>
-                        <button class="btn btn-orange" style="background:  rgb(255, 94, 0); font-size: 18px; color: white;"><i class="fas fa-adjust" style="color: white;"></i> IN PROGRESS </button> <span class="task-count">0</span>
+                        <div class="status-card status-progress">
+                            <i class="fas fa-adjust"></i> IN PROGRESS
+                            <span class="task-count">0</span>
+                        </div>
                     </h3>
-
                     <div class="task-column" id="in-progress-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    </div>
-                    <div class="task-list">
-                        <!-- Placeholder for tasks in In Progress column -->
                     </div>
                 </div>
 
                 <!-- Checking Column -->
                 <div class="task-header">
                     <h3>
-                        <button class="btn btn-warning" style="background: rgb(255, 193, 7); font-size: 18px; color: white; "><i class="fas fa-spinner" style="color: white;"></i> CHECKING </button> <span class="task-count">0</span>
+                        <div class="status-card status-checking">
+                            <i class="fas fa-spinner"></i> CHECKING
+                            <span class="task-count">0</span>
+                        </div>
                     </h3>
-
                     <div class="task-column" id="checking-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    </div>
-                    <div class="task-list">
-                        <!-- Placeholder for tasks in Checking column -->
                     </div>
                 </div>
 
                 <!-- Done Column -->
                 <div class="task-header">
                     <h3>
-                        <button class="btn btn-success" style="font-size: 18px;"><i class="fas fa-check-circle" style="color: white;"></i> DONE </button> <span class="task-count">0</span>
+                        <div class="status-card status-done">
+                            <i class="fas fa-check-circle"></i> DONE
+                            <span class="task-count">0</span>
+                        </div>
                     </h3>
-
                     <div class="task-column" id="done-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    </div>
-                    <div class="task-list">
-                        <!-- Placeholder for tasks in Done column -->
                     </div>
                 </div>
             </div>
@@ -420,11 +444,79 @@
 
     </div>
 
+   
+
+    <!-- Add this right before the closing body tag -->
+    <div class="profile-card" id="profileCard">
+        <div class="profile-card-content">
+            <button class="close-profile" id="closeProfile">
+                    <i class="fas fa-times"></i>
+                </button>
+
+            <div class="profile-banner"></div>
+
+            <div class="profile-image">
+                <img class="fas fa-user-circle" id="sidebarprofileImage" style="border-radius: 50%;">
+                <div class="online-status"></div>
+            </div>
+
+            <div class="profile-details">
+                <div class="profile-name" id="sidebarprofileName"> </div>
+                <div class="profile-position" ></div>
+
+                <div class="profile-info-section">
+                    <div class="profile-field">
+                        <div class="field-icon">
+                            <i class="fas fa-envelope" ></i>
+                        </div>
+                        <div class="field-content">
+                            <label>Email</label>
+                            <p id="sidebarEmail"></p>
+                        </div>
+                    </div>
+
+                    <div class="profile-field">
+                        <div class="field-icon">
+                            <i class="fas fa-id-badge"></i>
+                        </div>
+                        <div class="field-content">
+                        <label>Role</label>
+                        <p id="sidebarRole"></p>
+                        </div>
+                    </div>
+
+                    <div class="profile-field">
+                        <div class="field-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="field-content">
+                            <label>Joined Date</label>
+                            <p>November 15, 2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <script src="/js/eic/kanban.js"></script>
+    <script src="/js/eic/taskValidation.js"></script>
+    <script src="/js/eic/taskCard.js"></script>
+    <script src="/js/eic/taskDragDrop.js"></script>
+    <script src="/js/eic/taskModal.js"></script>
     <script src="/js/eic/profile.js"></script>
-    <!-- <script src="js/eic.js"></script> -->
+    <script src="/js/eic/taskSearch.js"></script>
+    <script src="/js/eic/taskDone.js"></script>
+    <script src="/js/eic/pageTransitions.js"></script>
+    <!-- <script type="module" src="/js/eic/taskService.js"></script> -->
+    <script type="module" src="/js/eic/taskCard.js"></script>
+
+
+
+
+
+
 </body>
 
 </html>
