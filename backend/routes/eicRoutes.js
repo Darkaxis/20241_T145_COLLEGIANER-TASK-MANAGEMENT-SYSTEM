@@ -20,7 +20,13 @@ eicRoutes.use(cookieParser());
 dotenv.config();
 
 // Initiate the OAuth flow
-eicRoutes.post('/add', (req, res) => {
+eicRoutes.post('/add', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
+        });
+    }
     const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
@@ -40,11 +46,21 @@ eicRoutes.post('/add', (req, res) => {
 
     console.log(`OAuth URL for ${role} with email ${email}: ${url}`);
 
-    const status = googleMailServices.sendOAuthLink(email, url);
+    const status = await googleMailServices.sendOAuthLink(email, url);
+    if (!status) {
+        return res.status(500).json({
+            message: 'Failed to send OAuth link'
+        });
+    }
+    
+    if (status === 400) {
+        return res.status(400).json({
+            message: 'Invalid email address'
+        })};
+
 
     res.status(200).json({
-        message: 'OAuth link sent successfully',
-        status: status
+        message: 'OAuth link sent successfully'
     });
 });
 
@@ -79,15 +95,20 @@ eicRoutes.get('/profile', async (req, res) => {
 
 
 eicRoutes.get('/users', async (req, res) => {
-    // const token = req.cookies.token;
-    // if (!token) {
-    //     return res.status(401).json({
-    //         message: 'No token provided'
-    //     });
-    // }
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
+        });
+    }
+    
     try {
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor In Charge') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
         const users = await eicServices.getAllUsers();
         res.status(200).json({
             message: 'Users retrieved successfully',

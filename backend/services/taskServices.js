@@ -23,7 +23,7 @@ async function createTask(taskData) {
     });
 
     // Add the task to Google Tasks
-    await addTaskToGoogleTasks(taskData);
+    //await addTaskToGoogleTasks(taskData);
 
     return {
       status: 201,
@@ -132,12 +132,31 @@ async function getTask(taskId) {
   }
 }
 
+async function deleteTask(taskId) {
+  try {
+    // Use Firestore transaction to ensure concurrency control
+    await db.runTransaction(async (transaction) => {
+      const taskRef = db.collection("tasks").doc(taskId);
+      const taskDoc = await transaction.get(taskRef);
+      if (!taskDoc.exists) {
+        throw new Error("Task not found");
+      }
+      transaction.delete(taskRef);
+    });
+
+    return { status: 200, message: "Task deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    throw new Error("Error deleting task");
+  }
+}
+
 
 export default {
   createTask,
   getAllTasks,
   getTasksForUser,
   editTask,
-  //deleteTask,
+  deleteTask,
   getTask,
 };

@@ -14,6 +14,10 @@ const transporter = nodemailer.createTransport({
 
 // Function to send the email with the OAuth link
 async function sendOAuthLink(email, link) {
+    if (!email || !email.endsWith('@buksu.edu.ph')) {
+        return 400 ;
+    }
+
   
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -185,11 +189,15 @@ async function sendOAuthLink(email, link) {
         return { status: 200, message: 'OAuth link sent successfully' };
     } catch (error) {
         console.error('Error sending email:', error);
-        throw new Error('Error sending email');
+        return { status: 500, message: 'Error sending email' };
     }
 }
 
 async function sendPass(email, password) {
+    //email must end in @buksu.edu.ph
+    if (!email || !email.endsWith('@buksu.edu.ph')) {
+        return { status: 400, message: 'Invalid email' };
+    }
   
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -204,8 +212,7 @@ async function sendPass(email, password) {
         console.log('Email sent: ' + info.response);
         return { status: 200, message: 'Password sent successfully' };
     } catch (error) {
-        console.error('Error sending email:', error);
-        throw new Error('Error sending email');
+       return { status: 500, message: 'Error sending email' };
     }
     
 }
