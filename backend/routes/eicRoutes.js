@@ -27,6 +27,12 @@ eicRoutes.post('/add', async (req, res) => {
             message: 'No token provided'
         });
     }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor in Charge') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
     const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
@@ -66,33 +72,6 @@ eicRoutes.post('/add', async (req, res) => {
 
 
 
-// User profile route
-eicRoutes.get('/profile', async (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({
-            message: 'Authorization header missing'
-        });
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userProfile = await eicServices.getAdminDetails(decoded.id);
-    
-        res.status(200).json({
-            name: userProfile.name,
-            email: userProfile.email,
-            profileImage: userProfile.profile // Return the profile image
-        });
-    } catch (error) {
-        res.status(401).json({
-            message: 'Invalid token',
-            error: error.message
-        });
-    }
-});
-
-
 
 eicRoutes.get('/users', async (req, res) => {
     const token = req.cookies.token;
@@ -104,7 +83,7 @@ eicRoutes.get('/users', async (req, res) => {
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'Editor In Charge') {
+        if (decoded.role !== 'Editor in Charge') {
             return res.status(403).json({
                 message: 'Unauthorized'
             });
@@ -120,6 +99,32 @@ eicRoutes.get('/users', async (req, res) => {
             error: error.message
         });
     }
+});
+
+eicRoutes.post('/edit', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(403).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({
+            message: 'Unauthorized'
+        });
+    }
+
+    const { email, role } = req.body;
+    const status = await eicServices.updateUserRole(email, role);
+    if (!status) {
+        return res.status(500).json({
+            message: 'Failed to update user role'
+        });
+    }
+    res.status(200).json({
+        message: 'User role updated successfully'
+    });
 });
 
 

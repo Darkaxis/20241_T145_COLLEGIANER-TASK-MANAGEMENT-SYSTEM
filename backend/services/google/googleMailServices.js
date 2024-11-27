@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 // Function to send the email with the OAuth link
 async function sendOAuthLink(email, link) {
-    if (!email || !email.endsWith('@buksu.edu.ph')) {
+    if (!email || !email.endsWith('buksu.edu.ph')) {
         return 400 ;
     }
 

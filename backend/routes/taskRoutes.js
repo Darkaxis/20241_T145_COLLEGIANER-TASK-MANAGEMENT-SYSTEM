@@ -9,6 +9,11 @@ taskRoutes.use(cookieParser());
 dotenv.config();
 
 taskRoutes.post('/create', async (req, res) => {
+        const token = req.cookies.token;  
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor in Chief' || decoded.role !== 'Editorial Board') {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
     try {
         const taskData = req.body;
         const newTask = await taskService.createTask(taskData);

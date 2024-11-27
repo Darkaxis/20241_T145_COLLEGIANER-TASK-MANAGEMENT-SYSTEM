@@ -130,6 +130,26 @@ export async function getAllUsers() {
   }
 }
 
+async function updateUserRole(email, role) {
+  try {
+    await db.runTransaction(async (transaction) => {
+      const userSnapshot = await transaction.get(
+        db.collection("users").where("email", "==", email)
+      );
+      if (userSnapshot.empty) {
+        throw new Error("User not found");
+      }
+
+      const userDoc = userSnapshot.docs[0];
+      transaction.update(userDoc.ref, { role });
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    throw new Error("Error updating user role");
+  }
+}
 
 
 
@@ -140,5 +160,6 @@ export default {
   getUserByEmail,
   addUser,
 getAllUsers,
+updateUserRole,
 
 };
