@@ -78,6 +78,7 @@ export async function addUser(userData) {
       const existingUserSnapshot = await transaction.get(
         db.collection("users").where("email", "==", email)
       );
+      
       if (!existingUserSnapshot.empty) {
         throw new Error("Email already exists");
       }
@@ -144,13 +145,37 @@ async function updateUserRole(email, role) {
       transaction.update(userDoc.ref, { role });
     });
 
+
     return true;
   } catch (error) {
     console.error("Error updating user role:", error);
-    throw new Error("Error updating user role");
+    return false;
   }
 }
 
+export async function getLogs(){
+    try {
+        const logs = await db.collection("logs").get();
+        if (logs.empty) {
+            throw new Error("No logs found");
+        }
+        return logs.docs.map((doc) => doc.data());
+    } catch (error) {
+        console.error("Error getting logs:", error);
+        throw new Error("Error getting logs");
+    }
+}
+staffRoutes.post('/tasks/:taskId/submit', async (req, res) => {
+    //handle submitting assigned task
+    try {
+        const taskId = req.params.taskId;
+        const submissionData = req.body; // Data related to the task submission
+        const result = await taskServices.submitTask(taskId, submissionData);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 
 

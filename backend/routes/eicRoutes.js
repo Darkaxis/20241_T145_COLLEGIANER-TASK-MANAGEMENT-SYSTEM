@@ -127,6 +127,22 @@ eicRoutes.post('/edit', async (req, res) => {
     });
 });
 
+//logs
+eicRoutes.post('/logs', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(403).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({
+            message: 'Unauthorized'
+        });
+    }
+    const logs = await eicServices.getLogs();
+});
 
 
 
