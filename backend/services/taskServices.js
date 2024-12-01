@@ -2,6 +2,7 @@ import admin from "firebase-admin"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js";
 import oauth2Client from "../utils/oauth2Client.js";
 import addTaskToGoogleTasks from "./google/googleTaskServices.js";
+import addEventToGoogleCalendar from "./google/googleCalendarServices.js";
 
 
 // Function to create a new task
@@ -24,6 +25,7 @@ async function createTask(taskData, userEmail) {
 
     // Add the task to Google Tasks for the specific user
     await addTaskToGoogleTasks(taskData, userEmail);
+    await addEventToGoogleCalendar(taskData, userEmail);
 
     return {
       status: 201,
