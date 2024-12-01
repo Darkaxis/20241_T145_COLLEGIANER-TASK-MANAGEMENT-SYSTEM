@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { google } from "googleapis";
-import oauth2Client from "../utils/oauthClient.js"; // Ensure shared OAuth client is imported
+import oauth2Client from "../utils/passport.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
 
 
@@ -66,7 +66,7 @@ export async function getUserByEmail(email) {
 }
 
 export async function addUser(userData) {
-  const { email, name, role, profile, password } = userData;
+  const { email, name, role, profile, password, token, refreshToken } = userData;
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -87,6 +87,8 @@ export async function addUser(userData) {
         email,
         name,
         role,
+        token,
+        refreshToken,
         password: hashedPassword,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         profile,
@@ -165,17 +167,6 @@ export async function getLogs(){
         throw new Error("Error getting logs");
     }
 }
-staffRoutes.post('/tasks/:taskId/submit', async (req, res) => {
-    //handle submitting assigned task
-    try {
-        const taskId = req.params.taskId;
-        const submissionData = req.body; // Data related to the task submission
-        const result = await taskServices.submitTask(taskId, submissionData);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
 
 
 

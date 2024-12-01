@@ -9,17 +9,17 @@ taskRoutes.use(cookieParser());
 dotenv.config();
 
 taskRoutes.post('/create', async (req, res) => {
-        const token = req.cookies.token;  
-        if(!token) {
-            return res.status(401).json({ message: 'No token provided' });
-        }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'Editor in Chief' || decoded.role !== 'Editorial Board') {
-            return res.status(403).json({ message: 'Unauthorized' });
-        }
+        // const token = req.cookies.token;  
+        // if(!token) {
+        //     return res.status(401).json({ message: 'No token provided' });
+        // }
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // if (decoded.role !== 'Editor in Chief' || decoded.role !== 'Editorial Board') {
+        //     return res.status(403).json({ message: 'Unauthorized' });
+        // }
     try {
         const taskData = req.body;
-        const newTask = await taskService.createTask(taskData);
+        const newTask = await taskService.createTask(taskData, taskData.assignedTo);
         res.status(201).send(newTask);
     } catch (error) {
         res.status(400).send(error.message);
@@ -115,7 +115,7 @@ taskRoutes.post('submit/:taskId/', async (req, res) => {
     try {
         const taskId = req.params.taskId;
         const submissionData = req.body; // Data related to the task submission
-        const result = await taskService    .submitTask(taskId, submissionData);
+        const result = await taskService.submitTask(taskId, submissionData);
         res.status(200).json(result);
     } catch (error) {
         res.status(400).json({ error: error.message });

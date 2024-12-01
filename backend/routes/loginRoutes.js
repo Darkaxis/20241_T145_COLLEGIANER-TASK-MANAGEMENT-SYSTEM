@@ -15,24 +15,24 @@ loginRoutes.post('/', async(req, res) => {
 
     // Verify reCAPTCHA first
     try {
-        // const recaptchaVerify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded',
-        //     },
-        //     body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-        // });
+        const recaptchaVerify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+        });
 
-        // const recaptchaResult = await recaptchaVerify.json();
-        // console.log('reCAPTCHA verification result:', recaptchaResult);
+        const recaptchaResult = await recaptchaVerify.json();
+        console.log('reCAPTCHA verification result:', recaptchaResult);
 
-        // if (!recaptchaResult.success) {
-        //     console.error('reCAPTCHA error:', recaptchaResult['error-codes']);
-        //     return res.status(400).json({
-        //         message: 'Please complete the reCAPTCHA verification',
-        //         error: recaptchaResult['error-codes']
-        //     });
-        // }
+        if (!recaptchaResult.success) {
+            console.error('reCAPTCHA error:', recaptchaResult['error-codes']);
+            return res.status(400).json({
+                message: 'Please complete the reCAPTCHA verification',
+                error: recaptchaResult['error-codes']
+            });
+        }
 
         // Continue with existing authentication logic
         const token = await loginServices.authenticateUser(email, password);
