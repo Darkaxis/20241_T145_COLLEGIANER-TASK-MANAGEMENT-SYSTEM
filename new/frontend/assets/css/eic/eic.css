@@ -1,0 +1,2923 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap");
+
+/* General Reset and Global Styles */
+
+* {
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    background-color: #f8f9fc;
+}
+
+
+/* Sidebar Styles */
+
+.sidebar {
+    width: 300px;
+    background-color: #05274B;
+    padding: 20px;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar-head {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.sidebar-head img {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 2px solid #ffffff;
+    margin: 10px 0;
+}
+
+.sidebar a {
+    display: block;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: "Inter", sans-serif;
+    letter-spacing: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #e3ddddd3;
+}
+
+.sidebar-section .icon {
+    font-size: 25px;
+    margin-right: 10px;
+    font-weight: lighter;
+    color: #f0f2f4;
+}
+
+.collegianer {
+    font-family: 'Old English Text MT', serif;
+    font-size: 35px;
+    font-weight: normal;
+    margin-left: -15px;
+    text-align: left;
+    padding-left: 0;
+}
+
+.task-management-system {
+    font-weight: 100;
+    margin: 0;
+    font-size: 12px;
+    width: 15vw;
+    letter-spacing: 1.5px;
+    margin-left: -15px;
+    text-align: left;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Main Content Styles */
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar-section {
+    margin-top: 20px;
+    /* Space above sidebar section */
+}
+
+.sidebar-section a .icon {
+    margin-right: 10px;
+    /* Spacing between icon and text */
+}
+
+.icon {
+    color: white;
+    /* Icon color */
+}
+
+
+/* Navbar Styles */
+
+.navbar {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.navbar .navbar-brand,
+.navbar-nav .nav-link {
+    color: #555;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #007bff;
+}
+
+
+/* Underline animation for hover effect */
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    left: 50%;
+    bottom: -5px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after,
+.navbar-nav .nav-link.active::after {
+    width: 100%;
+    left: 0;
+}
+
+.separator-line {
+    border: none;
+    border-bottom: 1px solid #28282868;
+    margin: 10px 0;
+}
+
+
+/* Task Dashboard and Task Board */
+
+.task-dashboard {
+    flex: 1;
+    overflow-y: auto;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.task-board {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f8f9fc;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.task-column {
+    flex: 1;
+    width: 230px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    height: 400px;
+    /* Set a fixed height for the column */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+}
+
+.task-column h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 15px;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.plus-icon {
+    cursor: pointer;
+    font-size: 20px;
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+.plus-icon:hover {
+    color: #0056b3;
+}
+
+.task-card {
+    display: block;
+    display: block;
+    background-color: #f4f6f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    /* Increased padding for larger cards */
+    margin-bottom: 10px;
+    color: #333;
+    text-decoration: none;
+    transition: box-shadow 0.3s ease;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.task-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+.task-card.dragging {
+    opacity: 0.5;
+    cursor: move;
+}
+
+.task-card.drag-over {
+    border: 2px dashed #666;
+}
+
+.task-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.task-card.drag-over::after {
+    background-color: #666;
+}
+
+
+/* Task Card Title and Description */
+
+.task-card h3,
+.task-card p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    /* Allow text to wrap to the next line */
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Profile Dropdown */
+
+.profile-dropdown {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+}
+
+.profile-button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.profile-img {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+}
+
+
+/* Dropdown menu item */
+
+.dropdown-item {
+    padding: 10px 15px;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+
+/* Profile image and text alignment in dropdown */
+
+.dropdown-item.d-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Animation for profile image on hover */
+
+.profile-button:hover .profile-img {
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+
+
+/* Modal Customization */
+
+
+/* Task Detail Modal Styling */
+
+#taskDetailModal {
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskDetailModal .modal-dialog {
+    max-width: 800px;
+}
+
+#taskDetailModal .modal-content {
+    border-radius: 12px;
+}
+
+#taskDetailModal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0;
+    padding: 1rem 1.5rem;
+}
+
+#taskDetailModal .modal-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+#taskDetailModal .modal-body {
+    padding: 1.5rem;
+}
+
+#taskDetailModal .form-group label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+#taskDetailModal .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskDetailModal .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+
+/* Comments Section Styling */
+
+.comments-section {
+    margin-top: 2rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem;
+}
+
+.comments-title {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1rem;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.comment-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.comment-user {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.comment-text {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.comment-input-container {
+    margin-top: 1rem;
+}
+
+#commentInput {
+    resize: none;
+    border-radius: 8px;
+    font-family: "Quicksand", sans-serif;
+}
+
+#addCommentBtn {
+    float: right;
+    font-family: "Quicksand", sans-serif;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+
+/* Modal Footer */
+
+#taskDetailModal .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+}
+
+#taskDetailModal .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-family: "Quicksand", sans-serif;
+}
+
+#markAsDoneBtn {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+#markAsDoneBtn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+
+/* Scrollbar styling */
+
+#taskDetailModal .modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+#taskDetailModal .modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+/* Status badges styling */
+
+#taskDetailModal #taskStatus {
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    min-width: 100px;
+}
+
+#taskDetailModal #taskStatus[data-status="To Do"] {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+#taskDetailModal #taskStatus[data-status="In Progress"] {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+#taskDetailModal #taskStatus[data-status="Checking"] {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+#taskDetailModal #taskStatus[data-status="Done"] {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+
+/* Description section styling */
+
+#taskDetailModal #taskDescription {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    line-height: 1.6;
+    color: #2c3e50;
+    min-height: 100px;
+}
+
+
+/* Comment section styling */
+
+#taskDetailModal .comment-section {
+    flex: 1;
+    padding-left: 1.5rem;
+    border-left: none;
+}
+
+#taskDetailModal .comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+#taskDetailModal .comment-item {
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+#taskDetailModal .comment-item:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Custom scrollbar for comments */
+
+#taskDetailModal .comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+/* Link styling */
+
+#taskDetailModal #taskLink {
+    color: #007bff;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+#taskDetailModal #taskLink:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    #taskDetailModal .modal-body {
+        flex-direction: column;
+    }
+    #taskDetailModal .task-details {
+        padding-right: 0;
+        border-right: none;
+        margin-bottom: 1.5rem;
+    }
+    #taskDetailModal .comment-section {
+        padding-left: 0;
+        border-left: none;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eaeaea;
+    }
+}
+
+.input-group input {
+    padding-left: 35px;
+    /* to account for the icon */
+    font-size: 14px;
+    width: 100%;
+    padding: 10px;
+    /* reasonable padding */
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.input-group {
+    width: 100%;
+    padding: 10px;
+    /* fixed padding */
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+i {
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+input,
+textarea,
+select {
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    margin: 5px;
+}
+
+.modal-footer button {
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+label {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    margin: 10px 0;
+}
+
+.modal-content {
+    margin: 100px 100px 100px 100px;
+}
+
+select {
+    width: 20px;
+}
+
+table {
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+}
+
+
+/* Style for header and footer buttons */
+
+.btn-close {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+
+/* Underline animation for hover effect */
+
+.navbar-nav .nav-link,
+.navbar-brand {
+    position: relative;
+    /* Position relative to enable absolute positioning for the underline */
+}
+
+.navbar-nav .nav-link::after,
+.navbar-brand::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    /* Change to your desired color */
+    left: 50%;
+    bottom: -5px;
+    /* Position below the link text */
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after,
+.navbar-brand:hover::after {
+    width: 100%;
+    left: 0;
+    /* Moves the underline to start from the left */
+}
+
+.navbar-nav .nav-link.active::after,
+.navbar-brand.active::after {
+    width: 100%;
+    /* Ensures the underline is full width */
+    left: 0;
+    /* Starts from the left */
+}
+
+
+/* Custom styling to match the clean look in the image */
+
+.modal-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.form-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.form-control,
+.form-select {
+    .task-dashboard {
+        flex: 1;
+        overflow-y: auto;
+    }
+    .task-board {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        background-color: #f8f9fc;
+    }
+    .task-column {
+        width: 250px;
+        /* Set a fixed width for the column */
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        position: relative;
+        font-family: "Inter", sans-serif;
+        height: 400px;
+        /* Set a fixed height for the column */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+    }
+    font-size: 14px;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.modal-footer .btn {
+    min-width: 100px;
+}
+
+
+/* Task Detail Modal Styling */
+
+#taskDetailModal .modal-content {
+    border: none;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+#taskDetailModal .modal-header {
+    padding: 1.5rem;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+}
+
+#taskDetailModal .modal-title {
+    color: #2c3e50;
+    font-size: 1.25rem;
+}
+
+#taskDetailModal .modal-body {
+    padding: 1.5rem;
+}
+
+#taskDetailModal .task-details {
+    flex: 2;
+    padding-right: 2rem;
+}
+
+#taskDetailModal .form-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+    color: #6c757d;
+}
+
+#taskDetailModal .form-control-plaintext {
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin: 0;
+    transition: background-color 0.2s ease;
+}
+
+#taskDetailModal .form-control-plaintext:hover {
+    background-color: #f0f2f5;
+}
+
+
+/* Status badges styling */
+
+#taskDetailModal #taskStatus {
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    min-width: 100px;
+}
+
+#taskDetailModal #taskStatus[data-status="To Do"] {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+#taskDetailModal #taskStatus[data-status="In Progress"] {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+#taskDetailModal #taskStatus[data-status="Checking"] {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+#taskDetailModal #taskStatus[data-status="Done"] {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+
+/* Description section styling */
+
+#taskDetailModal #taskDescription {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    line-height: 1.6;
+    color: #2c3e50;
+    min-height: 100px;
+}
+
+
+/* Comment section styling */
+
+#taskDetailModal .comment-section {
+    flex: 1;
+    padding-left: 1.5rem;
+    border-left: none;
+}
+
+#taskDetailModal .comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+#taskDetailModal .comment-item {
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+#taskDetailModal .comment-item:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Custom scrollbar for comments */
+
+#taskDetailModal .comments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#taskDetailModal .comments-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+/* Link styling */
+
+#taskDetailModal #taskLink {
+    color: #007bff;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+#taskDetailModal #taskLink:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    #taskDetailModal .modal-body {
+        flex-direction: column;
+    }
+    #taskDetailModal .task-details {
+        padding-right: 0;
+        border-right: none;
+        margin-bottom: 1.5rem;
+    }
+    #taskDetailModal .comment-section {
+        padding-left: 0;
+        border-left: none;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eaeaea;
+    }
+}
+
+
+/* Comments Section Styling */
+
+.comment-section {
+    border-left: 1px solid #dee2e6;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.comments-list {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.comment-item {
+    cursor: pointer;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.comment-item:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.comment-item:active {
+    transform: translateX(2px);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.comment-author {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.comment-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.comment-content {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+
+/* Comment Form Styling */
+
+.comment-form textarea {
+    border-radius: 8px;
+    resize: none;
+    font-size: 0.95rem;
+}
+
+.comment-form textarea:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Global Scrollbar Styling */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
+/* Navbar styles with Quicksand font */
+
+.navbar {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.navbar .nav-link {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 16px;
+    color: #333;
+    position: relative;
+    padding: 8px 15px;
+}
+
+.navbar .nav-item {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+
+/* Optional: Style for active nav items */
+
+.navbar .nav-link.active {
+    font-weight: 600;
+}
+
+
+/* Optional: Style for hover state */
+
+.navbar .nav-link:hover {
+    font-weight: 600;
+}
+
+#addTaskModal {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Add Task Modal Form Elements */
+
+#addTaskModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal .form-control {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal .form-select {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal textarea {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal input::placeholder {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addTaskModal .btn {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Account Dashboard Elements */
+
+.dashboard {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Cards */
+
+.card-title {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.card-text {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Table */
+
+.user-table {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.user-table thead th {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.user-table tbody td {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Section Title */
+
+h3.mt-4 {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Add User Button */
+
+.btn-primary.mt-2 {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Add User Modal */
+
+#addUserModal {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addUserModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addUserModal .form-control {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addUserModal .form-select {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addUserModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+#addUserModal .btn {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Buttons */
+
+.btn {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* H1 Heading Style */
+
+h1 .head {
+    font-optical-sizing: auto;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+
+/* If you want to target specific h1 elements */
+
+.main-content h1 {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Remove unwanted scrollbar from modal backdrop */
+
+#taskDetailModal.modal.fade.show {
+    overflow-y: hidden !important;
+}
+
+.modal-backdrop {
+    position: fixed;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.modal {
+    overflow: hidden !important;
+}
+
+
+/* Task Detail Modal Label and Content Styling */
+
+#taskDetailModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    /* Make labels bold */
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+    /* Match the size with content */
+}
+
+#taskDetailModal .form-control-plaintext,
+#taskDetailModal #taskDescription {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    /* Medium weight for content */
+    font-size: 14px;
+    /* Match the size with labels */
+    color: #333;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: none;
+    min-height: 38px;
+}
+
+
+/* Style for empty/placeholder content */
+
+#taskDetailModal .form-control-plaintext:empty::before {
+    content: "No data provided";
+    color: #6c757d;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+#taskDetailModal #taskCategory:empty::before {
+    content: "No category provided";
+    color: #6c757d;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+#taskDetailModal #taskDescription:empty::before {
+    content: "No description provided";
+    color: #6c757d;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+#taskDetailModal #taskLink:empty::before {
+    content: "No link provided";
+    color: #6c757d;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+
+/* Comments Heading Style */
+
+#taskDetailModal .comment-section h6 {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    /* Make it bold like other labels */
+    color: #333;
+    font-size: 14px;
+    /* Match size with other labels */
+    margin-bottom: 8px;
+}
+
+
+/* Comment Input Styling */
+
+.comment-input-container {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 15px;
+}
+
+.comment-input-container textarea {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-size: 13px;
+    padding: 8px 35px 8px 12px;
+    height: 40px;
+    min-height: 40px;
+    resize: none;
+}
+
+.comment-input-container .send-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #0d6efd;
+    cursor: pointer;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.comment-input-container .send-icon:hover {
+    color: #0a58ca;
+}
+
+.comment-input-container textarea::placeholder {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-size: 13px;
+}
+
+.comment-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.comments-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+
+/* Status and Privacy alignment */
+
+.task-details .row:first-child {
+    display: flex;
+    align-items: start;
+    margin-bottom: 15px;
+}
+
+.task-details .row:first-child .col-md-6 {
+    flex: 1;
+}
+
+.task-details .form-label {
+    margin-bottom: 5px;
+}
+
+
+/* Adjust spacing between sections */
+
+.task-details .row {
+    margin-bottom: 10px;
+}
+
+.task-details .mb-3 {
+    margin-bottom: 10px !important;
+}
+
+
+/* Comment section adjustments */
+
+.comment-section {
+    padding-left: 20px;
+}
+
+.comments-list {
+    max-height: 350px;
+}
+
+.task-count {
+    display: inline-block;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 8px;
+    min-width: 24px;
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.task-header h3 {
+    display: flex;
+    align-items: center;
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+/* Comment Section Styles */
+
+.comment-input-container {
+    position: relative;
+}
+
+.comment-textarea {
+    padding-right: 50px;
+}
+
+.comment-send-btn {
+    position: absolute;
+    right: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 1px 6px;
+    font-size: 11px;
+    height: 25px;
+    border-radius: 3px;
+    min-width: 40px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Navbar brand adjustments */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-brand img {
+    margin-right: 5px;
+}
+
+.navbar-brand p {
+    margin: 0;
+    padding-right: 15px;
+}
+
+
+/* Collegianer text */
+
+.collegianer-text {
+    margin-left: auto;
+    padding-left: 15px;
+}
+
+
+/* Table Container Styles */
+
+.table-container {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.table-container table {
+    width: 100%;
+    margin-bottom: 0;
+    /* Remove bottom margin as container handles spacing */
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.card-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h5 {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+    font-weight: 600;
+}
+
+.card-content .count {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 5px 0 0;
+    color: #333;
+}
+
+
+/* Card specific colors */
+
+.admin-card .card-icon {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+}
+
+.editorial-card .card-icon {
+    background: linear-gradient(135deg, #4ECDC4, #45B7AF);
+}
+
+.staff-card .card-icon {
+    background: linear-gradient(135deg, #6C5CE7, #8983F7);
+}
+
+
+/* Optional: Add different border accents */
+
+.admin-card {
+    border-left: 4px solid #FF6B6B;
+}
+
+.editorial-card {
+    border-left: 4px solid #4ECDC4;
+}
+
+.staff-card {
+    border-left: 4px solid #6C5CE7;
+}
+
+
+/* Add Task Modal Styles */
+
+#addTaskModal .modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#addTaskModal .modal-header {
+    background-color: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+    padding: 1.5rem;
+    border: none;
+}
+
+#addTaskModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #05274B;
+}
+
+#addTaskModal .modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#addTaskModal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+#addTaskModal .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    padding: 0.75rem;
+}
+
+#addTaskModal .input-group-text i {
+    color: #6c757d;
+    width: 16px;
+    text-align: center;
+}
+
+#addTaskModal .form-control,
+#addTaskModal .form-select {
+    border-left: none;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+}
+
+#addTaskModal .form-control:focus,
+#addTaskModal .form-select:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#addTaskModal textarea.form-control {
+    min-height: 100px;
+}
+
+#addTaskModal .modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+    border: none;
+}
+
+#addTaskModal .btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+#addTaskModal .btn-light {
+    background-color: #e9ecef;
+    border: none;
+}
+
+#addTaskModal .btn-light:hover {
+    background-color: #dee2e6;
+}
+
+#addTaskModal .btn-primary {
+    background-color: #05274B;
+    border: none;
+}
+
+#addTaskModal .btn-primary:hover {
+    background-color: #031b33;
+}
+
+
+/* Error message styles */
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.input-error {
+    border-color: red !important;
+}
+
+
+/* Form validation error styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* Adjust input group margins */
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Form validation error styles */
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Input group validation styling */
+
+.input-group .form-control.is-invalid,
+.input-group .form-select.is-invalid {
+    z-index: 2;
+}
+
+.input-group .form-control.is-invalid:focus,
+.input-group .form-select.is-invalid:focus {
+    z-index: 3;
+}
+
+
+/* Form validation error styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+    padding-left: 2rem;
+    /* Align with input text (accounting for icon width) */
+}
+
+
+/* Adjust input groups */
+
+.d-flex.align-items-center {
+    margin-bottom: 0.25rem;
+}
+
+
+/* Ensure form groups have proper spacing */
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Specific alignment for icons */
+
+.d-flex i {
+    width: 2rem;
+    /* Fixed width for icons to ensure consistent alignment */
+    text-align: center;
+}
+
+
+/* Adjust spacing for columns */
+
+.row .col-md-6 {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Ensure error messages in columns align with inputs */
+
+.row .col-md-6 .error-message {
+    padding-left: 10px;
+    /* Match the input text alignment */
+}
+
+
+/* Input validation styling */
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* General error message styles */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Submit button styling */
+
+#submitTaskButton {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#submitTaskButton:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+
+/* Submission select styling */
+
+#submitToInput {
+    background-color: #fff;
+}
+
+#submitToInput:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+}
+
+.submit-section .row {
+    margin: 0;
+}
+
+.submit-section .btn-success {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+
+/* Form control consistency */
+
+.form-select,
+.form-control {
+    border-radius: 0.375rem;
+}
+
+
+/* Icon alignment in buttons */
+
+.btn i {
+    font-size: 0.875rem;
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+}
+
+.submit-section .row {
+    margin: 0;
+}
+
+.submit-section .btn-success {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Description textarea styling */
+
+#taskDescription {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* Form group spacing */
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+
+/* View Task Modal Styling */
+
+#taskDetailModal {
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskDetailModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 600;
+}
+
+#taskDetailModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+    color: #333;
+}
+
+#taskDetailModal .form-select,
+#taskDetailModal .form-control,
+#taskDetailModal input,
+#taskDetailModal textarea,
+#taskDetailModal select {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+
+/* Submit section styling */
+
+.submit-section {
+    font-family: "Quicksand", sans-serif;
+}
+
+.submit-section .form-label {
+    font-weight: 500;
+}
+
+#submitToInput {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+#submitAndMarkDoneBtn {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+
+/* Comment section styling */
+
+.comment-section {
+    font-family: "Quicksand", sans-serif;
+}
+
+.comment-section h6 {
+    font-weight: 600;
+}
+
+.comment-textarea {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+}
+
+
+/* Error message styling */
+
+.error-message {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+
+/* Modal footer buttons */
+
+.modal-footer .btn {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 500;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+}
+
+.task-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.task-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.task-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.task-card i {
+    margin-right: 5px;
+    width: 16px;
+}
+
+.task-column {
+    min-height: 100px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.task-card-content {
+    font-family: "Quicksand", sans-serif;
+}
+
+#taskTitle {
+    border: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+    width: 65%;
+    margin-right: 20px;
+}
+
+#taskTitle:focus {
+    outline: none;
+    border-bottom: 2px solid #007bff;
+}
+
+
+/* Style for task detail modal input fields */
+
+#taskDetailModal .form-control {
+    font-size: 14px;
+    padding: 6px 10px;
+    height: 32px;
+}
+
+#taskDetailModal textarea.form-control {
+    height: auto;
+    min-height: 80px;
+}
+
+#taskDetailModal select.form-control {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Style for task title in modal */
+
+#taskTitle {
+    font-size: 16px;
+    font-weight: bold;
+    height: 36px;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    width: 300px !important;
+    /* Set specific width */
+    max-width: 80%;
+    /* Ensure it doesn't get too wide on larger screens */
+}
+
+
+/* Style for labels in modal */
+
+#taskDetailModal label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+
+/* Style for modal content padding */
+
+#taskDetailModal .modal-body {
+    padding: 15px 20px;
+}
+
+
+/* Style for form groups in modal */
+
+#taskDetailModal .form-group {
+    margin-bottom: 12px;
+}
+
+
+/* Style for date input specific */
+
+#taskDetailModal input[type="date"] {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Style for select dropdowns */
+
+#taskDetailModal select {
+    height: 32px;
+    padding: 4px 8px;
+}
+
+
+/* Status Card Styling */
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.status-card i {
+    font-size: 18px;
+}
+
+.status-todo {
+    background: #6c757d;
+}
+
+.status-progress {
+    background: rgb(255, 94, 0);
+}
+
+.status-checking {
+    background: rgb(255, 193, 7);
+}
+
+.status-done {
+    background: #28a745;
+}
+
+
+/* Task Count Styling */
+
+.task-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+
+/* Task Header Layout */
+
+.task-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+
+/* Plus Icon Styling */
+
+.plus-icon {
+    background: #f8f9fa;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #6c757d;
+}
+
+.plus-icon:hover {
+    background: #e9ecef;
+    transform: rotate(90deg);
+}
+
+
+/* Hover effects for status cards */
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Comments Section Styling */
+
+.comments-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.comments-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.comment-user {
+    font-weight: 500;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: #444;
+}
+
+.comment-input-container {
+    margin-top: 15px;
+}
+
+#commentInput {
+    resize: none;
+    border-radius: 6px;
+}
+
+#addCommentBtn {
+    float: right;
+}
+
+
+/* Common Label Styling for both Add Task and View Task modals */
+
+#addTaskModal .form-group label,
+#taskDetailModal .form-group label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+
+/* Form Control styling for both modals */
+
+#addTaskModal .form-control,
+#taskDetailModal .form-control {
+    font-family: "Quicksand", sans-serif;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+
+/* Modal styling for both */
+
+#addTaskModal .modal-title,
+#taskDetailModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    color: #333;
+}
+
+
+/* Add Task Modal Label Styling */
+
+#addTaskModal .form-label {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 800 !important;
+    /* Extra bold */
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+
+/* Add Task Modal Form Control Styling */
+
+#addTaskModal .form-control,
+#addTaskModal .form-select {
+    font-family: "Quicksand", sans-serif;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+
+/* Add Task Modal Icons */
+
+#addTaskModal .fas {
+    color: #6c757d;
+    width: 20px;
+    text-align: center;
+}
+
+
+/* Add Task Modal Title */
+
+#addTaskModal .modal-title {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 800;
+    color: #333;
+    font-size: 1.25rem;
+}
+
+
+/* Error Message Styling */
+
+#addTaskModal .error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Modal Body Scrollbar Styling */
+
+#addTaskModal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#addTaskModal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+/* Add styles for edit mode */
+
+.form-control:not([readonly]) {
+    background-color: #fff;
+    border-color: #80bdff;
+}
+
+.form-control:not([readonly]):focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+#saveEditButton {
+    margin-right: 5px;
+}
+
+.task-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-card .view-details {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+}
+
+.task-card-content {
+    padding: 15px;
+}
+
+
+/* Style for the modal inputs when in view mode */
+
+.modal input[readonly],
+.modal textarea[readonly] {
+    background-color: #f8f9fa;
+    cursor: default;
+}
+
+
+/* Style for the modal inputs when in edit mode */
+
+.modal input.editable,
+.modal textarea.editable {
+    background-color: #fff;
+    cursor: text;
+}
+
+
+/* Add these styles for the task info layout */
+
+.task-info {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.task-info p {
+    margin: 0;
+    flex: 1;
+}
+
+
+/* Update task card styling */
+
+.task-card-content {
+    padding: 15px;
+}
+
+.task-card-content h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.task-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.task-info-container p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.task-info-container i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+
+/* Add styles for the select dropdowns */
+
+.form-select,
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.25rem;
+}
+
+.form-select:disabled,
+select.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+
+/* Style for the dropdown options */
+
+.form-select option,
+select.form-control option {
+    padding: 8px 12px;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* Search Box Styles */
+
+.search-box {
+    position: relative;
+    margin-bottom: 30px;
+    max-width: 400px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.search-box input {
+    padding-left: 40px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.search-box input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+
+/* Navbar Search Box Styles */
+
+.navbar .search-box {
+    position: relative;
+    width: 300px;
+    margin-bottom: 0;
+}
+
+.navbar .search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    z-index: 1;
+}
+
+.navbar .search-box input {
+    padding-left: 40px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+    height: 38px;
+}
+
+.navbar .search-box input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+    outline: none;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 992px) {
+    .navbar .search-box {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+.task-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.task-card-body {
+    flex: 1;
+    padding-bottom: 10px;
+}
+
+.task-card-footer {
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.task-card-footer .btn {
+    font-size: 0.875rem;
+}
+
+.task-card-footer .dropdown-menu {
+    min-width: 200px;
+}
+
+
+/* Add these styles for the task detail modal buttons */
+
+.task-detail-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+#taskDetailModal .dropdown-menu {
+    width: 100%;
+}
+
+#taskDetailModal .btn {
+    padding: 8px 16px;
+}
+
+
+/* Sidebar Link Styles */
+
+.sidebar-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 6px 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+
+/* Icon styles */
+
+.sidebar-link .icon {
+    margin-right: 12px;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+
+/* Hover effect */
+
+.sidebar-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+
+
+/* Active state styling */
+
+.sidebar-link.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* Gradient border effect for active state */
+
+.sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient( 180deg, #ffffff 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.3) 100%);
+    border-radius: 0 4px 4px 0;
+    animation: borderPulse 2s infinite;
+}
+
+
+/* Subtle shine effect */
+
+.sidebar-link.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient( 90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shine 3s infinite;
+}
+
+
+/* Animations */
+
+@keyframes borderPulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+
+/* Icon animation for active state */
+
+.sidebar-link.active .icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.task-menu-item.delete-task-btn {
+    color: #dc3545;
+}
+
+.task-menu-item.delete-task-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+#deleteTaskButton {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    transition: all 0.3s ease;
+}
+
+#deleteTaskButton:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+.modal-footer .d-flex {
+    gap: 10px;
+}
+
+
+/* Task Category Styles */
+
+.task-category {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+
+
+/* Error Message Styling */
+
+.error-message-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: rgba(220, 53, 69, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+.error-icon {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.error-text {
+    color: #dc3545;
+    font-family: "Quicksand", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+/* Invalid input styling */
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    border-width: 2px;
+    background-image: none;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+
+/* Error animations */
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.shake-error {
+    animation: shake 0.4s ease-in-out;
+}
+
+
+/* Adjust spacing for form groups */
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 24px !important;
+}
+
+
+/* Ensure error messages don't overlap */
+
+.form-group {
+    position: relative;
+    margin-bottom: 24px;
+}
