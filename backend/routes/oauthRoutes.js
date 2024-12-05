@@ -109,6 +109,7 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
         } else if (state.startsWith('login')) {
             // Handle login callback
             const user = await eicServices.getUserByEmail(email);
+        
             if (!user) {
                 return res.status(401).json({
                     message: 'User not found. Please sign up first.'

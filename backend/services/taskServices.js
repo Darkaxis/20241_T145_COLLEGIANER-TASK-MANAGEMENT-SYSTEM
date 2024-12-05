@@ -24,8 +24,9 @@ async function createTask(taskData, userEmail) {
     });
 
     // Add the task to Google Tasks for the specific user
-    await addTaskToGoogleTasks(taskData, userEmail);
-    await addEventToGoogleCalendar(taskData, userEmail);
+    console.log("Anew task",newTask);
+    await addTaskToGoogleTasks(newTask, userEmail);
+    await addEventToGoogleCalendar(newTask, userEmail);
 
     return {
       status: 201,
