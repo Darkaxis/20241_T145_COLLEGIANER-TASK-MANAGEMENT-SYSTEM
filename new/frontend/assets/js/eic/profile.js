@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
         // Use the token from local storage for fetching the user profile
         const profileinfo = userResult.user;
-
+        console.log(profileinfo)
 
         const profileName = document.getElementById("profileName");
         const profileImage = document.getElementById("profileImage");

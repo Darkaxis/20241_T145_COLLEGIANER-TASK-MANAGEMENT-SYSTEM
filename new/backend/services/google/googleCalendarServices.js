@@ -1,37 +1,53 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-import { LoginTicket } from 'google-auth-library';
+import { google } from 'googleapis';
+import oAuth2Client from '../../utils/oauth2Client.js';
+import db from '../../utils/firestoreClient.js'; // Assuming you have a Firestore client to get user tokens
 
-dotenv.config();
-
-// Create a Nodemailer transporter using SMTP
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+async function getUserTokens(email) {
+  try {
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (userSnapshot.empty) {
+      throw new Error('User not found');
     }
-});
-
-
-// Function to send the email with the OAuth link
-async function sendOAuthLink(email, link) {
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Complete Your Registration',
-        text: `Please complete your registration by clicking the following link: ${link}`,
-        html: `<p>Please complete your registration by clicking the following link: <a href="${link}">${Verify}</a></p>`
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-        return { status: 200, message: 'OAuth link sent successfully' };
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw new Error('Error sending email');
-    }
+    const userDoc = userSnapshot.docs[0];
+    return {
+      access_token: userDoc.data().token,
+      refresh_token: userDoc.data().refreshToken
+    }; // Assuming tokens are stored in the user document
+  } catch (error) {
+    console.error('Error getting user tokens:', error);
+    throw new Error('Error getting user tokens');
+  }
 }
 
-export default { sendOAuthLink };
+async function addEventToGoogleCalendar(eventData, email) {
+  try {
+    const tokens = await getUserTokens(email);
+    oAuth2Client.setCredentials(tokens);
+
+    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+    const event = {
+      summary: eventData.taskName,
+      description: eventData.description,
+      start: {
+        dateTime: eventData.createdAt,
+        timeZone: 'Asia/Manila',
+      },
+      end: {
+        dateTime: eventData.deadline,
+        timeZone: 'Asia/Manila',
+      },
+    };
+
+    const response = await calendar.events.insert({
+      calendarId: 'primary',
+      requestBody: event,
+    });
+    console.log('Event added to Google Calendar:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding event to Google Calendar:', error);
+    throw new Error('Error adding event to Google Calendar');
+  }
+}
+
+export default addEventToGoogleCalendar;

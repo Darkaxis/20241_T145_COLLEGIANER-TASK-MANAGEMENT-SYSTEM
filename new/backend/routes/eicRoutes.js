@@ -2,15 +2,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import jwt from 'jsonwebtoken';
 import eicServices from '../services/eicServices.js'; // Import the admin services
-import oauth2Client from '../utils/oauthClient.js'; // Import the shared OAuth client
+import oauth2Client from '../utils/passport.js'; // Import the shared OAuth client
 import { setTempAdminData } from '../utils/tempData.js'; // Import temp data functions
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import googleMailServices from '../services/google/googleMailServices.js';
 import taskRoutes from './taskRoutes.js';
 import cookieParser from 'cookie-parser';
-
-
+import passport from '../utils/passport.js'
 
 const eicRoutes = express.Router();
 eicRoutes.use('/tasks', taskRoutes);
@@ -20,7 +19,19 @@ eicRoutes.use(cookieParser());
 dotenv.config();
 
 // Initiate the OAuth flow
-eicRoutes.post('/add', (req, res) => {
+eicRoutes.post('/add', async (req, res) => {
+    // const token = req.cookies.token;
+    // if (!token) {
+    //     return res.status(401).json({
+    //         message: 'No token provided'
+    //     });
+    // }
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //     if (decoded.role !== 'Editor in Charge') {
+    //         return res.status(403).json({
+    //             message: 'Unauthorized'
+    //         });
+    //     }
     const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
@@ -29,65 +40,51 @@ eicRoutes.post('/add', (req, res) => {
 
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ];
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/tasks', // Add the Google Tasks scope
+         'https://www.googleapis.com/auth/calendar'
 
-    const url = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: scopes,
-        state: state // Pass the state parameter
-    });
+      ];
 
-    console.log(`OAuth URL for ${role} with email ${email}: ${url}`);
+      const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
+    console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
 
-    const status = googleMailServices.sendOAuthLink(email, url);
+    const status = await googleMailServices.sendOAuthLink(email, authUrl);
+    if (!status) {
+        return res.status(500).json({
+            message: 'Failed to send OAuth link'
+        });
+    }
+    
+    if (status === 400) {
+        return res.status(400).json({
+            message: 'Invalid email address'
+        })};
+
 
     res.status(200).json({
-        message: 'OAuth link sent successfully',
-        status: status
+        message: 'OAuth link sent successfully'
     });
 });
 
-
-
-// User profile route
-eicRoutes.get('/profile', async (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({
-            message: 'Authorization header missing'
-        });
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userProfile = await eicServices.getAdminDetails(decoded.id);
-    
-        res.status(200).json({
-            name: userProfile.name,
-            email: userProfile.email,
-            profileImage: userProfile.profile // Return the profile image
-        });
-    } catch (error) {
-        res.status(401).json({
-            message: 'Invalid token',
-            error: error.message
-        });
-    }
-});
 
 
 
 eicRoutes.get('/users', async (req, res) => {
-    // const token = req.cookies.token;
-    // if (!token) {
-    //     return res.status(401).json({
-    //         message: 'No token provided'
-    //     });
-    // }
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
+        });
+    }
+    
     try {
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor in Charge') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
         const users = await eicServices.getAllUsers();
         res.status(200).json({
             message: 'Users retrieved successfully',
@@ -101,6 +98,48 @@ eicRoutes.get('/users', async (req, res) => {
     }
 });
 
+eicRoutes.post('/edit', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(403).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({
+            message: 'Unauthorized'
+        });
+    }
+
+    const { email, role } = req.body;
+    const status = await eicServices.updateUserRole(email, role);
+    if (!status) {
+        return res.status(500).json({
+            message: 'Failed to update user role'
+        });
+    }
+    res.status(200).json({
+        message: 'User role updated successfully'
+    });
+});
+
+//logs
+eicRoutes.post('/logs', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(403).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({
+            message: 'Unauthorized'
+        });
+    }
+    const logs = await eicServices.getLogs();
+});
 
 
 

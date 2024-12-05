@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { google } from "googleapis";
-import oauth2Client from "../utils/oauthClient.js"; // Ensure shared OAuth client is imported
+import oauth2Client from "../utils/passport.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
 
 
@@ -66,7 +66,7 @@ export async function getUserByEmail(email) {
 }
 
 export async function addUser(userData) {
-  const { email, name, role, profile, password } = userData;
+  const { email, name, role, profile, password, token, refreshToken } = userData;
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -78,6 +78,7 @@ export async function addUser(userData) {
       const existingUserSnapshot = await transaction.get(
         db.collection("users").where("email", "==", email)
       );
+      
       if (!existingUserSnapshot.empty) {
         throw new Error("Email already exists");
       }
@@ -86,6 +87,8 @@ export async function addUser(userData) {
         email,
         name,
         role,
+        token,
+        refreshToken,
         password: hashedPassword,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         profile,
@@ -130,7 +133,40 @@ export async function getAllUsers() {
   }
 }
 
+async function updateUserRole(email, role) {
+  try {
+    await db.runTransaction(async (transaction) => {
+      const userSnapshot = await transaction.get(
+        db.collection("users").where("email", "==", email)
+      );
+      if (userSnapshot.empty) {
+        throw new Error("User not found");
+      }
 
+      const userDoc = userSnapshot.docs[0];
+      transaction.update(userDoc.ref, { role });
+    });
+
+
+    return true;
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return false;
+  }
+}
+
+export async function getLogs(){
+    try {
+        const logs = await db.collection("logs").get();
+        if (logs.empty) {
+            throw new Error("No logs found");
+        }
+        return logs.docs.map((doc) => doc.data());
+    } catch (error) {
+        console.error("Error getting logs:", error);
+        throw new Error("Error getting logs");
+    }
+}
 
 
 
@@ -140,5 +176,6 @@ export default {
   getUserByEmail,
   addUser,
 getAllUsers,
+updateUserRole,
 
 };

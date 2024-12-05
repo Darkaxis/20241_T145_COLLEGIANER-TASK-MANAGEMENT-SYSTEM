@@ -12,6 +12,24 @@ function initializeProjects() {
     const saveProjectBtn = document.getElementById('saveProjectBtn');
     const searchInput = document.querySelector('.search-box input');
 
+    // Set minimum date for date inputs
+    const today = new Date().toISOString().split('T')[0];
+    const startDateInput = document.getElementById('projectStart');
+    const endDateInput = document.getElementById('projectEnd');
+
+    if (startDateInput && endDateInput) {
+        startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
+
+        // Add event listener to start date to update end date minimum
+        startDateInput.addEventListener('change', function() {
+            endDateInput.setAttribute('min', this.value);
+            if (endDateInput.value && endDateInput.value < this.value) {
+                endDateInput.value = this.value;
+            }
+        });
+    }
+
     // Initialize search functionality
     if (searchInput) {
         searchInput.addEventListener('input', handleSearch);
@@ -45,7 +63,18 @@ function handleAddProject() {
         return;
     }
 
-    if (new Date(projectEnd) <= new Date(projectStart)) {
+    // Validate dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startDate = new Date(projectStart);
+    const endDate = new Date(projectEnd);
+
+    if (startDate < today) {
+        alert('Start date cannot be in the past');
+        return;
+    }
+
+    if (endDate <= startDate) {
         alert('End date must be after start date');
         return;
     }
@@ -178,10 +207,18 @@ function handleEditProject(projectId) {
     const project = getProjectById(projectId);
     if (!project) return;
 
+    // Set minimum dates for edit form
+    const today = new Date().toISOString().split('T')[0];
+    const startDateInput = document.getElementById('projectStart');
+    const endDateInput = document.getElementById('projectEnd');
+
+    startDateInput.setAttribute('min', today);
+    endDateInput.setAttribute('min', today);
+
     // Populate form with project data
     document.getElementById('projectName').value = project.name;
-    document.getElementById('projectStart').value = project.startDate;
-    document.getElementById('projectEnd').value = project.endDate;
+    startDateInput.value = project.startDate;
+    endDateInput.value = project.endDate;
 
     // Show modal
     const modal = new bootstrap.Modal(document.getElementById('addProjectModal'));
@@ -209,7 +246,18 @@ function handleEditProject(projectId) {
             return;
         }
 
-        if (new Date(end) <= new Date(start)) {
+        // Validate dates
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        if (startDate < today) {
+            alert('Start date cannot be in the past');
+            return;
+        }
+
+        if (endDate <= startDate) {
             alert('End date must be after start date');
             return;
         }

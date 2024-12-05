@@ -206,6 +206,10 @@ function updateTaskCard(taskCard) {
         `Private Except: ${taskCard.dataset.hideFrom}` :
         taskCard.dataset.privacy;
 
+    // Format the date from ISO to local date string
+    const deadlineDate = taskCard.dataset.deadline ?
+        new Date(taskCard.dataset.deadline).toLocaleDateString() : '';
+
     taskCard.innerHTML = `
         <div class="task-card-content">
             <div class="task-card-header">
@@ -229,7 +233,7 @@ function updateTaskCard(taskCard) {
             </div>
             <div class="task-card-body">
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
-                <p><i class="fa-regular fa-calendar"></i> ${taskCard.dataset.deadline}</p>
+                <p><i class="fa-regular fa-calendar"></i> ${deadlineDate}</p>
                 <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
                   <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
@@ -443,6 +447,9 @@ async function saveTaskEdits(taskCard) {
         return false;
     }
 
+    // Convert local date to ISO format
+    const isoDate = new Date(dateInput.value).toISOString();
+
     // Get updated values
     const updatedData = {
         taskName: document.getElementById('taskTitle').value,
@@ -450,7 +457,7 @@ async function saveTaskEdits(taskCard) {
         status: document.getElementById('taskStatus').value,
         privacy: document.getElementById('taskPrivacy').value,
         assignedTo: document.getElementById('taskAssignTo').value,
-        deadline: dateInput.value,
+        deadline: isoDate,
         link: document.getElementById('taskLink').value,
         category: document.getElementById('taskDetailCategory').value
     };

@@ -1,40 +1,38 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import oauth2Client from '../utils/oauthClient.js';
 import eicServices from '../services/eicServices.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import googleMailServices from '../services/google/googleMailServices.js';
-import loginServices from '../services/loginServices.js';
+import  passport  from '../utils/passport.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
 const oauthRoutes = express.Router();
 
 // Generate the URL for the Google OAuth2 consent page
-oauthRoutes.get('/auth', (req, res) => {
-    const state = `login-${uuidv4()}`; // Generate a unique state
-    setTempAdminData(state, { type: 'login' }); // Store the state temporarily
 
-    const scopes = [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ];
-
-    const url = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: scopes,
-        state: state // Pass the state parameter
-    });
-    res.redirect(url);
+// Generate the URL for the Google OAuth2 consent page
+oauthRoutes.get('/auth', (req, res, next) => {
+  const state = 'login-' + uuidv4(); // Generate a unique state parameter
+  setTempAdminData(state, { /* any data you want to store temporarily */ });
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    state: state, // Pass the state parameter
+    accessType: 'offline',
+    prompt: 'consent'
+  })(req, res, next);
 });
 
-
 // Handle the OAuth callback
-oauthRoutes.get('/callback', async (req, res) => {
-    const code = req.query.code;
+oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: '/' }), async (req, res) => {
     const state = req.query.state; // Retrieve the state parameter
 
     if (!state) {
@@ -50,28 +48,29 @@ oauthRoutes.get('/callback', async (req, res) => {
             message: 'Invalid or expired state parameter'
         });
     }
+    const userProfile = req.user.profile;
+    console.log('User profile:', userProfile);
 
     try {
-        const { tokens } = await oauth2Client.getToken(code);
-        oauth2Client.setCredentials(tokens);
-        if (tokens.refresh_token) {
-            const envPath = path.resolve(__dirname, '.env');
-            fs.appendFile(envPath, `\nGOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`, (err) => {
-              if (err) {
-                console.error('Error writing to .env file', err);
-              } else {
-                console.log('Refresh token stored in .env file');
-              }
-            });
-          }
         
+     const accessToken = req.user.accessToken;
+    const refreshToken = req.user.refreshToken;
+    
+    //     // Store the refresh token in the .env file
+    // if (refreshToken) {
+    //     const envPath = path.resolve(__dirname, '../.env'); 
+    //     fs.appendFile(envPath, `\nGOOGLE_REFRESH_TOKEN=${refreshToken}`, (err) => {
+    //       if (err) {
+    //         console.error('Error writing to .env file', err);
+    //       } else {
+    //         console.log('Refresh token stored in .env file');
+    //       }
+    //     });
+    //   }
 
-        // Fetch user profile information
-        const userProfile = await eicServices.getUserProfile(tokens);
-        // Extract user information
-        const name = userProfile.names && userProfile.names[0] ? userProfile.names[0].displayName : 'No Name';
-        const email = userProfile.emailAddresses && userProfile.emailAddresses[0] ? userProfile.emailAddresses[0].value : 'No Email';
-        const profile = userProfile.photos && userProfile.photos[0] ? userProfile.photos[0].url : 'No Profile';
+        const name = userProfile.displayName;
+        const email = userProfile.emails[0].value;
+        const profile = userProfile.photos[0].value;
         
         
 
@@ -89,6 +88,8 @@ oauthRoutes.get('/callback', async (req, res) => {
                 email: email,
                 name: name,
                 role: role,
+                token: accessToken,
+                refreshToken: refreshToken,
                 password: password,
                 profile: profile,
             };
@@ -99,9 +100,12 @@ oauthRoutes.get('/callback', async (req, res) => {
             // Clean up temporary data
             deleteTempAdminData(state);
 
-            res.status(addUserResponse.status).json({
-                message: addUserResponse.message,
-            });
+            res.status(200).json({
+                message: 'OAuth callback handled successfully',
+                name,
+                email,
+                profile
+              });
         } else if (state.startsWith('login')) {
             // Handle login callback
             const user = await eicServices.getUserByEmail(email);
@@ -139,6 +143,10 @@ oauthRoutes.get('/callback', async (req, res) => {
             } else if (user.role === 'Staff') {
                 // Redirect to the dashboard without the token in the URL
                 res.redirect('https://localhost:4000/staff/dashboard');
+            }
+            else if (user.role === 'Adviser') {
+                // Redirect to the dashboard without the token in the URL
+                res.redirect('https://localhost:4000/adviser/dashboard');
             }
             
         } else {
