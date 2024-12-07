@@ -5,7 +5,7 @@
 
 * {
     box-sizing: border-box;
-    font-family: "Inter", sans-serif;
+    font-family: "Ubuntu", sans-serif;
 }
 
 body,
@@ -1234,22 +1234,24 @@ h3.mt-4 {
 
 /* H1 Heading Style */
 
-h1 {
-    font-family: "Quicksand", sans-serif;
+h3 {
     font-optical-sizing: auto;
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 
-/* If you want to target specific h1 elements */
+/* If you want to target specific h3 elements */
 
-.headerr h1 {
-    font-family: "Quicksand", sans-serif;
+.headerr h3 {
     font-optical-sizing: auto;
+    color: #2c3e50;
 }
 
-.main-content h1 {
-    font-family: "Quicksand", sans-serif;
+.main-content h3 {
     font-optical-sizing: auto;
+    color: #2c3e50;
 }
 
 

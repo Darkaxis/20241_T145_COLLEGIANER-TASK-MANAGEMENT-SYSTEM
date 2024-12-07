@@ -1,23 +1,23 @@
 .activity-log-container {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 100px);
     padding: 1.5rem;
     background-color: #f8fafc;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
     overflow-y: auto;
 }
 
 .activity-item {
     background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: -10px;
-    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    border: 1px solid #e2e8f0;
     display: grid;
     grid-template-columns: auto 1fr auto auto;
-    gap: 15px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
 }
 
 .activity-item:last-child {
@@ -26,20 +26,22 @@
 
 .activity-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
 }
 
 .activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.1rem;
 }
 
 .activity-icon.create {
-    background: linear-gradient(135deg, #6366f1, #818cf8);
+    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
     color: white;
 }
 
@@ -49,7 +51,7 @@
 }
 
 .activity-icon.modify {
-    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
     color: white;
 }
 
@@ -59,59 +61,68 @@
 }
 
 .activity-icon.user-add {
-    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: white;
+}
+
+.activity-icon.edit {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
     color: white;
 }
 
 .activity-details {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 0.3rem;
 }
 
 .activity-text {
     color: #1e293b;
     font-size: 0.95rem;
     font-weight: 500;
+    line-height: 1.4;
 }
 
 .user-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
+    gap: 0.3rem;
 }
 
 .user-name {
     color: #1e293b;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.9rem;
 }
 
 .user-label {
     color: #64748b;
     font-size: 0.75rem;
-    margin-top: 4px;
+    padding: 0.2rem 0.6rem;
+    background: #f1f5f9;
+    border-radius: 12px;
 }
 
 .timestamp-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
+    gap: 0.3rem;
 }
 
 .timestamp-info span:first-child {
-    color: #1e293b;
-    font-size: 0.9rem;
+    color: #64748b;
+    font-size: 0.85rem;
 }
 
 .timestamp-label {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.75rem;
-    margin-top: 4px;
 }
 
 .activity-log-container::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .activity-log-container::-webkit-scrollbar-track {
@@ -120,7 +131,7 @@
 
 .activity-log-container::-webkit-scrollbar-thumb {
     background: #cbd5e1;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .activity-log-container::-webkit-scrollbar-thumb:hover {

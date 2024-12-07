@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeProfileBtn) {
         closeProfileBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const profileCard = document.getElementById('profileCard');
-            profileCard.classList.remove('show');
+            closeProfile();
         });
     }
 
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileCard) {
         profileCard.addEventListener('click', function(e) {
             if (e.target === this) {
-                this.classList.remove('show');
+                closeProfile();
             }
         });
     }
@@ -33,10 +32,24 @@ document.addEventListener('DOMContentLoaded', function() {
 function showProfile() {
     const profileCard = document.getElementById('profileCard');
     if (profileCard) {
+        profileCard.style.display = 'block';
+        // Force reflow
+        profileCard.offsetHeight;
         profileCard.classList.add('show');
-        console.log('Profile card shown'); // Debug log
-    } else {
-        console.error('Profile card element not found'); // Debug log
+    }
+}
+
+function closeProfile() {
+    const profileCard = document.getElementById('profileCard');
+    if (profileCard) {
+        profileCard.classList.add('hiding');
+        profileCard.classList.remove('show');
+
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+            profileCard.classList.remove('hiding');
+            profileCard.style.display = 'none';
+        }, 300);
     }
 }
 
@@ -59,8 +72,7 @@ document.addEventListener("DOMContentLoaded", async() => {
 
         // Use the token from local storage for fetching the user profile
         const profileinfo = userResult.user;
-    
-       
+        console.log(profileinfo)
 
         const profileName = document.getElementById("profileName");
         const profileImage = document.getElementById("profileImage");

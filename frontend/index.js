@@ -38,7 +38,15 @@ app.get('/eic/accounts', (req, res) => {
 app.get('/eb/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eb/eb-dashboard.html'));
 });
-
+app.get('/eic/projects', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/eic/eic-projects.html'));
+});
+app.get('/eic/archive', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/eic/eic-archive.html'));
+});
+app.get('/eic/activitylog', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/eic/eic-activitylog.html'));
+});
 // Start the server
 https.createServer(httpsOptions, app).listen(PORT, () => {
     console.log(`Server is running on https://localhost:${PORT}`);
