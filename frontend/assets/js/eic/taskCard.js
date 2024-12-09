@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async() => {
 function createTask(task) {
 
     const taskCard = document.createElement('div');
+    taskCard.dataset.version = task.version;
     taskCard.dataset.taskId = task.id;
     taskCard.className = 'task-card';
     taskCard.draggable = true;

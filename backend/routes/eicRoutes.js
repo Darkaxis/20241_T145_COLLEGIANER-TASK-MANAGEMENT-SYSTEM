@@ -98,7 +98,7 @@ eicRoutes.get('/users', async (req, res) => {
     }
 });
 
-eicRoutes.post('/edit', async (req, res) => {
+eicRoutes.patch('/edit', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(403).json({

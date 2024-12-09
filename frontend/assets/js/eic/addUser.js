@@ -149,11 +149,11 @@ async function saveUser() {
         };
 
         const url = editUserIndex ?
-            `https://localhost:3000/api/v1/eic/users/edit/${email}` :
+            `https://localhost:3000/api/v1/eic/edit` :
             'https://localhost:3000/api/v1/eic/add';
 
         const response = await fetch(url, {
-            method: editUserIndex ? 'PUT' : 'POST',
+            method: editUserIndex ? 'PATCH' : 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
