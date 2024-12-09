@@ -1,7 +1,6 @@
-
 let users = [];
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async() => {
     try {
         const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
             method: 'GET',
@@ -19,13 +18,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         let usersData = await usersResponse.json();
         users = usersData.data.map(user => user.name);
-       
+
     } catch (error) {
         console.error('Error fetching users:', error);
     }
-    
+
     const myTask = document.getElementById('myTask');
-    myTask.addEventListener('click', async () => {
+    myTask.addEventListener('click', async() => {
         try {
             const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/user', {
                 method: 'GET',
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     const allTask = document.getElementById('allTask');
-    allTask.addEventListener('click', async () => {
+    allTask.addEventListener('click', async() => {
         try {
             const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
                 method: 'GET',
@@ -54,19 +53,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-function createTask(formData) {
-   
-    const taskCard = document.createElement('div'); 
-    taskCard.dataset.taskId = formData.id;
-    taskCard.dataset.taskVersion = formData.taskversion;
+function createTask(task) {
+
+    const taskCard = document.createElement('div');
+    taskCard.dataset.taskId = task.id;
     taskCard.className = 'task-card';
     taskCard.draggable = true;
     taskCard.id = 'task-' + Date.now();
 
     // Set data attributes
-    Object.entries(formData).forEach(([key, value]) => {
+    Object.entries(task).forEach(([key, value]) => {
         taskCard.dataset[key] = value;
     });
+    // Make sure category is included in the dataset
+    taskCard.dataset.category = task.category || '';
 
     // Add event listeners
     addTaskCardEventListeners(taskCard);
@@ -75,22 +75,14 @@ function createTask(formData) {
     updateTaskCard(taskCard);
 
     // Add to appropriate column
-    addToColumn(taskCard, formData.status);
+    const columnId = getColumnIdFromStatus(task.status);
+    const column = document.getElementById(columnId);
+    if (column) {
+        column.appendChild(taskCard);
+        updateColumnCount(columnId);
+    }
 }
 
-function addTaskCardEventListeners(taskCard) {
-    taskCard.addEventListener('dragstart', handleDragStart);
-    taskCard.addEventListener('dragenter', handleDragEnter);
-    taskCard.addEventListener('dragover', handleDragOver);
-    taskCard.addEventListener('dragleave', handleDragLeave);
-    taskCard.addEventListener('drop', handleDrop);
-    taskCard.addEventListener('dragend', handleDragEnd);
-
-    // Add click event listener for showing task details
-    taskCard.addEventListener('click', () => {
-        console.log(users); // Access the users array here
-    });
-}
 function addTaskCardEventListeners(taskCard) {
     taskCard.addEventListener('dragstart', handleDragStart);
     taskCard.addEventListener('dragenter', handleDragEnter);
@@ -102,7 +94,7 @@ function addTaskCardEventListeners(taskCard) {
     // Add click event listener for showing task details
     taskCard.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation(); 
+        e.stopPropagation();
 
         // Get the modal element
         const taskDetailModal = document.getElementById('taskDetailModal');
@@ -112,14 +104,24 @@ function addTaskCardEventListeners(taskCard) {
         document.getElementById('taskDescription').value = taskCard.dataset.description || '';
         document.getElementById('taskStatus').value = taskCard.dataset.status || '';
         document.getElementById('taskPrivacy').value = taskCard.dataset.privacy || '';
+        document.getElementById('taskDetailCategory').value = taskCard.dataset.category || '';
+
+        // Format the date for the input field (YYYY-MM-DD format)
+        const dateInput = document.getElementById('taskDate');
+        if (taskCard.dataset.deadline) {
+            const deadlineDate = new Date(taskCard.dataset.deadline);
+            const formattedDate = deadlineDate.toISOString().split('T')[0];
+            dateInput.value = formattedDate;
+        } else {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
 
         // Update assignTo dropdown
         const assignToSelect = document.getElementById('taskAssignTo');
         assignToSelect.innerHTML = users.map(user =>
-            `<option value="${user}" ${user === taskCard.dataset.assignTo ? 'selected' : ''}>${user}</option>`
+            `<option value="${user}" ${user === taskCard.dataset.assignedTo ? 'selected' : ''}>${user}</option>`
         ).join('');
 
-        document.getElementById('taskDate').value = taskCard.dataset.deadline || '';
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
         // Handle Private Except case
@@ -199,6 +201,17 @@ function updateTaskCard(taskCard) {
         `Private Except: ${taskCard.dataset.hideFrom}` :
         taskCard.dataset.privacy;
 
+    // Format the date properly
+    let deadlineDisplay = 'No deadline set';
+    if (taskCard.dataset.deadline) {
+        const deadlineDate = new Date(taskCard.dataset.deadline);
+        deadlineDisplay = deadlineDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
     taskCard.innerHTML = `
         <div class="task-card-content">
             <div class="task-card-header">
@@ -222,8 +235,9 @@ function updateTaskCard(taskCard) {
             </div>
             <div class="task-card-body">
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
-                <p><i class="fa-regular fa-calendar"></i> ${taskCard.dataset.deadline}</p>
+                <p><i class="fa-regular fa-calendar"></i> ${deadlineDisplay}</p>
                 <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
+                  <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
             </div>
         </div>
@@ -256,7 +270,7 @@ function updateTaskCard(taskCard) {
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`,{
+            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
@@ -322,8 +336,8 @@ function handleMarkAsDone(taskCard) {
 async function moveTaskToDone(taskCard) {
     // Update the task's status
     taskCard.dataset.status = 'Done';
-   
-   
+
+
 
 
     console.log('Status updated to Done');
@@ -364,7 +378,12 @@ function enableEditMode() {
         input.removeAttribute('readonly');
         input.classList.add('editable');
     });
-
+    // Make category input editable
+    const categoryInput = document.getElementById('taskDetailCategory');
+    if (categoryInput) {
+        categoryInput.removeAttribute('readonly');
+        categoryInput.classList.add('editable');
+    }
     // Create a status dropdown for editing
     const statusInput = document.getElementById('taskStatus');
     const currentStatus = statusInput.value;
@@ -425,8 +444,16 @@ function toggleHideFromUsersInModal() {
 
 // Add this function to save edits
 async function saveTaskEdits(taskCard) {
+    const dateInput = document.getElementById('taskDate');
+    if (!validateTaskDate(dateInput)) {
+        return false;
+    }
 
-    //
+    // Ensure date is properly formatted as ISO string
+    const selectedDate = new Date(dateInput.value);
+    selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+    const isoDate = selectedDate.toISOString();
+
     // Get updated values
     const updatedData = {
         taskName: document.getElementById('taskTitle').value,
@@ -434,59 +461,59 @@ async function saveTaskEdits(taskCard) {
         status: document.getElementById('taskStatus').value,
         privacy: document.getElementById('taskPrivacy').value,
         assignedTo: document.getElementById('taskAssignTo').value,
-        deadline: document.getElementById('taskDate').value,
+        deadline: isoDate,
         link: document.getElementById('taskLink').value,
-        version: taskCard.dataset.version
+        category: document.getElementById('taskDetailCategory').value
     };
-   // send to backend
-    const taskId = taskCard.dataset.taskId;
-    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedData),
-        credentials: 'include'
-    });
-    console.log(response.status);
-    if (response.status === 200) {
-        
-        
-    
 
-    // Add hideFrom if privacy is Private Except
-    if (updatedData.privacy === 'Private Except') {
-        updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+    try {
+        // send to backend
+        const taskId = taskCard.dataset.taskId;
+        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData),
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update task');
+        }
+
+        // Add hideFrom if privacy is Private Except
+        if (updatedData.privacy === 'Private Except') {
+            updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+        }
+
+        // Update task card dataset
+        Object.entries(updatedData).forEach(([key, value]) => {
+            taskCard.dataset[key] = value;
+        });
+
+        // Update the card display
+        updateTaskCard(taskCard);
+
+        // Move card to correct column if status changed
+        const columnId = getColumnIdFromStatus(updatedData.status);
+        const targetColumn = document.getElementById(columnId);
+        if (targetColumn && taskCard.parentElement.id !== columnId) {
+            targetColumn.appendChild(taskCard);
+            updateTaskCounts();
+        }
+
+        // Reset modal to view mode
+        disableEditMode();
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
+        modal.hide();
+
+    } catch (error) {
+        console.error('Error updating task:', error);
+        alert('Failed to update task. Please try again.');
     }
-
-    // Update task card dataset
-    Object.entries(updatedData).forEach(([key, value]) => {
-        taskCard.dataset[key] = value;
-    });
-
-    // Update the card display
-    updateTaskCard(taskCard);
-
-    
-
-    // Move card to correct column if status changed
-    const columnId = getColumnIdFromStatus(updatedData.status);
-    const targetColumn = document.getElementById(columnId);
-    if (targetColumn && taskCard.parentElement.id !== columnId) {
-        targetColumn.appendChild(taskCard);
-        updateTaskCounts();
-    }
-
-    // Reset modal to view mode
-    disableEditMode();
-
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
-    modal.hide();
-}
-else{
-    alert("Error updating task. Please try again later.");
-}
 }
 
 // Add this function to disable edit mode
@@ -498,6 +525,13 @@ function disableEditMode() {
         input.classList.remove('editable');
     });
 
+
+    // Make category input readonly
+    const categoryInput = document.getElementById('taskDetailCategory');
+    if (categoryInput) {
+        categoryInput.setAttribute('readonly', true);
+        categoryInput.classList.remove('editable');
+    }
     // Convert dropdowns back to readonly inputs
     const statusSelect = document.getElementById('taskStatus');
     const privacySelect = document.getElementById('taskPrivacy');
@@ -589,4 +623,29 @@ function handleDragEnd(e) {
         card.classList.remove('drag-over');
     });
     updateTaskCounts();
+}
+
+// Helper function to get column ID from status
+function getColumnIdFromStatus(status) {
+    const columnMap = {
+        'To Do': 'todo-column',
+        'In Progress': 'in-progress-column',
+        'Checking': 'checking-column',
+        'Done': 'done-column'
+    };
+    return columnMap[status];
+}
+
+// Add validateTaskDate function if not already present
+function validateTaskDate(dateInput) {
+    const selectedDate = new Date(dateInput.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+        alert('Cannot set deadline to a past date');
+        dateInput.value = today.toISOString().split('T')[0];
+        return false;
+    }
+    return true;
 }

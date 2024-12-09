@@ -22,9 +22,10 @@ function handleTaskSearch(e) {
         const tasks = column.querySelectorAll('.task-card');
         tasks.forEach(task => {
             const title = task.dataset.taskName.toLowerCase();
+            const category = task.dataset.category ? task.dataset.category.toLowerCase() : '';
             const status = task.dataset.status;
 
-            if (title.includes(searchTerm)) {
+            if (title.includes(searchTerm) || category.includes(searchTerm)) {
                 task.classList.add('search-match');
                 task.classList.remove('search-no-match');
                 task.classList.add(`search-match-${status.toLowerCase().replace(' ', '-')}`);

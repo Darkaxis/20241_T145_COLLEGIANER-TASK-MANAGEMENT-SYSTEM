@@ -60,7 +60,7 @@
     <div class="main-content">
         <!-- Navbar with notification and profile -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <h3 style="width: 100%;">Project 2024-2025</h3>
+            <h3 style="width: 100%;" class="head">Project 2024-2025</h3>
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <div class="ms-auto d-flex align-items-center">
@@ -194,6 +194,8 @@
                             <label class="form-label">Description</label>
                             <textarea class="form-control" id="taskDescription" rows="3" readonly></textarea>
                         </div>
+
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Status</label>
@@ -215,7 +217,8 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Assign To</label>
-                                <select class="form-control" id="taskAssignTo" readonly>
+                                <select class="form-control" id="taskAssignTo" disabled>
+                                    <!-- options will be populated dynamically -->
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -223,6 +226,12 @@
                                 <input type="date" class="form-control" id="taskDate" readonly>
                             </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <input type="text" class="form-control" id="taskDetailCategory" readonly>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Link</label>
                             <input type="url" class="form-control" id="taskLink" readonly>
@@ -231,7 +240,7 @@
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <label class="form-label" id="submitToLabel">Submit to</label>
-                                <select class="form-control" id="taskSubmitTo">
+                                <select class="form-control" id="taskSubmitTo" disabled>
                                     <option value="">Select user</option>
                                     <option value="John Doe">John Doe</option>
                                     <option value="Jane Smith">Jane Smith</option>
@@ -282,6 +291,7 @@
                                 </div>
                                 <div class="error-message"></div>
                             </div>
+
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -343,6 +353,15 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="taskCategoryInput" class="form-label">Category</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tag me-2"></i>
+                                    <input type="text" class="form-control" id="taskCategoryInput" placeholder="Enter task category">
+                                </div>
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="taskLinkInput" class="form-label">Link</label>
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-link me-2"></i>
@@ -350,6 +369,8 @@
                                 </div>
                                 <div class="error-message"></div>
                             </div>
+
+
                         </form>
                     </div>
                     <div class="modal-footer" style="border: none;">
@@ -397,7 +418,7 @@
                     <h3>
                         <div class="status-card status-todo">
                             <i class="fa-regular fa-circle"></i> TO DO
-                            <span class="task-count">0</span>
+                            <span class="task-count" id="todo-column-count">0</span>
                         </div>
                     </h3>
                     <div class="task-column" id="todo-column" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -409,7 +430,7 @@
                     <h3>
                         <div class="status-card status-progress">
                             <i class="fas fa-adjust"></i> IN PROGRESS
-                            <span class="task-count">0</span>
+                            <span class="task-count" id="in-progress-column-count">0</span>
                         </div>
                     </h3>
                     <div class="task-column" id="in-progress-column" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -421,7 +442,7 @@
                     <h3>
                         <div class="status-card status-checking">
                             <i class="fas fa-spinner"></i> CHECKING
-                            <span class="task-count">0</span>
+                            <span class="task-count" id="checking-column-count">0</span>
                         </div>
                     </h3>
                     <div class="task-column" id="checking-column" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -433,7 +454,7 @@
                     <h3>
                         <div class="status-card status-done">
                             <i class="fas fa-check-circle"></i> DONE
-                            <span class="task-count">0</span>
+                            <span class="task-count" id="done-column-count">0</span>
                         </div>
                     </h3>
                     <div class="task-column" id="done-column" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -465,7 +486,7 @@
                 <div class="profile-position"></div>
 
                 <div class="profile-info-section">
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="email">
                         <div class="field-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
@@ -475,7 +496,7 @@
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="role">
                         <div class="field-icon">
                             <i class="fas fa-id-badge"></i>
                         </div>
@@ -485,7 +506,7 @@
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="date">
                         <div class="field-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>

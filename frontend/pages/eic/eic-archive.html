@@ -180,150 +180,134 @@
         <!-- Archive List -->
         <div class="archive-list-container">
             <div class="list-header">
-                <h3><i class="fas fa-archive me-2"></i>Recent Archives</h3>
-                <div class="view-controls">
-                    <button class="view-btn active" data-view="list">
-                        <i class="fas fa-list"></i>
-                    </button>
-                    <button class="view-btn" data-view="grid">
-                        <i class="fas fa-th-large"></i>
-                    </button>
-                </div>
+                <h3><i class="fas fa-archive me-2"></i>Completed Tasks</h3>
             </div>
 
-            <div class="archive-items">
-                <!-- Archive Item -->
-                <div class="archive-item">
-                    <div class="item-header">
-                        <div class="item-title-group">
-                            <h4>Website Redesign</h4>
-                            <span class="badge">Design</span>
+            <div class="archive-table">
+                <div class="table-header">
+                    <div class="col-task">Task Name</div>
+                    <div class="col-assigned">Assigned By</div>
+                    <div class="col-actions">Actions</div>
+                </div>
+
+                <div class="table-body scrollable-content">
+                    <!-- Archive Items -->
+                    <div class="archive-item">
+                        <div class="col-task" id="taskName">Website Redesign</div>
+                        <div class="col-assigned" id="assignedBy">Reynante Baldivino</div>
+                        <div class="col-actions">
+                            <button class="action-btn restore">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
                         </div>
-                        <div class="item-date">
-                            <i class="far fa-clock"></i>
-                            <span>March 15, 2024</span>
-                        </div>
+                        <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
                     </div>
 
-                    <div class="item-content">
-                        <div class="item-details">
-                            <div class="detail">
-                                <div class="detail-icon">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <span>John Doe</span>
-                            </div>
-                            <div class="detail">
-                                <div class="detail-icon completed">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <span>Completed</span>
-                            </div>
-                            <div class="detail">
-                                <div class="detail-icon">
-                                    <i class="fas fa-calendar"></i>
-                                </div>
-                                <span>March 14, 2024</span>
-                            </div>
+                    <div class="archive-item">
+                        <div class="col-task" id="taskName">Database Migration</div>
+                        <div class="col-assigned" id="assignedBy">Margaret Zoe Neri</div>
+                        <div class="col-actions">
+                            <button class="action-btn restore">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
                         </div>
-
-                        <div class="item-progress">
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 100%"></div>
-                            </div>
-                            <span class="progress-text">100% Complete</span>
-                        </div>
+                        <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
                     </div>
 
-                    <div class="item-actions">
-                        <button class="action-btn view">
-                            <i class="fas fa-eye"></i>
-                            <span class="tooltip">View Details</span>
-                        </button>
-                        <button class="action-btn restore">
-                            <i class="fas fa-undo"></i>
-                            <span class="tooltip">Restore Task</span>
-                        </button>
-                        <button class="action-btn delete">
-                            <i class="fas fa-trash"></i>
-                            <span class="tooltip">Delete</span>
-                        </button>
+                    <div class="archive-item">
+                        <div class="col-task" id="taskName">User Authentication System</div>
+                        <div class="col-assigned" id="assignedBy">Yed Francois Cagang</div>
+                        <div class="col-actions">
+                            <button class="action-btn restore">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
+                    </div>
+
+                    <div class="archive-item">
+                        <div class="col-task" id="taskName">Mobile App UI Design</div>
+                        <div class="col-assigned" id="assignedBy">Aubie Bryne Hallazgo</div>
+                        <div class="col-actions">
+                            <button class="action-btn restore">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
+                    </div>
+
+                    <div class="archive-item">
+                        <div class="col-task" id="taskName">API Documentation</div>
+                        <div class="col-assigned" id="assignedBy">Reynante Baldivino</div>
+                        <div class="col-actions">
+                            <button class="action-btn restore">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <button class="page-btn prev" disabled>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="page-numbers">
-                    <button class="page-btn active">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                </div>
-                <button class="page-btn next">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Empty State -->
-        <div class="archive-empty-state">
-            <div class="empty-state-content">
-                <div class="empty-icon">
-                    <i class="fas fa-box-open"></i>
-                </div>
-                <h3>No Archived Tasks</h3>
-                <p>When you archive completed tasks, they will appear here.</p>
-                <button class="create-task-btn">
-                    <i class="fas fa-plus"></i>
-                    Create New Task
-                </button>
             </div>
         </div>
     </div>
+
+
 
     <!-- Add this right before the closing body tag -->
     <div class="profile-card" id="profileCard">
         <div class="profile-card-content">
             <button class="close-profile" id="closeProfile">
-                <i class="fas fa-times"></i>
-            </button>
+                    <i class="fas fa-times"></i>
+                </button>
 
             <div class="profile-banner"></div>
 
             <div class="profile-image">
-                <i class="fas fa-user-circle"></i>
+                <img class="fas fa-user-circle" id="sidebarprofileImage" style="border-radius: 50%;">
                 <div class="online-status"></div>
             </div>
 
             <div class="profile-details">
-                <div class="profile-name">Margaret Zoe Neri</div>
-                <div class="profile-position">EIC-ADMIN</div>
+                <div class="profile-name" id="sidebarprofileName"> </div>
+                <div class="profile-position"></div>
 
                 <div class="profile-info-section">
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="email">
                         <div class="field-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="field-content">
                             <label>Email</label>
-                            <p>2201101820@student.buksu.edu.ph</p>
+                            <p id="sidebarEmail"></p>
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="role">
                         <div class="field-icon">
                             <i class="fas fa-id-badge"></i>
                         </div>
                         <div class="field-content">
-                            <label>Employee ID</label>
-                            <p>EIC-2024-001</p>
+                            <label>Role</label>
+                            <p id="sidebarRole"></p>
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="date">
                         <div class="field-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
@@ -332,6 +316,59 @@
                             <p>November 15, 2024</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="task-detail-modal" id="taskDetailModal">
+        <div class="task-detail-content">
+            <div class="task-detail-header">
+                <h3 id="taskDetailTitle"></h3>
+                <button class="close-btn" onclick="closeTaskDetail()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="task-detail-body">
+                <div class="detail-group">
+                    <label><i class="fas fa-check-circle detail-icon"></i>Status</label>
+                    <p class="status-completed"><i class="fas fa-check-circle"></i> Completed</p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user-tie detail-icon"></i>Assigned By</label>
+                    <p id="taskDetailAssignedBy"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user detail-icon"></i>Assigned To</label>
+                    <p id="taskDetailAssignedTo"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-calendar-alt detail-icon"></i>Date Completed</label>
+                    <p id="taskDetailDeadline"></p>
+                </div>
+
+                <div class="detail-group full-width">
+                    <label><i class="fas fa-align-left detail-icon"></i>Description</label>
+                    <p id="taskDetailDescription"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-tags detail-icon"></i>Category</label>
+                    <p id="taskDetailCategory"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user-shield detail-icon"></i>Privacy</label>
+                    <p id="taskDetailPrivacy"></p>
+                </div>
+
+                <div class="detail-group full-width" id="taskDetailLinkContainer">
+                    <label><i class="fas fa-link detail-icon"></i>Links</label>
+                    <p id="taskDetailLink"></p>
                 </div>
             </div>
         </div>

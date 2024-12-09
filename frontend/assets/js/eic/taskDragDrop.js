@@ -11,11 +11,17 @@ function drop(ev) {
     ev.preventDefault();
     const data = ev.dataTransfer.getData("text");
     const draggedElement = document.getElementById(data);
-    
+
     if (draggedElement && ev.target.classList.contains('task-column')) {
         ev.target.appendChild(draggedElement);
         updateTaskStatus(draggedElement, ev.target.id);
-        updateTaskCounts();
+        setTimeout(updateTaskCounts, 0);
+    } else if (draggedElement && ev.target.closest('.task-column')) {
+        // If dropped on a task card or somewhere inside the column
+        const dropZone = ev.target.closest('.task-column');
+        dropZone.appendChild(draggedElement);
+        updateTaskStatus(draggedElement, dropZone.id);
+        setTimeout(updateTaskCounts, 0);
     }
 }
 
@@ -34,7 +40,6 @@ async function updateTaskStatus(taskCard, columnId) {
     const taskData = taskCard.dataset;
     taskData.status = newStatus;
     const taskId = taskCard.dataset.taskId;
-    taskData.version = taskCard.dataset.version;
     const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
         method: 'PUT',
         headers: {
@@ -52,5 +57,33 @@ async function updateTaskStatus(taskCard, columnId) {
     } else {
         updateTaskCard(taskCard);
     }
-    
+
+}
+
+// Helper function to get status from column ID
+function getStatusFromColumnId(columnId) {
+    const statusMap = {
+        'todo-column': 'To Do',
+        'in-progress-column': 'In Progress',
+        'checking-column': 'Checking',
+        'done-column': 'Done'
+    };
+    return statusMap[columnId];
+}
+
+// Helper function to update single column count
+function updateColumnCount(columnId) {
+    const column = document.getElementById(columnId);
+    const countElement = document.querySelector(`#${columnId}-count`);
+    if (column && countElement) {
+        // Get all visible task cards (not filtered out by search)
+        const visibleCards = column.querySelectorAll('.task-card:not([style*="display: none"])');
+        countElement.textContent = visibleCards.length;
+    }
+}
+
+// Add this new function to update all column counts
+function updateAllColumnCounts() {
+    const columns = ['todo-column', 'in-progress-column', 'checking-column', 'done-column'];
+    columns.forEach(columnId => updateColumnCount(columnId));
 }

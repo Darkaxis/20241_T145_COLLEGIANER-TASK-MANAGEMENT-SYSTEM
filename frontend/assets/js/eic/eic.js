@@ -22,6 +22,10 @@ function saveTask() {
     // Clear the form after saving
     clearAddTaskForm();
 
+    const taskData = {
+        category: document.getElementById('taskCategoryInput').value
+    };
+
     // Close the modal
     $('#addTaskModal').modal('hide');
 }

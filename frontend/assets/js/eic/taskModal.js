@@ -1,5 +1,4 @@
-
-document.addEventListener('DOMContentLoaded',  async function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Initialize Mark as Done button handler
     const markAsDoneBtn = document.getElementById('markAsDoneBtn');
     if (markAsDoneBtn) {
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded',  async function() {
             }
         });
 
-        
+
     }
 
     //fetch all user names
@@ -20,18 +19,18 @@ document.addEventListener('DOMContentLoaded',  async function() {
         credentials: 'include'
     })
     const data = await response.json();
-    
+
     console.log(data);
-        const users = data.data;
-        const assignInput = document.getElementById('taskAssignInput');
-        if (assignInput) {
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.email;
-                option.text = user.name;
-                assignInput.appendChild(option);
-            });
-        }
+    const users = data.data;
+    const assignInput = document.getElementById('taskAssignInput');
+    if (assignInput) {
+        users.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.name;
+            option.text = user.name;
+            assignInput.appendChild(option);
+        });
+    }
 
     // Add Task button click handler
     const addTaskBtn = document.querySelector('.add-task-btn');
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded',  async function() {
         saveTaskButton.addEventListener('click', async function() {
             clearErrorMessages();
 
-            // Get form values
+            // Get form values with consistent property name
             const formData = {
                 taskName: document.getElementById('taskTitleInput').value.trim(),
                 description: document.getElementById('taskDescriptionInput').value.trim(),
@@ -57,12 +56,13 @@ document.addEventListener('DOMContentLoaded',  async function() {
                 hideFrom: document.getElementById('hideUserInput').value.trim(),
                 assignedTo: document.getElementById('taskAssignInput').value.trim(),
                 deadline: document.getElementById('taskDateInput').value,
-                link: document.getElementById('taskLinkInput').value.trim()
+                link: document.getElementById('taskLinkInput').value.trim(),
+                category: document.getElementById('taskCategoryInput').value.trim()
             };
 
             if (validateFormData(formData)) {
                 //send to server
-                const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {    
+                const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
                     method: 'POST',
                     include: 'credentials',
                     headers: {
@@ -133,6 +133,14 @@ document.addEventListener('DOMContentLoaded',  async function() {
             });
         }
     }
+
+    // Set minimum date for date inputs
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    const today = new Date().toISOString().split('T')[0];
+
+    dateInputs.forEach(input => {
+        input.setAttribute('min', today);
+    });
 });
 
 // Toggle hide input function
@@ -156,6 +164,16 @@ function enableEditMode() {
     inputs.forEach(input => {
         input.removeAttribute('readonly');
         input.classList.add('editable');
+    });
+
+    // Enable specific select elements
+    const editableSelects = ['taskStatus', 'taskPrivacy', 'taskAssignTo', 'taskSubmitTo'];
+    editableSelects.forEach(id => {
+        const select = document.getElementById(id);
+        if (select) {
+            select.disabled = false;
+            select.classList.add('editable');
+        }
     });
 
     // Create a status dropdown for editing
@@ -190,6 +208,16 @@ function enableEditMode() {
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
     document.getElementById('saveEditButton').style.display = 'inline-block';
+
+    // Add date validation for edit mode
+    const dateInput = document.getElementById('taskDate');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        dateInput.addEventListener('change', function() {
+            validateTaskDate(this);
+        });
+    }
 }
 
 // Update the disableEditMode function
@@ -199,6 +227,13 @@ function disableEditMode() {
     inputs.forEach(input => {
         input.setAttribute('readonly', true);
         input.classList.remove('editable');
+    });
+
+    // Disable all select elements
+    const selects = document.querySelectorAll('#taskDetailModal select');
+    selects.forEach(select => {
+        select.disabled = true;
+        select.classList.remove('editable');
     });
 
     // Convert dropdowns back to readonly inputs
@@ -226,7 +261,21 @@ function disableEditMode() {
     document.getElementById('saveEditButton').style.display = 'none';
 }
 
-// Update the showTaskDetails function to use the new module
+// Add this function to handle date validation in the task detail modal
+function validateTaskDate(dateInput) {
+    const selectedDate = new Date(dateInput.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+        showErrorMessage(dateInput.id, 'Deadline cannot be set in the past');
+        dateInput.value = today.toISOString().split('T')[0];
+        return false;
+    }
+    return true;
+}
+
+// Update the showTaskDetails function
 function showTaskDetails(taskCard) {
     const taskDetailModal = document.getElementById('taskDetailModal');
     taskDetailModal.dataset.currentTaskId = taskCard.id;
@@ -236,9 +285,31 @@ function showTaskDetails(taskCard) {
     document.getElementById('taskDescription').value = taskCard.dataset.description || '';
     document.getElementById('taskStatus').value = taskCard.dataset.status || '';
     document.getElementById('taskPrivacy').value = taskCard.dataset.privacy || '';
-    document.getElementById('taskAssignTo').value = taskCard.dataset.assignTo || '';
-    document.getElementById('taskDate').value = taskCard.dataset.deadline || '';
+    document.getElementById('taskAssignTo').value = taskCard.dataset.assignedTo || '';
+
+    // Format the date for display
+    const taskDateInput = document.getElementById('taskDate');
+    const today = new Date().toISOString().split('T')[0];
+    taskDateInput.setAttribute('min', today);
+
+    // Convert ISO date to YYYY-MM-DD format for input
+    if (taskCard.dataset.deadline) {
+        const deadlineDate = new Date(taskCard.dataset.deadline);
+        const formattedDate = deadlineDate.toISOString().split('T')[0];
+        taskDateInput.value = formattedDate;
+    } else {
+        taskDateInput.value = today;
+    }
+
+    // Validate and set the date
+    validateTaskDate(taskDateInput);
+
     document.getElementById('taskLink').value = taskCard.dataset.link || '';
+
+    // Add event listener for date changes
+    taskDateInput.addEventListener('change', function() {
+        validateTaskDate(this);
+    });
 
     // Toggle Mark as Done button visibility
     toggleMarkAsDoneButton(taskCard);
@@ -275,5 +346,90 @@ function toggleHideFromUsersInModal() {
     } else {
         hideFromContainer.style.display = 'none';
         hideFromInput.value = '';
+    }
+}
+
+// Update the saveTaskEdits function
+async function saveTaskEdits(taskCard) {
+    const dateInput = document.getElementById('taskDate');
+    if (!validateTaskDate(dateInput)) {
+        return false;
+    }
+
+    // Ensure date is properly formatted as ISO string
+    const selectedDate = new Date(dateInput.value);
+    selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+    const isoDate = selectedDate.toISOString();
+
+    // Get updated values
+    const updatedData = {
+        id: taskCard.dataset.taskId,
+        taskName: document.getElementById('taskTitle').value,
+        description: document.getElementById('taskDescription').value,
+        status: document.getElementById('taskStatus').value,
+        privacy: document.getElementById('taskPrivacy').value,
+        assignedTo: document.getElementById('taskAssignTo').value,
+        deadline: isoDate,
+        link: document.getElementById('taskLink').value,
+        category: document.getElementById('taskDetailCategory').value
+    };
+
+    // Add hideFrom if privacy is Private Except
+    if (updatedData.privacy === 'Private Except') {
+        updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+    }
+
+    console.log('Sending update with data:', updatedData);
+
+    try {
+        // Send to backend
+        const taskId = taskCard.dataset.taskId;
+        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(updatedData),
+            credentials: 'include'
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Server error:', errorData);
+            throw new Error(`Failed to update task: ${errorData.message || 'Unknown error'}`);
+        }
+
+        const responseData = await response.json();
+        console.log('Update successful:', responseData);
+
+        // Update task card dataset with the response data
+        Object.entries(updatedData).forEach(([key, value]) => {
+            taskCard.dataset[key] = value;
+        });
+
+        // Update the card display
+        updateTaskCard(taskCard);
+
+        // Move card to correct column if status changed
+        const columnId = getColumnIdFromStatus(updatedData.status);
+        const targetColumn = document.getElementById(columnId);
+        if (targetColumn && taskCard.parentElement.id !== columnId) {
+            targetColumn.appendChild(taskCard);
+            updateTaskCounts();
+        }
+
+        // Reset modal to view mode
+        disableEditMode();
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
+        modal.hide();
+
+    } catch (error) {
+        console.error('Error updating task:', error);
+        alert(`Failed to update task: ${error.message}`);
     }
 }

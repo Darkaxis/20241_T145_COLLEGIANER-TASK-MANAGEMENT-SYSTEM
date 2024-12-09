@@ -74,8 +74,10 @@ body {
 
 .main-content {
     flex: 1;
-    padding: 20px;
-    /* Padding for main content */
+    padding: 10px;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .navbar {
@@ -96,12 +98,13 @@ body {
 }
 
 .table {
-    margin-top: 20px;
-    /* Spacing above the table */
+    margin-bottom: 0;
+    background: white;
 }
 
 .table th,
 .table td {
+    padding: 0.6rem 1rem;
     vertical-align: middle;
     /* Center content in cells */
 }
@@ -213,10 +216,11 @@ body {
 /* Table Container Styles */
 
 .table-responsive {
-    max-height: 250px;
-    /* Increased from 250px to show more users */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: calc(100vh - 320px);
     overflow-y: auto;
-    margin-bottom: 1rem;
 }
 
 .table thead th {
@@ -228,6 +232,7 @@ body {
 
 .table {
     margin-bottom: 0;
+    background: white;
 }
 
 
@@ -416,7 +421,52 @@ body {
 
 /* Dashboard Cards Responsive */
 
-@media (max-width: 1200px) {
+.dashboard {
+    margin: 0 0 15px 0;
+}
+
+.dashboard .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0 5px;
+}
+
+.dashboard-card {
+    margin: 0;
+    height: 100%;
+    min-height: 90px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 0.8rem;
+}
+
+
+/* Table Responsive Styles */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+.table {
+    min-width: 750px;
+    /* Minimum width to prevent squishing */
+    width: 100%;
+}
+
+
+/* Responsive breakpoints */
+
+@media (max-width: 1400px) {
     .dashboard-card {
         padding: 1rem;
     }
@@ -425,93 +475,232 @@ body {
         height: 45px;
         font-size: 1.2rem;
     }
-    .card-content h5 {
-        font-size: 1rem;
-    }
-    .count {
-        font-size: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .dashboard .row {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 }
 
 @media (max-width: 992px) {
-    .sidebar {
-        width: 250px;
-    }
-    .collegianer {
-        font-size: 28px;
-    }
-    .task-management-system {
-        font-size: 11px;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 0;
-        position: fixed;
-        z-index: 1000;
-        transition: 0.3s;
-    }
-    .sidebar.active {
-        width: 250px;
-    }
-    .main-content {
-        padding: 15px;
-    }
     .dashboard .row {
-        margin: 0 -10px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
-    .col-md-4 {
-        padding: 0 10px;
-        margin-bottom: 15px;
+    .sidebar {
+        width: 250px;
     }
-    .table-responsive {
-        max-height: none;
+    @media (max-width: 768px) {
+        .dashboard {
+            margin: 0 0 5px 0;
+        }
+        .card.shadow-sm {
+            margin: 5px 0;
+            height: calc(100vh - 200px);
+        }
+        .table-responsive {
+            max-height: calc(100vh - 280px);
+        }
+        .main-content {
+            padding: 8px;
+        }
+        .dashboard-card {
+            margin-bottom: 15px;
+        }
+        .card-header {
+            padding: 0.75rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+        /* Table Adjustments */
+        .table-responsive {
+            margin: 0 -10px;
+        }
+        .table {
+            font-size: 0.85rem;
+        }
+        /* Hide less important columns on mobile */
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            display: none;
+        }
+        /* Modal Adjustments */
+        #addUserModal .modal-dialog {
+            margin: 0.5rem;
+        }
+        #addUserModal .modal-body {
+            padding: 1rem;
+        }
+        .btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+        }
     }
-    .table thead th {
-        font-size: 0.85rem;
-        padding: 0.75rem;
+    /* User Role Modal Styles */
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .table tbody td {
-        padding: 0.75rem;
-        font-size: 0.9rem;
+    .avatar-circle i {
+        color: #6c757d;
+        font-size: 1.2rem;
     }
-}
-
-@media (max-width: 576px) {
-    .main-content {
-        padding: 10px;
+    .user-details {
+        padding-left: 3.5rem;
     }
-    .dashboard-card {
-        margin-bottom: 15px;
+    .user-details i {
+        width: 16px;
+    }
+    /* Card hover effect */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    /* Role-specific card colors */
+    [data-role="Editor in Charge"] .avatar-circle {
+        background-color: #cfe2ff;
+    }
+    [data-role="Editor in Charge"] .avatar-circle i {
+        color: #0d6efd;
+    }
+    [data-role="Editorial Board"] .avatar-circle {
+        background-color: #d1e7dd;
+    }
+    [data-role="Editorial Board"] .avatar-circle i {
+        color: #198754;
+    }
+    [data-role="Staff"] .avatar-circle {
+        background-color: #fff3cd;
+    }
+    [data-role="Staff"] .avatar-circle i {
+        color: #ffc107;
+    }
+    /* Profile image styles for role cards */
+    .profile-image-container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .online-status {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #28a745;
+        border: 2px solid #fff;
+    }
+    /* Role-specific card styles */
+    [data-role="Editor in Charge"] .profile-image {
+        border-color: #0d6efd;
+    }
+    [data-role="Editorial Board"] .profile-image {
+        border-color: #198754;
+    }
+    [data-role="Staff"] .profile-image {
+        border-color: #ffc107;
+    }
+    /* Card hover effect */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    /* User details spacing */
+    .user-details {
+        padding-left: 3.5rem;
+    }
+    .user-details i {
+        width: 16px;
+    }
+    /* Table Card Spacing */
+    .card.shadow-sm {
+        margin: 0;
+        border-radius: 12px;
+        height: calc(100vh - 250px);
+        background: white;
     }
     .card-header {
-        padding: 0.75rem;
+        padding: 0.8rem 1rem;
+        margin: 0;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
     }
-    .card-title {
-        font-size: 1.1rem;
+    .card-body {
+        padding: 0.6rem;
+        overflow: hidden;
     }
-    /* Table Adjustments */
+    /* Table Spacing */
     .table-responsive {
-        margin: 0 -10px;
+        margin: 15px 0;
     }
     .table {
-        font-size: 0.85rem;
+        min-width: 750px;
+        width: 100%;
+        border-spacing: 0 8px;
+        border-collapse: separate;
     }
-    /* Hide less important columns on mobile */
-    .table th:nth-child(3),
-    .table td:nth-child(3) {
-        display: none;
+    .table th,
+    .table td {
+        padding: 0.6rem 1rem;
+        vertical-align: middle;
     }
-    /* Modal Adjustments */
-    #addUserModal .modal-dialog {
-        margin: 0.5rem;
-    }
-    #addUserModal .modal-body {
-        padding: 1rem;
-    }
+    /* Button Spacing */
     .btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 1.25rem;
+        margin: 5px;
     }
+}
+
+
+/* Custom scrollbar */
+
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.table {
+    margin-bottom: 0;
+    background: white;
+}
+
+
+/* Card body */
+
+.card-body {
+    padding: 0.6rem;
+    overflow: hidden;
+    height: calc(100% - 100px);
+    /* Reduced height, accounting for header */
 }

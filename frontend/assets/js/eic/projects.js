@@ -39,14 +39,48 @@ function handleAddProject() {
     const projectName = document.getElementById('projectName').value;
     const projectStart = document.getElementById('projectStart').value;
     const projectEnd = document.getElementById('projectEnd').value;
+    let hasErrors = false;
 
-    if (!projectName || !projectStart || !projectEnd) {
-        alert('Please fill in all fields');
+    // Clear previous errors
+    clearAllErrors();
+
+    // Validate project name
+    if (!projectName) {
+        showInputError('projectName', 'Please input project name');
+        hasErrors = true;
+    }
+
+    // Validate start date
+    if (!projectStart) {
+        showInputError('projectStart', 'Please input start date');
+        hasErrors = true;
+    }
+
+    // Validate end date
+    if (!projectEnd) {
+        showInputError('projectEnd', 'Please input end date');
+        hasErrors = true;
+    }
+
+    if (hasErrors) {
         return;
     }
 
-    if (new Date(projectEnd) <= new Date(projectStart)) {
-        alert('End date must be after start date');
+    // Date validation
+    const startDate = new Date(projectStart);
+    const endDate = new Date(projectEnd);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check if start date is in the past
+    if (startDate < today) {
+        showDateError('projectStart', 'Project start date cannot be in the past');
+        return;
+    }
+
+    // Check if end date is before start date
+    if (endDate <= startDate) {
+        showDateError('projectEnd', 'End date must be after start date');
         return;
     }
 
@@ -162,21 +196,54 @@ function initializeProjectActions() {
 }
 
 function handleDeleteProject(projectId) {
-    if (confirm('Are you sure you want to delete this project?')) {
-        // Remove from UI
+    // Create and show the custom modal
+    const modal = document.createElement('div');
+    modal.className = 'delete-confirmation-modal';
+    modal.innerHTML = `
+        <div class="delete-modal-content">
+            <div class="delete-modal-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3>Delete Project</h3>
+            <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+            <div class="delete-modal-buttons">
+                <button class="delete-cancel-btn">Cancel</button>
+                <button class="delete-confirm-btn">Delete</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Handle cancel button
+    modal.querySelector('.delete-cancel-btn').onclick = () => {
+        modal.remove();
+    };
+
+    // Handle delete button
+    modal.querySelector('.delete-confirm-btn').onclick = () => {
+        // Remove from UI with fade out animation
         const projectElement = document.querySelector(`[data-project-id="${projectId}"]`);
         if (projectElement) {
-            projectElement.remove();
+            projectElement.classList.add('fade-out');
+            setTimeout(() => {
+                projectElement.remove();
+                // Remove from storage
+                deleteProject(projectId);
+                // Show success notification
+                showDeleteNotification('Project deleted successfully');
+            }, 300);
         }
-
-        // Remove from storage
-        deleteProject(projectId);
-    }
+        modal.remove();
+    };
 }
 
 function handleEditProject(projectId) {
     const project = getProjectById(projectId);
     if (!project) return;
+
+    // Update modal title for edit mode
+    const modalTitle = document.querySelector('#addProjectModal .modal-title');
+    modalTitle.textContent = 'Edit Project';
 
     // Populate form with project data
     document.getElementById('projectName').value = project.name;
@@ -187,7 +254,7 @@ function handleEditProject(projectId) {
     const modal = new bootstrap.Modal(document.getElementById('addProjectModal'));
     modal.show();
 
-    // Update save button
+    // Update save button text
     const saveBtn = document.getElementById('saveProjectBtn');
     saveBtn.textContent = 'Update Project';
 
@@ -203,13 +270,26 @@ function handleEditProject(projectId) {
         const start = document.getElementById('projectStart').value;
         const end = document.getElementById('projectEnd').value;
 
-        // Validation
+        // Validation for required fields
         if (!name || !start || !end) {
             alert('Please fill in all fields');
             return;
         }
 
-        if (new Date(end) <= new Date(start)) {
+        // Date validation
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Check if start date is in the past
+        if (startDate < today) {
+            alert('Project start date cannot be in the past');
+            return;
+        }
+
+        // Check if end date is before start date
+        if (endDate <= startDate) {
             alert('End date must be after start date');
             return;
         }
@@ -251,6 +331,9 @@ function handleEditProject(projectId) {
             // Close modal and reset
             modal.hide();
             resetModalForm();
+
+            // Show success notification
+            showUpdateNotification('Project updated successfully');
         }
     });
 }
@@ -289,12 +372,20 @@ function loadProjects() {
     projects.forEach(project => {
         addProjectToUI(project);
     });
+
+    // Adjust layout for current zoom level
+    adjustLayoutForZoom();
 }
 
 // Add this new function to reset the modal form
 function resetModalForm() {
     const form = document.getElementById('addProjectForm');
     form.reset();
+    clearAllErrors();
+
+    // Reset modal title back to Add New Project
+    const modalTitle = document.querySelector('#addProjectModal .modal-title');
+    modalTitle.textContent = 'Add New Project';
 
     const saveBtn = document.getElementById('saveProjectBtn');
     const newSaveBtn = saveBtn.cloneNode(true);
@@ -302,4 +393,172 @@ function resetModalForm() {
 
     newSaveBtn.textContent = 'Create Project';
     newSaveBtn.addEventListener('click', handleAddProject);
+}
+
+// Set minimum date to today for both date inputs
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('projectStart').min = today;
+document.getElementById('projectEnd').min = today;
+
+// Renamed notification function
+function showDeleteNotification(message) {
+    const toast = document.createElement('div');
+    toast.className = 'delete-toast';
+    toast.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span class="delete-toast-message">${message}</span>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Add new notification function for updates
+function showUpdateNotification(message) {
+    const toast = document.createElement('div');
+    toast.className = 'update-toast';
+    toast.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span class="update-toast-message">${message}</span>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function showDateError(inputId, message) {
+    const field = document.getElementById(inputId);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message-container';
+
+    // Create icon element
+    const icon = document.createElement('i');
+    icon.className = 'fas fa-exclamation-circle error-icon';
+
+    // Create message element
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'error-text';
+    messageSpan.textContent = message;
+
+    // Combine icon and message
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(messageSpan);
+
+    // Find the parent container
+    const parentContainer = field.closest('.input-group');
+
+    // Remove any existing error messages
+    const existingError = parentContainer.parentElement.querySelector('.error-message-container');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    // Add error message after the parent container
+    parentContainer.parentElement.appendChild(errorDiv);
+
+    // Add invalid class and error styling
+    field.classList.add('is-invalid');
+    parentContainer.classList.add('has-error');
+
+    // Add shake animation
+    field.classList.add('shake-error');
+    setTimeout(() => field.classList.remove('shake-error'), 500);
+}
+
+function clearDateErrors() {
+    const dateInputs = ['projectStart', 'projectEnd'];
+    dateInputs.forEach(id => {
+        const input = document.getElementById(id);
+        const inputGroup = input.closest('.input-group');
+        const errorDiv = input.parentElement.nextElementSibling;
+
+        inputGroup.classList.remove('has-error');
+        errorDiv.textContent = '';
+        errorDiv.classList.remove('show');
+    });
+}
+
+function showInputError(inputId, message) {
+    const field = document.getElementById(inputId);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message-container';
+
+    // Create icon element
+    const icon = document.createElement('i');
+    icon.className = 'fas fa-exclamation-circle error-icon';
+
+    // Create message element
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'error-text';
+    messageSpan.textContent = message;
+
+    // Combine icon and message
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(messageSpan);
+
+    // Find the parent container
+    const parentContainer = field.closest('.input-group');
+
+    // Remove any existing error messages
+    const existingError = parentContainer.parentElement.querySelector('.error-message-container');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    // Add error message after the parent container
+    parentContainer.parentElement.appendChild(errorDiv);
+
+    // Add invalid class and error styling
+    field.classList.add('is-invalid');
+    parentContainer.classList.add('has-error');
+
+    // Add shake animation
+    field.classList.add('shake-error');
+    setTimeout(() => field.classList.remove('shake-error'), 500);
+}
+
+function clearAllErrors() {
+    document.querySelectorAll('.error-message-container').forEach(error => error.remove());
+    document.querySelectorAll('.is-invalid').forEach(input => {
+        input.classList.remove('is-invalid');
+        input.classList.remove('shake-error');
+    });
+    document.querySelectorAll('.has-error').forEach(group => {
+        group.classList.remove('has-error');
+    });
+}
+
+// Add resize event listener to handle zoom changes
+window.addEventListener('resize', function() {
+    adjustLayoutForZoom();
+});
+
+function adjustLayoutForZoom() {
+    const container = document.querySelector('.projects-container');
+    const cards = document.querySelectorAll('.project-card');
+
+    // Get the current zoom level
+    const zoomLevel = Math.round(window.devicePixelRatio * 100);
+
+    // Adjust container padding based on zoom
+    container.style.padding = `${20 * (100 / zoomLevel)}px`;
+
+    // Adjust card sizes if needed
+    cards.forEach(card => {
+        if (zoomLevel > 125) {
+            card.style.fontSize = '0.9em';
+        } else if (zoomLevel < 75) {
+            card.style.fontSize = '1.1em';
+        } else {
+            card.style.fontSize = '1em';
+        }
+    });
 }

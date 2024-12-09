@@ -173,67 +173,64 @@
             </div>
         </nav>
         <!-- Dashboard Section -->
-        <div class="dashboard container mt-4">
+        <div class="dashboard">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="dashboard-card admin-card">
-                        <div class="card-icon">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <div class="card-content">
-                            <h5>Total Admin</h5>
-                            <p class="count" id="totalAdmins">0</p>
-                        </div>
+                <!-- Cards will automatically adjust based on screen size -->
+                <div class="dashboard-card admin-card" onclick="showUsersByRole('Editor in Charge')">
+                    <div class="card-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="card-content">
+                        <h5>Total Editorial in Charge</h5>
+                        <p class="count" id="totalAdmins">0</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="dashboard-card editorial-card">
-                        <div class="card-icon">
-                            <i class="fas fa-user-edit"></i>
-                        </div>
-                        <div class="card-content">
-                            <h5>Total Editorial Board</h5>
-                            <p class="count" id="totalEditorials">0</p>
-                        </div>
+                <div class="dashboard-card editorial-card" onclick="showUsersByRole('Editorial Board')">
+                    <div class="card-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <div class="card-content">
+                        <h5>Total Editorial Board</h5>
+                        <p class="count" id="totalEditorials">0</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="dashboard-card staff-card">
-                        <div class="card-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="card-content">
-                            <h5>Total Staff</h5>
-                            <p class="count" id="totalStaff">0</p>
-                        </div>
+                <div class="dashboard-card staff-card" onclick="showUsersByRole('Staff')">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h5>Total Staff</h5>
+                        <p class="count" id="totalStaff">0</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- User Information Table -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
+        <!-- User Information Table -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <h3 class="card-title text-primary fw-bold mb-0">User Information</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-4">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="fw-semibold">Name</th>
-                                    <th class="fw-semibold">Email</th>
-                                    <th class="fw-semibold">Role</th>
-                                    <th class="fw-semibold">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userTableBody">
-                                <!-- User accounts will be added here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-primary px-4 shadow-sm" onclick="openAddUserModal()">
+                    <button class="btn btn-primary px-4 shadow-sm mt-2 mt-sm-0" onclick="openAddUserModal()">
                         <i class="fas fa-plus-circle me-2"></i>Add User
                     </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-4">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="fw-semibold">Name</th>
+                                <th class="fw-semibold">Email</th>
+                                <th class="fw-semibold">Role</th>
+                                <th class="fw-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- User accounts will be added here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -254,7 +251,7 @@
                             <label for="email" class="form-label">Email</label>
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-envelope me-2"></i>
-                                <input type="email" class="form-control" id="email">
+                                <input type="email" class="form-control" id="email" placeholder="Enter email">
                             </div>
                             <div class="error-message"></div>
                         </div>
@@ -351,7 +348,7 @@
                                     <th>Role</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody">
+                            <tbody id="usersByRoleTableBody">
                             </tbody>
                         </table>
                     </div>

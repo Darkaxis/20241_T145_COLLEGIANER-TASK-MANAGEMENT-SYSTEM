@@ -178,59 +178,21 @@
         </nav>
 
         <!-- Projects Container -->
-        <div class="container mt-4 projects-container">
+        <div class="container-fluid mt-4 projects-container">
             <!-- Search and Add Project Row -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" placeholder="Search projects...">
-                    </div>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="form-control" placeholder="Search projects...">
                 </div>
-                <div class="col-md-4 text-end">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
-                        <i class="fas fa-plus me-2"></i>Add Project
-                    </button>
-                </div>
+                <button class="btn btn-primary add-project-btn" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                    <i class="fas fa-plus me-2"></i>Add Project
+                </button>
             </div>
 
             <!-- Projects Grid -->
             <div class="row g-4">
-                <!-- Project Card Template -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="project-card">
-                        <div class="project-card-header">
-                            <i class="fas fa-folder-open project-icon"></i>
-                            <div class="project-options">
-                                <button class="btn btn-link" title="Edit">
-                                    <i class="fas fa-edit text-primary"></i>
-                                </button>
-                                <button class="btn btn-link" title="Delete">
-                                    <i class="fas fa-trash text-danger"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="project-card-body">
-                            <h5 class="project-title">Project Name</h5>
-                            <div class="project-dates">
-                                <div class="date-item">
-                                    <i class="fas fa-calendar-alt text-primary"></i>
-                                    <span>Start: March 1, 2024</span>
-                                </div>
-                                <div class="date-item">
-                                    <i class="fas fa-calendar-check text-success"></i>
-                                    <span>End: March 30, 2024</span>
-                                </div>
-                            </div>
-                            <div class="project-progress">
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: 75%"></div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Project cards will be dynamically added here -->
             </div>
         </div>
 
@@ -257,6 +219,7 @@
                                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                     <input type="date" class="form-control" id="projectStart" required>
                                 </div>
+                                <div class="date-error-message"></div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">End Date</label>
@@ -264,6 +227,7 @@
                                     <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
                                     <input type="date" class="form-control" id="projectEnd" required>
                                 </div>
+                                <div class="date-error-message"></div>
                             </div>
                         </form>
                     </div>
@@ -285,46 +249,47 @@
     <script type="module" src="/js/eic/taskService.js"></script>
     <script type="module" src="/js/eic/taskCard.js"></script>
 
+
     <!-- Add this right before the closing body tag -->
     <div class="profile-card" id="profileCard">
         <div class="profile-card-content">
             <button class="close-profile" id="closeProfile">
-                <i class="fas fa-times"></i>
-            </button>
+                    <i class="fas fa-times"></i>
+                </button>
 
             <div class="profile-banner"></div>
 
             <div class="profile-image">
-                <i class="fas fa-user-circle"></i>
+                <img class="fas fa-user-circle" id="sidebarprofileImage" style="border-radius: 50%;">
                 <div class="online-status"></div>
             </div>
 
             <div class="profile-details">
-                <div class="profile-name">Margaret Zoe Neri</div>
-                <div class="profile-position">EIC-ADMIN</div>
+                <div class="profile-name" id="sidebarprofileName"> </div>
+                <div class="profile-position"></div>
 
                 <div class="profile-info-section">
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="email">
                         <div class="field-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="field-content">
                             <label>Email</label>
-                            <p>2201101820@student.buksu.edu.ph</p>
+                            <p id="sidebarEmail"></p>
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="role">
                         <div class="field-icon">
                             <i class="fas fa-id-badge"></i>
                         </div>
                         <div class="field-content">
-                            <label>Employee ID</label>
-                            <p>EIC-2024-001</p>
+                            <label>Role</label>
+                            <p id="sidebarRole"></p>
                         </div>
                     </div>
 
-                    <div class="profile-field">
+                    <div class="profile-field" data-type="date">
                         <div class="field-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
@@ -337,7 +302,6 @@
             </div>
         </div>
     </div>
-
 
 </body>
 

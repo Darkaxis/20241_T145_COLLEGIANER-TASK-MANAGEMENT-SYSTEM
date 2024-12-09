@@ -21,7 +21,7 @@ function initializeMarkAsDone() {
 async function moveTaskToDone(taskCard) {
 
 
-    
+
     // Update the task's status
     taskCard.dataset.status = 'Done';
 
