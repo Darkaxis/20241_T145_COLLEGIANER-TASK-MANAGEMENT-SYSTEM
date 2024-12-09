@@ -3,7 +3,6 @@ import taskService from '../services/taskServices.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { version } from 'uuid';
 
 const taskRoutes = express.Router();
 taskRoutes.use(cookieParser());

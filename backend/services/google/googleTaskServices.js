@@ -1,3 +1,25 @@
+import { google } from 'googleapis';
+import oauth2Client from '../../utils/oauth2Client.js';
+import db from '../../utils/firestoreClient.js';
+
+
+
+async function getUserTokens(email) {
+  try {
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (userSnapshot.empty) {
+      throw new Error('User not found');
+    }
+    const userDoc = userSnapshot.docs[0];
+    return {
+      access_token: userDoc.data().token,
+      refresh_token: userDoc.data().refreshToken
+    }; // Assuming tokens are stored in the user document
+  } catch (error) {
+    console.error('Error getting user tokens:', error);
+    throw new Error('Error getting user tokens');
+  }
+}
 
 
 

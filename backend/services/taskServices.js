@@ -1,8 +1,7 @@
 import admin from "firebase-admin"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js";
-import oauth2Client from "../utils/oauth2Client.js";
-import addTaskToGoogleTasks from "./google/googleTaskServices.js";
-import addEventToGoogleCalendar from "./google/googleCalendarServices.js";
+import googleTaskServices from "./google/googleTaskServices.js";
+import googleCalendarServices from "./google/googleCalendarServices.js";
 
 
 function formatDeadline(isoString) {
@@ -22,18 +21,17 @@ function formatDeadline(isoString) {
 async function createTask(taskData, userEmail) {
   try {
     // Create task object with timestamps
-    const deadline = new Date(taskData.deadline);
+        const deadline = new Date(taskData.deadline);
     deadline.setHours(23, 59, 59, 999); // Set to end of day
-    const isoDeadline = deadline.toLocaleString('en-US', {
-      timeZone: 'Asia/Manila',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2T');
+    
+    // Convert to Manila timezone and RFC 3339 format
+    const manilaDate = new Date(deadline.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila'
+    }));
+    
+    const isoDeadline = manilaDate.toISOString(); // Results in: "2024-02-14T15:59:59.999Z" format
+    
+
     const newTask = {
       ...taskData,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -49,10 +47,10 @@ async function createTask(taskData, userEmail) {
 
       try {
         // Add to Google Tasks
-        const googleTask = await addTaskToGoogleTasks(newTask, userEmail);
+        const googleTask = await googleTaskServices.addTaskToGoogleTasks(newTask, userEmail);
 
         // Add to Google Calendar
-        const calendarEvent = await addEventToGoogleCalendar(newTask, userEmail);
+        const calendarEvent = await googleCalendarServices.addEventToGoogleCalendar(newTask, userEmail);
 
         // Add external IDs to task data
         const taskWithIds = {

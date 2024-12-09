@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded',  async function() {
         if (assignInput) {
             users.forEach(user => {
                 const option = document.createElement('option');
-                option.value = user.name;
+                option.value = user.email;
                 option.text = user.name;
                 assignInput.appendChild(option);
             });
