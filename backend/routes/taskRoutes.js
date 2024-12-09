@@ -3,6 +3,7 @@ import taskService from '../services/taskServices.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { version } from 'uuid';
 
 const taskRoutes = express.Router();
 taskRoutes.use(cookieParser());
@@ -56,13 +57,14 @@ taskRoutes.put('/edit/:id', async (req, res) => {
     
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const assignee = decoded.email;
+    //const assignee = decoded.email;
     try {
         const taskId = req.params.id;
         const taskData = req.body;
-        taskData.assignee = assignee;
+        //taskData.assignee = assignee;
         console.log(taskData);
         const updatedTask = await taskService.editTask(taskId, taskData);
+        console.log(updatedTask);
         res.status(200).send(updatedTask);
     } catch (error) {
         res.status(400).send(error.message);
@@ -110,17 +112,31 @@ taskRoutes.post('/archive/:id', async (req, res) => {
 }
 );
 
-taskRoutes.post('submit/:taskId/', async (req, res) => {
+taskRoutes.post('submit/:taskId', async (req, res) => {
     //handle submitting assigned task
     try {
         const taskId = req.params.taskId;
-        const submissionData = req.body; // Data related to the task submission
-        const result = await taskService.submitTask(taskId, submissionData);
+
+        const result = await taskService.submitTask(taskId);
         res.status(200).json(result);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
+
+taskRoutes.post('/transfer/:taskId', async (req, res) => {
+    try {
+        const taskId = req.params.taskId;
+        const user = req.body.user;
+        const result = await taskService.transferTask(taskId, user);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
+
 
 export default taskRoutes;
 

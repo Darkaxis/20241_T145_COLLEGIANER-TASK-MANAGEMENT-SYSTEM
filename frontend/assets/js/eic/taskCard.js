@@ -1,3 +1,4 @@
+
 let users = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -57,6 +58,7 @@ function createTask(formData) {
    
     const taskCard = document.createElement('div'); 
     taskCard.dataset.taskId = formData.id;
+    taskCard.dataset.taskVersion = formData.taskversion;
     taskCard.className = 'task-card';
     taskCard.draggable = true;
     taskCard.id = 'task-' + Date.now();
@@ -433,10 +435,10 @@ async function saveTaskEdits(taskCard) {
         privacy: document.getElementById('taskPrivacy').value,
         assignedTo: document.getElementById('taskAssignTo').value,
         deadline: document.getElementById('taskDate').value,
-        link: document.getElementById('taskLink').value
+        link: document.getElementById('taskLink').value,
+        version: taskCard.dataset.version
     };
-
-    // send to backend
+   // send to backend
     const taskId = taskCard.dataset.taskId;
     const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
         method: 'PUT',
@@ -446,7 +448,10 @@ async function saveTaskEdits(taskCard) {
         body: JSON.stringify(updatedData),
         credentials: 'include'
     });
-
+    console.log(response.status);
+    if (response.status === 200) {
+        
+        
     
 
     // Add hideFrom if privacy is Private Except
@@ -478,6 +483,10 @@ async function saveTaskEdits(taskCard) {
     // Close modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
     modal.hide();
+}
+else{
+    alert("Error updating task. Please try again later.");
+}
 }
 
 // Add this function to disable edit mode

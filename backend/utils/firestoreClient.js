@@ -1,6 +1,5 @@
 import admin from 'firebase-admin';
 
-// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert({
@@ -19,6 +18,7 @@ if (!admin.apps.length) {
         ignoreUndefinedProperties: true 
     });
 }
+
 
 const db = admin.firestore();
 

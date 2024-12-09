@@ -5,33 +5,75 @@ import addTaskToGoogleTasks from "./google/googleTaskServices.js";
 import addEventToGoogleCalendar from "./google/googleCalendarServices.js";
 
 
-// Function to create a new task
+function formatDeadline(isoString) {
+  if (!isoString) return null;
+  const date = new Date(isoString);
+  return date.toLocaleString('en-US', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
 async function createTask(taskData, userEmail) {
   try {
-    // Validate taskData
-
+    // Create task object with timestamps
+    const deadline = new Date(taskData.deadline);
+    deadline.setHours(23, 59, 59, 999); // Set to end of day
+    const isoDeadline = deadline.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2T');
     const newTask = {
       ...taskData,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      deadline: isoDeadline,
+      version: 1,
     };
 
-    // Use Firestore transaction to ensure concurrency control
-    const taskId = await db.runTransaction(async (transaction) => {
+    // Use transaction to handle all operations
+    const result = await db.runTransaction(async (transaction) => {
+      // Create Firestore document
       const taskRef = db.collection("tasks").doc();
-      transaction.set(taskRef, newTask);
-      return taskRef.id;
-    });
 
-    // Add the task to Google Tasks for the specific user
-    console.log("Anew task",newTask);
-    await addTaskToGoogleTasks(newTask, userEmail);
-    await addEventToGoogleCalendar(newTask, userEmail);
+      try {
+        // Add to Google Tasks
+        const googleTask = await addTaskToGoogleTasks(newTask, userEmail);
+
+        // Add to Google Calendar
+        const calendarEvent = await addEventToGoogleCalendar(newTask, userEmail);
+
+        // Add external IDs to task data
+        const taskWithIds = {
+          ...newTask,
+          googleTaskId: googleTask.googleTaskId,
+          googleCalendarEventId: calendarEvent.id
+        };
+
+        // Save to Firestore with external IDs
+        transaction.set(taskRef, taskWithIds);
+
+      } catch (error) {
+        console.error("Error in external services:", error);
+        throw new Error("Failed to create task in external services");
+      }
+    });
 
     return {
       status: 201,
       message: "Task created successfully",
-      taskId: taskId,
+      ...result
     };
   } catch (error) {
     console.error("Error creating task:", error);
@@ -43,7 +85,14 @@ async function getAllTasks() {
   try {
     const tasksSnapshot = await db.collection("tasks").get();
     const tasks = [];
-    tasksSnapshot.forEach((doc) => tasks.push({ id: doc.id, ...doc.data() }));
+    tasksSnapshot.forEach((doc) => {
+      const taskData = doc.data();
+      tasks.push({ 
+        id: doc.id,
+        ...taskData,
+        deadline: formatDeadline(taskData.deadline)
+      });
+    });
     return { status: 200, message: "Tasks retrieved successfully", tasks };
   } catch (error) {
     console.error("Error getting tasks:", error);
@@ -51,12 +100,9 @@ async function getAllTasks() {
   }
 }
 
-// Function to get tasks for a specific user
 async function getTasksForUser(name) {
   try {
-    // Use Firestore transaction to ensure concurrency control
     const tasks = await db.runTransaction(async (transaction) => {
-      // Check visible and assigned tasks
       const visibleTasksSnapshot = await transaction.get(
         db.collection("tasks").where("visibleTo", "array-contains", name)
       );
@@ -64,33 +110,50 @@ async function getTasksForUser(name) {
         db.collection("tasks").where("assignedTo", "==", name)
       );
 
-      // Use a Set to avoid duplicate tasks
-      const taskSet = new Set();
+      const visibleTasks = [];
+      const assignedTasks = [];
 
-      visibleTasksSnapshot.forEach((doc) => taskSet.add(doc.id));
-      assignedTasksSnapshot.forEach((doc) => taskSet.add(doc.id));
+      visibleTasksSnapshot.forEach((doc) => {
+        const taskData = doc.data();
+        visibleTasks.push({
+          id: doc.id,
+          ...taskData,
+          deadline: formatDeadline(taskData.deadline)
+        });
+      });
 
-      // Convert the Set to an array of task data
-      const tasks = [];
-      for (const taskId of taskSet) {
-        const taskDoc = await transaction.get(db.collection("tasks").doc(taskId));
-        if (taskDoc.exists) {
-          tasks.push({ id: taskDoc.id, ...taskDoc.data() });
-        }
-      }
+      assignedTasksSnapshot.forEach((doc) => {
+        const taskData = doc.data();
+        assignedTasks.push({
+          id: doc.id,
+          ...taskData,
+          deadline: formatDeadline(taskData.deadline)
+        });
+      });
 
-      return tasks;
+      return [...new Set([...visibleTasks, ...assignedTasks])];
     });
 
     return { status: 200, message: "Tasks retrieved successfully", tasks };
   } catch (error) {
-    console.error("Error getting tasks for user:", error);
-    throw new Error("Error getting tasks for user");
+    console.error("Error getting tasks:", error);
+    throw new Error("Error getting tasks");
   }
 }
-
 // Function to edit a task
 async function editTask(taskId, taskData) {
+  const deadline = new Date(taskData.deadline);
+  deadline.setHours(23, 59, 59, 999); // Set to end of day
+  const isoDeadline = deadline.toLocaleString('en-US', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2T');
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -100,9 +163,21 @@ async function editTask(taskId, taskData) {
         throw new Error("Task not found");
       }
 
+      const currentVersion = taskDoc.data().version; // Get the current version number
+
+      const taskDataVersion = parseInt(taskData.version, 10);
+      // Check if the task has been updated since the transaction started
+      if (taskDataVersion && taskDataVersion != currentVersion) {
+        console.log("Task has been updated by another transaction");
+        throw new Error("Task has been updated by another transaction");
+
+      }
+
       const updatedTask = {
         ...taskData,
+        deadline: isoDeadline,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        version: currentVersion + 1, // Increment the version number
       };
 
       transaction.update(taskRef, updatedTask);
@@ -154,7 +229,7 @@ async function deleteTask(taskId) {
   }
 }
 
-async function approveTask(taskId) { 
+async function approveTask(taskId) {
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -176,7 +251,7 @@ async function approveTask(taskId) {
     throw new Error("Error approving task");
   }
 }
-export async function archiveTask(taskId){
+export async function archiveTask(taskId) {
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -209,7 +284,7 @@ export async function submitTask(taskId) {
         throw new Error("Task not found");
       }
       const taskData = taskDoc.data();
-      if (taskData.status !== "Checking") {
+      if (taskData.status !== "To Do") {
         throw new Error("Task is not pending approval");
       }
       transaction.update(taskRef, { status: "Submitted" });
@@ -220,7 +295,26 @@ export async function submitTask(taskId) {
     console.error("Error approving task:", error);
     throw new Error("Error approving task");
   }
-  
+
+}
+export async function transferTask(taskId, user) {
+  try {
+    await db.runTransaction(async (transaction) => {
+      const taskRef = db.collection("tasks").doc(taskId);
+      const taskDoc = await transaction.get(taskRef);
+      if (!taskDoc.exists) {
+        throw new Error("Task not found");
+      }
+      const taskData = taskDoc.data();
+      taskData.assignedTo = user;
+      transaction.update(taskRef, taskData);
+    }
+    );
+    return { status: 200, message: "Task transferred successfully" };
+  } catch (error) {
+    console.error("Error approving task:", error);
+    throw new Error("Error approving task");
+  }
 }
 
 
