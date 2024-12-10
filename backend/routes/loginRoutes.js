@@ -49,18 +49,22 @@ loginRoutes.post('/', async(req, res) => {
 });
 
 
-loginRoutes.get('/verify-token', (req, res) => {
+loginRoutes.get('/verify-token', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
-    //CHECK FOR invAlid token
-
-
 
     try {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        //check if token data is updated if not clear token and return 401
+        const user = await loginServices.getUser(decoded.email);
+        
+        if (user.role !== decoded.role) {
+            res.clearCookie('token');
+            return res.status(401).json({ message: 'Invalid token' });
+        }
 
         res.status(200).json({ user: decoded });
     } catch (error) {

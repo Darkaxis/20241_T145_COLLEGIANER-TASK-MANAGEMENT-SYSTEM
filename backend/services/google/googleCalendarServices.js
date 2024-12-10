@@ -21,15 +21,17 @@ async function getUserTokens(email) {
 
 async function addEventToGoogleCalendar(eventData, email) {
   try {
+    
     const tokens = await getUserTokens(email);
     oAuth2Client.setCredentials(tokens);
 
     const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+    const startDateTime = new Date().toISOString().replace(/\.\d{3}Z$/, '+08:00');
     const event = {
       summary: eventData.taskName,
       description: eventData.description,
       start: {
-        dateTime: eventData.createdAt,
+        dateTime: startDateTime,
         timeZone: 'Asia/Manila',
       },
       end: {

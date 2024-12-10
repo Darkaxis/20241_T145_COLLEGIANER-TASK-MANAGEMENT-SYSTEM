@@ -38,9 +38,19 @@ export async function authenticateUser(email, password) {
     return token;
   }
 
+export async function getUser(email) {
+    const userSnapshot = await db
+      .collection("users")
+      .where("email", "==", email)
+      .get();
+    if (userSnapshot.empty) {
+      throw new Error("User not found");
+    }
+    return userSnapshot.docs[0].data();
+  }
 
 
   
 export default{
-    authenticateUser
+    authenticateUser, getUser
 }

@@ -20,17 +20,15 @@ function formatDeadline(isoString) {
 
 async function createTask(taskData, userEmail) {
   try {
-    // Create task object with timestamps
-        const deadline = new Date(taskData.deadline);
-    deadline.setHours(23, 59, 59, 999); // Set to end of day
-    
-    // Convert to Manila timezone and RFC 3339 format
-    const manilaDate = new Date(deadline.toLocaleString('en-US', {
-      timeZone: 'Asia/Manila'
-    }));
-    
-    const isoDeadline = manilaDate.toISOString(); // Results in: "2024-02-14T15:59:59.999Z" format
-    
+    const deadline = new Date(taskData.deadline);
+deadline.setHours(23, 59, 59, 999); // Set to end of day
+
+// Convert to Manila timezone RFC 3339 format for Google APIs
+const manilaOffset = '+08:00'; // Manila timezone offset
+const isoDeadline = new Date(deadline.toLocaleString('en-US', {
+    timeZone: 'Asia/Manila'
+})).toISOString()
+    .replace(/\.\d{3}Z$/, manilaOffset);
 
     const newTask = {
       ...taskData,
@@ -44,11 +42,11 @@ async function createTask(taskData, userEmail) {
     const result = await db.runTransaction(async (transaction) => {
       // Create Firestore document
       const taskRef = db.collection("tasks").doc();
-
+      console.log(userEmail);
       try {
         // Add to Google Tasks
         const googleTask = await googleTaskServices.addTaskToGoogleTasks(newTask, userEmail);
-
+        
         // Add to Google Calendar
         const calendarEvent = await googleCalendarServices.addEventToGoogleCalendar(newTask, userEmail);
 
@@ -56,7 +54,7 @@ async function createTask(taskData, userEmail) {
         const taskWithIds = {
           ...newTask,
           googleTaskId: googleTask.googleTaskId,
-          googleCalendarEventId: calendarEvent.id
+          googleCalendarEventId: calendarEvent.googleCalendarEventId
         };
 
         // Save to Firestore with external IDs
@@ -285,7 +283,7 @@ export async function submitTask(taskId) {
       if (taskData.status !== "To Do") {
         throw new Error("Task is not pending approval");
       }
-      transaction.update(taskRef, { status: "Submitted" });
+      transaction.update(taskRef, { status: "Checking" });
     });
 
     return { status: 200, message: "Task Submitted successfully" };

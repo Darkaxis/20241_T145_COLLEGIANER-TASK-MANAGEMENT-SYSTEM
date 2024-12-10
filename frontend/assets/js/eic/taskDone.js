@@ -26,7 +26,7 @@ async function moveTaskToDone(taskCard) {
     taskCard.dataset.status = 'Done';
     const taskData = taskCard.dataset
     const taskId = taskCard.dataset.taskId;
-    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/approve/${taskId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

@@ -3,24 +3,28 @@ import taskService from '../services/taskServices.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-
+import { logAction } from '../services/eicServices.js';
 const taskRoutes = express.Router();
 taskRoutes.use(cookieParser());
 dotenv.config();
 
 taskRoutes.post('/create', async (req, res) => {
-        // const token = req.cookies.token;  
-        // if(!token) {
-        //     return res.status(401).json({ message: 'No token provided' });
-        // }
-        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // if (decoded.role !== 'Editor in Chief' || decoded.role !== 'Editorial Board') {
+        const token = req.cookies.token;  
+        
+        if(!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
         //     return res.status(403).json({ message: 'Unauthorized' });
         // }
     try {
         const taskData = req.body;
         const newTask = await taskService.createTask(taskData, taskData.assignedTo);
+        logAction('Task created', decoded.name, "create");
         res.status(201).send(newTask);
+
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -64,6 +68,7 @@ taskRoutes.put('/edit/:id', async (req, res) => {
         console.log(taskData);
         const updatedTask = await taskService.editTask(taskId, taskData);
         console.log(updatedTask);
+        logAction('Task updated', decoded.name, "update");
         res.status(200).send(updatedTask);
     } catch (error) {
         res.status(400).send(error.message);
@@ -71,9 +76,12 @@ taskRoutes.put('/edit/:id', async (req, res) => {
 });     
 
 taskRoutes.delete('/delete/:id', async (req, res) => {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     try {
         const taskId = req.params.id;
         const deletedTask = await taskService.deleteTask(taskId);
+        logAction('Task deleted', decoded.name, "delete");
         res.status(200).send(deletedTask);
     } catch (error) {
         res.status(400).send(error.message);
@@ -90,20 +98,26 @@ taskRoutes.get('/get/:id', async (req, res) => {
     }
 });
 
-taskRoutes.post('/approve/:id', async (req, res) => {
+taskRoutes.patch('/approve/:id', async (req, res) => {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     try {
         const taskId = req.params.id;
         const task = await taskService.approveTask(taskId);
+        logAction('Task approved', decoded.name, "update");
         res.status(200).send(task);
     } catch (error) {
         res.status(404).send(error.message);
     }
 }
 );
-taskRoutes.post('/archive/:id', async (req, res) => {
+taskRoutes.patch('/archive/:id', async (req, res) => {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     try {
         const taskId = req.params.id;
         const task = await taskService.archiveTask(taskId);
+        logAction('Task archived', decoded.name, "update");
         res.status(200).send(task);
     } catch (error) {
         res.status(404).send(error.message);
@@ -111,12 +125,15 @@ taskRoutes.post('/archive/:id', async (req, res) => {
 }
 );
 
-taskRoutes.post('submit/:taskId', async (req, res) => {
+taskRoutes.patch('submit/:taskId', async (req, res) => {
     //handle submitting assigned task
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     try {
         const taskId = req.params.taskId;
 
         const result = await taskService.submitTask(taskId);
+        logAction('Task submitted', decoded.name, "update");
         res.status(200).json(result);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -124,10 +141,13 @@ taskRoutes.post('submit/:taskId', async (req, res) => {
 });
 
 taskRoutes.post('/transfer/:taskId', async (req, res) => {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     try {
         const taskId = req.params.taskId;
         const user = req.body.user;
         const result = await taskService.transferTask(taskId, user);
+        logAction('Task transferred', decoded.name, "update");
         res.status(200).json(result);
     } catch (error) {
         res.status(400).json({ error: error.message });

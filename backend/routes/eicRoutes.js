@@ -10,6 +10,7 @@ import googleMailServices from '../services/google/googleMailServices.js';
 import taskRoutes from './taskRoutes.js';
 import cookieParser from 'cookie-parser';
 import passport from '../utils/passport.js'
+import e from 'express';
 
 const eicRoutes = express.Router();
 eicRoutes.use('/tasks', taskRoutes);
@@ -20,18 +21,18 @@ dotenv.config();
 
 // Initiate the OAuth flow
 eicRoutes.post('/add', async (req, res) => {
-    // const token = req.cookies.token;
-    // if (!token) {
-    //     return res.status(401).json({
-    //         message: 'No token provided'
-    //     });
-    // }
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    //     if (decoded.role !== 'Editor in Charge') {
-    //         return res.status(403).json({
-    //             message: 'Unauthorized'
-    //         });
-    //     }
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor in Charge') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
     const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
@@ -48,7 +49,7 @@ eicRoutes.post('/add', async (req, res) => {
 
       const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
     console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
-
+    eicServices.logAction('User added', decoded.name, 'add');
     const status = await googleMailServices.sendOAuthLink(email, authUrl);
     if (!status) {
         return res.status(500).json({
@@ -119,13 +120,14 @@ eicRoutes.patch('/edit', async (req, res) => {
             message: 'Failed to update user role'
         });
     }
+    eicServices.logAction('User role updated', decoded.name, 'update');
     res.status(200).json({
         message: 'User role updated successfully'
     });
 });
 
 //logs
-eicRoutes.post('/logs', async (req, res) => {
+eicRoutes.get('/logs', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(403).json({
@@ -139,7 +141,12 @@ eicRoutes.post('/logs', async (req, res) => {
         });
     }
     const logs = await eicServices.getLogs();
+    res.status(200).json({
+        message: 'Logs retrieved successfully',
+        data: logs
+    });
 });
+
 
 
 

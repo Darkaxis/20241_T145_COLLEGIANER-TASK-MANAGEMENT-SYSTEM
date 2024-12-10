@@ -17,8 +17,10 @@ document.addEventListener('DOMContentLoaded', async() => {
             credentials: 'include' // Include cookies in the request
         });
         let usersData = await usersResponse.json();
-        users = usersData.data.map(user => user.name);
-
+        users = usersData.data.map(user => ({
+            name: user.name,
+            email: user.email
+        }));
     } catch (error) {
         console.error('Error fetching users:', error);
     }
@@ -120,7 +122,7 @@ function addTaskCardEventListeners(taskCard) {
         // Update assignTo dropdown
         const assignToSelect = document.getElementById('taskAssignTo');
         assignToSelect.innerHTML = users.map(user =>
-            `<option value="${user}" ${user === taskCard.dataset.assignedTo ? 'selected' : ''}>${user}</option>`
+            `<option value="${user.email}" ${user.name === taskCard.dataset.assignedTo ? 'selected' : ''}>${user.email}</option>`
         ).join('');
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
@@ -454,6 +456,9 @@ async function saveTaskEdits(taskCard) {
     const selectedDate = new Date(dateInput.value);
     selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
     const isoDate = selectedDate.toISOString();
+    //set to the email corresponding to the user
+    
+
 
     // Get updated values
     const updatedData = {

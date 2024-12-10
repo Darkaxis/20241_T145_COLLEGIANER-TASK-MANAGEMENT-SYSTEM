@@ -167,6 +167,20 @@ export async function getLogs(){
         throw new Error("Error getting logs");
     }
 }
+export async function logAction(action, user, type) {
+    try {
+        const log = {
+            type,
+            action,
+            user,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        };
+        await db.collection("logs").add(log);
+    } catch (error) {
+        console.error("Error logging action:", error);
+        throw new Error("Error logging action");
+    }
+}
 
 
 
@@ -177,5 +191,7 @@ export default {
   addUser,
 getAllUsers,
 updateUserRole,
+getLogs,
+logAction,
 
 };

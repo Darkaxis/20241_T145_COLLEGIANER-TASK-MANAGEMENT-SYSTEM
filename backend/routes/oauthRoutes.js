@@ -49,24 +49,12 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
         });
     }
     const userProfile = req.user.profile;
-    console.log('User profile:', userProfile);
+    
 
     try {
         
      const accessToken = req.user.accessToken;
     const refreshToken = req.user.refreshToken;
-    
-    //     // Store the refresh token in the .env file
-    // if (refreshToken) {
-    //     const envPath = path.resolve(__dirname, '../.env'); 
-    //     fs.appendFile(envPath, `\nGOOGLE_REFRESH_TOKEN=${refreshToken}`, (err) => {
-    //       if (err) {
-    //         console.error('Error writing to .env file', err);
-    //       } else {
-    //         console.log('Refresh token stored in .env file');
-    //       }
-    //     });
-    //   }
 
         const name = userProfile.displayName;
         const email = userProfile.emails[0].value;

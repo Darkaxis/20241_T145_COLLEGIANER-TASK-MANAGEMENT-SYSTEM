@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (assignInput) {
         users.forEach(user => {
             const option = document.createElement('option');
-            option.value = user.name;
+            option.value = user.email;
             option.text = user.name;
             assignInput.appendChild(option);
         });
@@ -64,15 +64,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                 //send to server
                 const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
                     method: 'POST',
-                    include: 'credentials',
+                    credentials: 'include',
+                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
-
+                if (response.ok) {
                 createTask(formData);
                 closeAndResetModal();
+                }
             }
         });
     }
