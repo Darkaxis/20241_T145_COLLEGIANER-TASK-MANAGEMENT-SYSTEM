@@ -1,0 +1,131 @@
+/* Search Bar Styles */
+
+.search-container {
+    position: relative;
+    margin-right: 20px;
+    min-width: 300px;
+}
+
+.search-box {
+    position: relative;
+    margin-right: 20px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: #6c757d;
+}
+
+.search-box input {
+    padding-left: 35px;
+    padding-right: 12px;
+    border-radius: 20px;
+    border: 1px solid #dee2e6;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+/* New styles for search matching */
+
+.task-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.task-card.search-match::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    animation: searchIndicator 0.3s ease-in;
+}
+
+.task-card.search-match-to-do::before {
+    background-color: #3b82f6;
+    /* Blue for Todo */
+}
+
+.task-card.search-match-in-progress::before {
+    background-color: #f97316;
+    /* Yellow for In Progress */
+}
+
+.task-card.search-match-checking::before {
+    background-color: #8b5cf6;
+    /* Orange for Checking */
+}
+
+.task-card.search-match-done::before {
+    background-color: #22c55e;
+    /* Green for Done */
+}
+
+.task-card.search-no-match {
+    opacity: 0.2;
+}
+
+@keyframes searchIndicator {
+    from {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+
+/* Add or update these styles */
+
+.notification-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notification-icon i {
+    font-size: 14px;
+}
+
+
+/* Ensure proper alignment within the notification item */
+
+.notification-item .d-flex {
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* Center the bell icon in the notification button */
+
+.notification-button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 50%;
+}
+
+.notification-button i {
+    font-size: 16px;
+    color: #64748b;
+}
+
+
+/* Ensure proper spacing and alignment */
+
+.notification-menu .dropdown-item {
+    padding: 8px 16px;
+}

@@ -1,0 +1,129 @@
+/* Add this at the top of your CSS file */
+
+:root {
+    --main-font: "Quicksand", sans-serif;
+}
+
+
+/* Then update the task card container */
+
+.task-card {
+    font-family: var(--main-font);
+}
+
+
+/* All child elements will inherit the
+
+/* Add the font-family to the main task card elements */
+
+.task-card-content {
+    position: relative;
+    font-family: "Quicksand", sans-serif;
+}
+
+.task-card-header {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    font-family: "Quicksand", sans-serif;
+}
+
+.task-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.task-icons {
+    display: flex;
+    gap: 12px;
+    color: #6c757d;
+}
+
+.task-menu-toggle {
+    background: none;
+    border: none;
+    color: #6c757d;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+}
+
+.task-menu-toggle:hover,
+.task-menu-toggle:focus {
+    color: #343a40;
+    text-decoration: none !important;
+}
+
+.task-menu-toggle i {
+    transform: rotate(0deg);
+}
+
+.task-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    min-width: 120px;
+    font-family: "Quicksand", sans-serif;
+}
+
+.task-menu.show {
+    display: block;
+}
+
+.task-menu-item {
+    display: block;
+    width: 100%;
+    padding: 6px 12px;
+    text-align: left;
+    border: none;
+    background: none;
+    color: #212529;
+    cursor: pointer;
+    font-family: "Quicksand", sans-serif;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.task-menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+.task-menu-item i {
+    font-size: 12px;
+    margin-right: 6px;
+}
+
+.mark-done-btn:hover {
+    color: #28a745;
+}
+
+.archive-btn:hover {
+    color: #6c757d;
+}
+
+.task-title {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Quicksand", sans-serif;
+}
+
+.task-card-body {
+    padding: 0 10px 10px 10px;
+    font-family: "Quicksand", sans-serif;
+}

@@ -1,0 +1,706 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+* {
+    box-sizing: border-box;
+    font-family: "Ubuntu", sans-serif;
+    /* Changed to Ubuntu */
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    background-color: #f8f9fc;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #05274B;
+    /* Dark blue for sidebar */
+    padding: 20px;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+}
+
+.brand-logo {
+    max-width: 60px;
+    /* Logo size */
+    margin-top: 10px;
+}
+
+.collegianer {
+    font-family: 'Old English Text MT', serif;
+    font-size: 35px;
+    font-weight: normal;
+    margin-left: -15px;
+    text-align: left;
+    padding-left: 0;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 2px solid #ffffff;
+    /* White divider */
+    margin: 10px 0;
+    width: 100%;
+}
+
+.sidebar-section a {
+    display: block;
+    color: #ffffff;
+    /* White text */
+    padding: 10px;
+    border-radius: 4px;
+    /* Rounded corners */
+    text-decoration: none;
+    /* No underline */
+}
+
+.sidebar-section a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Light hover effect */
+}
+
+.main-content {
+    flex: 1;
+    padding: 10px;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.navbar {
+    margin-bottom: 20px;
+    /* Spacing below the navbar */
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-title {
+    margin-top: 10px;
+    /* Spacing for card title */
+    font-weight: bold;
+    /* Bold card title */
+}
+
+.table {
+    margin-bottom: 0;
+    background: white;
+}
+
+.table th,
+.table td {
+    padding: 0.6rem 1rem;
+    vertical-align: middle;
+    /* Center content in cells */
+}
+
+.btn-primary {
+    background-color: #007bff;
+    /* Primary button color */
+    border-color: #007bff;
+    /* Primary button border */
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    border-color: #0056b3;
+    /* Darker border on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.profile-button {
+    border: none;
+    /* Remove border from profile button */
+    background: none;
+    /* Remove background from profile button */
+}
+
+.profile-img {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+    /* Minimum width for dropdown */
+}
+
+.dropdown-item {
+    display: flex;
+    /* Flexbox for dropdown items */
+    align-items: center;
+    /* Center items vertically */
+}
+
+.dropdown-item i {
+    margin-right: 10px;
+    /* Spacing between icon and text */
+}
+
+.task-management-system {
+    font-weight: 100;
+    margin: 0;
+    font-size: 12px;
+    width: 15vw;
+    letter-spacing: 1.5px;
+    margin-left: -15px;
+    text-align: left;
+}
+
+.sidebar-section {
+    margin-top: 20px;
+    /* Space above sidebar section */
+}
+
+.sidebar-section a .icon {
+    margin-right: 10px;
+    /* Spacing between icon and text */
+}
+
+.icon {
+    color: white;
+    /* Icon color */
+}
+
+.icon:hover {
+    color: #007bff;
+    /* Change icon color on hover */
+}
+
+
+/* User Information Table Styles */
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+}
+
+.table thead th {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+
+/* Table Container Styles */
+
+.table-responsive {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: calc(100vh - 320px);
+    overflow-y: auto;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.table {
+    margin-bottom: 0;
+    background: white;
+}
+
+
+/* Modal Styles */
+
+#addUserModal .modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#addUserModal .modal-header {
+    background-color: #f8f9fa;
+    border-radius: 15px 15px 0 0;
+    padding: 1.5rem;
+}
+
+#addUserModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #05274B;
+}
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+#addUserModal .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    padding: 0.75rem;
+}
+
+#addUserModal .input-group-text i {
+    color: #6c757d;
+}
+
+#addUserModal .form-control,
+#addUserModal .form-select {
+    border-left: none;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+}
+
+#addUserModal .form-control:focus,
+#addUserModal .form-select:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#addUserModal .modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+}
+
+#addUserModal .btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+#addUserModal .btn-light {
+    background-color: #e9ecef;
+    border: none;
+}
+
+#addUserModal .btn-light:hover {
+    background-color: #dee2e6;
+}
+
+#addUserModal .btn-primary {
+    background-color: #05274B;
+    border: none;
+}
+
+#addUserModal .btn-primary:hover {
+    background-color: #031b33;
+}
+
+
+/* Form validation error styles */
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+
+/* Adjust input group margins */
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+
+/* Modal form styling */
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-family: "Quicksand", sans-serif;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    margin-bottom: 0.25rem;
+}
+
+.modal-body .mb-3 {
+    position: relative;
+    margin-bottom: 1.5rem !important;
+}
+
+
+/* Input group validation styling */
+
+.input-group .form-control.is-invalid,
+.input-group .form-select.is-invalid {
+    z-index: 2;
+}
+
+.input-group .form-control.is-invalid:focus,
+.input-group .form-select.is-invalid:focus {
+    z-index: 3;
+}
+
+
+/* Modal form styling */
+
+#addUserModal .modal-body {
+    padding: 1.5rem;
+}
+
+#addUserModal .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+#addUserModal .d-flex i {
+    color: #6c757d;
+    width: 16px;
+    text-align: center;
+}
+
+
+/* Add these responsive styles at the end of your file */
+
+
+/* Dashboard Cards Responsive */
+
+.dashboard {
+    margin: 0 0 15px 0;
+}
+
+.dashboard .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0 5px;
+}
+
+.dashboard-card {
+    margin: 0;
+    height: 100%;
+    min-height: 90px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    padding: 0.8rem;
+}
+
+
+/* Table Responsive Styles */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+.table {
+    min-width: 750px;
+    /* Minimum width to prevent squishing */
+    width: 100%;
+}
+
+
+/* Responsive breakpoints */
+
+@media (max-width: 1400px) {
+    .dashboard-card {
+        padding: 1rem;
+    }
+    .card-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard .row {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard .row {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .sidebar {
+        width: 250px;
+    }
+    @media (max-width: 768px) {
+        .dashboard {
+            margin: 0 0 5px 0;
+        }
+        .card.shadow-sm {
+            margin: 5px 0;
+            height: calc(100vh - 200px);
+        }
+        .table-responsive {
+            max-height: calc(100vh - 280px);
+        }
+        .main-content {
+            padding: 8px;
+        }
+        .dashboard-card {
+            margin-bottom: 15px;
+        }
+        .card-header {
+            padding: 0.75rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+        /* Table Adjustments */
+        .table-responsive {
+            margin: 0 -10px;
+        }
+        .table {
+            font-size: 0.85rem;
+        }
+        /* Hide less important columns on mobile */
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            display: none;
+        }
+        /* Modal Adjustments */
+        #addUserModal .modal-dialog {
+            margin: 0.5rem;
+        }
+        #addUserModal .modal-body {
+            padding: 1rem;
+        }
+        .btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+    /* User Role Modal Styles */
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .avatar-circle i {
+        color: #6c757d;
+        font-size: 1.2rem;
+    }
+    .user-details {
+        padding-left: 3.5rem;
+    }
+    .user-details i {
+        width: 16px;
+    }
+    /* Card hover effect */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    /* Role-specific card colors */
+    [data-role="Editor in Charge"] .avatar-circle {
+        background-color: #cfe2ff;
+    }
+    [data-role="Editor in Charge"] .avatar-circle i {
+        color: #0d6efd;
+    }
+    [data-role="Editorial Board"] .avatar-circle {
+        background-color: #d1e7dd;
+    }
+    [data-role="Editorial Board"] .avatar-circle i {
+        color: #198754;
+    }
+    [data-role="Staff"] .avatar-circle {
+        background-color: #fff3cd;
+    }
+    [data-role="Staff"] .avatar-circle i {
+        color: #ffc107;
+    }
+    /* Profile image styles for role cards */
+    .profile-image-container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .online-status {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #28a745;
+        border: 2px solid #fff;
+    }
+    /* Role-specific card styles */
+    [data-role="Editor in Charge"] .profile-image {
+        border-color: #0d6efd;
+    }
+    [data-role="Editorial Board"] .profile-image {
+        border-color: #198754;
+    }
+    [data-role="Staff"] .profile-image {
+        border-color: #ffc107;
+    }
+    /* Card hover effect */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    /* User details spacing */
+    .user-details {
+        padding-left: 3.5rem;
+    }
+    .user-details i {
+        width: 16px;
+    }
+    /* Table Card Spacing */
+    .card.shadow-sm {
+        margin: 0;
+        border-radius: 12px;
+        height: calc(100vh - 250px);
+        background: white;
+    }
+    .card-header {
+        padding: 0.8rem 1rem;
+        margin: 0;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+    }
+    .card-body {
+        padding: 0.6rem;
+        overflow: hidden;
+    }
+    /* Table Spacing */
+    .table-responsive {
+        margin: 15px 0;
+    }
+    .table {
+        min-width: 750px;
+        width: 100%;
+        border-spacing: 0 8px;
+        border-collapse: separate;
+    }
+    .table th,
+    .table td {
+        padding: 0.6rem 1rem;
+        vertical-align: middle;
+    }
+    /* Button Spacing */
+    .btn {
+        padding: 0.5rem 1.25rem;
+        margin: 5px;
+    }
+}
+
+
+/* Custom scrollbar */
+
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.table {
+    margin-bottom: 0;
+    background: white;
+}
+
+
+/* Card body */
+
+.card-body {
+    padding: 0.6rem;
+    overflow: hidden;
+    height: calc(100% - 100px);
+    /* Reduced height, accounting for header */
+}
