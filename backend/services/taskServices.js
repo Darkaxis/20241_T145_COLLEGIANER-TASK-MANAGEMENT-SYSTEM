@@ -2,6 +2,9 @@ import admin from "firebase-admin"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js";
 import googleTaskServices from "./google/googleTaskServices.js";
 import googleCalendarServices from "./google/googleCalendarServices.js";
+import {encrypt, decrypt} from "../utils/encrypt.js";
+
+
 
 
 function formatDeadline(isoString) {
@@ -21,45 +24,43 @@ function formatDeadline(isoString) {
 async function createTask(taskData, userEmail) {
   try {
     const deadline = new Date(taskData.deadline);
-deadline.setHours(23, 59, 59, 999); // Set to end of day
+    deadline.setHours(23, 59, 59, 999);
 
-// Convert to Manila timezone RFC 3339 format for Google APIs
-const manilaOffset = '+08:00'; // Manila timezone offset
-const isoDeadline = new Date(deadline.toLocaleString('en-US', {
-    timeZone: 'Asia/Manila'
-})).toISOString()
-    .replace(/\.\d{3}Z$/, manilaOffset);
+    const isoDeadline = new Date(deadline.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila'
+    })).toISOString().replace(/\.\d{3}Z$/, '+08:00');
 
-    const newTask = {
-      ...taskData,
+    // Encrypt sensitive data
+    taskData.deadline = isoDeadline;
+    const encryptedTask = {
+      taskName: encrypt(taskData.taskName),
+      description: encrypt(taskData.description),
+      assignedTo: encrypt(taskData.assignedTo),
+      category: encrypt(taskData.category),
+      status: encrypt(taskData.status),
+      privacy: encrypt(taskData.privacy),
+      link: encrypt(taskData.link || ''),
+      deadline: encrypt(isoDeadline),
+      // Non-encrypted metadata
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      deadline: isoDeadline,
       version: 1,
     };
 
-    // Use transaction to handle all operations
     const result = await db.runTransaction(async (transaction) => {
-      // Create Firestore document
       const taskRef = db.collection("tasks").doc();
-      console.log(userEmail);
-      try {
-        // Add to Google Tasks
-        const googleTask = await googleTaskServices.addTaskToGoogleTasks(newTask, userEmail);
-        
-        // Add to Google Calendar
-        const calendarEvent = await googleCalendarServices.addEventToGoogleCalendar(newTask, userEmail);
 
-        // Add external IDs to task data
+      try {
+        const googleTask = await googleTaskServices.addTaskToGoogleTasks(taskData, userEmail);
+        const calendarEvent = await googleCalendarServices.addEventToGoogleCalendar(taskData, userEmail);
+
         const taskWithIds = {
-          ...newTask,
+          ...encryptedTask,
           googleTaskId: googleTask.googleTaskId,
           googleCalendarEventId: calendarEvent.googleCalendarEventId
         };
 
-        // Save to Firestore with external IDs
         transaction.set(taskRef, taskWithIds);
-
       } catch (error) {
         console.error("Error in external services:", error);
         throw new Error("Failed to create task in external services");
@@ -81,15 +82,33 @@ async function getAllTasks() {
   try {
     const tasksSnapshot = await db.collection("tasks").get();
     const tasks = [];
+    
     tasksSnapshot.forEach((doc) => {
       const taskData = doc.data();
       tasks.push({ 
         id: doc.id,
-        ...taskData,
-        deadline: formatDeadline(taskData.deadline)
+        taskName: decrypt(taskData.taskName),
+        description: decrypt(taskData.description),
+        assignedTo: decrypt(taskData.assignedTo),
+        category: decrypt(taskData.category),
+        status: decrypt(taskData.status),
+        privacy: decrypt(taskData.privacy),
+        link: decrypt(taskData.link),
+        deadline: formatDeadline(decrypt(taskData.deadline)),
+        // Non-encrypted fields
+        createdAt: taskData.createdAt,
+        updatedAt: taskData.updatedAt,
+        version: taskData.version,
+        googleTaskId: taskData.googleTaskId,
+        googleCalendarEventId: taskData.googleCalendarEventId
       });
     });
-    return { status: 200, message: "Tasks retrieved successfully", tasks };
+
+    return { 
+      status: 200, 
+      message: "Tasks retrieved successfully", 
+      tasks 
+    };
   } catch (error) {
     console.error("Error getting tasks:", error);
     throw new Error("Error getting tasks");
@@ -139,17 +158,14 @@ async function getTasksForUser(name) {
 // Function to edit a task
 async function editTask(taskId, taskData) {
   const deadline = new Date(taskData.deadline);
+
   deadline.setHours(23, 59, 59, 999); // Set to end of day
-  const isoDeadline = deadline.toLocaleString('en-US', {
-    timeZone: 'Asia/Manila',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  }).replace(/(\d+)\/(\d+)\/(\d+),/, '$3-$1-$2T');
+  // Convert to Manila timezone RFC 3339 format for Google APIs
+  const manilaOffset = '+08:00'; // Manila timezone offset
+  const isoDeadline = new Date(deadline.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila'
+  })).toISOString()
+      .replace(/\.\d{3}Z$/, manilaOffset);
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -166,7 +182,6 @@ async function editTask(taskId, taskData) {
       if (taskDataVersion && taskDataVersion != currentVersion) {
         console.log("Task has been updated by another transaction");
         throw new Error("Task has been updated by another transaction");
-
       }
 
       const updatedTask = {
@@ -177,6 +192,7 @@ async function editTask(taskId, taskData) {
       };
 
       transaction.update(taskRef, updatedTask);
+      console.log(updatedTask);
     });
 
     return { status: 200, message: "Task updated successfully" };
@@ -247,28 +263,92 @@ async function approveTask(taskId) {
     throw new Error("Error approving task");
   }
 }
-export async function archiveTask(taskId) {
+export async function archiveTask(taskId, userId) {
   try {
-    // Use Firestore transaction to ensure concurrency control
+    // Use Firestore transaction
     await db.runTransaction(async (transaction) => {
       const taskRef = db.collection("tasks").doc(taskId);
       const taskDoc = await transaction.get(taskRef);
+
       if (!taskDoc.exists) {
         throw new Error("Task not found");
       }
+
       const taskData = taskDoc.data();
-      if (taskData.status !== "Checking") {
-        throw new Error("Task is not pending approval");
+      
+      // Get current archived users array or create new one
+      const archivedBy = taskData.archivedBy || [];
+
+      // Check if user already archived
+      if (archivedBy.includes(userId)) {
+        throw new Error("Task already archived by user");
       }
-      transaction.update(taskRef, { archived: "True" });
+
+      // Add user to archived array
+      transaction.update(taskRef, {
+        archivedBy: [...archivedBy, userId],
+        lastArchivedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
     });
 
-    return { status: 200, message: "Task approved successfully" };
+    return { status: 200, message: "Task archived successfully" };
   } catch (error) {
-    console.error("Error approving task:", error);
-    throw new Error("Error approving task");
+    console.error("Error archiving task:", error);
+    throw new Error("Error archiving task");
   }
+}
+export async function getArchivedTask(taskId, userId) {
+  try {
+    const taskRef = db.collection("tasks").doc(taskId);
+    const taskDoc = await taskRef.get();
 
+    if (!taskDoc.exists) {
+      throw new Error("Task not found");
+    }
+
+    const taskData = taskDoc.data();
+    const archivedBy = taskData.archivedBy || [];
+
+    // Check if task is archived by this user
+    if (!archivedBy.includes(userId)) {
+      throw new Error("Task not archived by user");
+    }
+
+    return {
+      id: taskId,
+      ...taskData,
+      isArchived: true,
+      archivedAt: taskData.lastArchivedAt
+    };
+
+  } catch (error) {
+    console.error("Error getting archived task:", error);
+    throw error;
+  }
+}
+
+export async function getAllArchivedTasks(userId) {
+  try {
+    const tasksSnapshot = await db.collection("tasks")
+      .where("archivedBy", "array-contains", userId)
+      .orderBy("lastArchivedAt", "desc")
+      .get();
+
+    const archivedTasks = [];
+    tasksSnapshot.forEach(doc => {
+      archivedTasks.push({
+        id: doc.id,
+        ...doc.data(),
+        isArchived: true
+      });
+    });
+
+    return archivedTasks;
+
+  } catch (error) {
+    console.error("Error getting archived tasks:", error);
+    throw new Error("Error getting archived tasks");
+  }
 }
 export async function submitTask(taskId) {
   try {
@@ -322,4 +402,6 @@ export default {
   deleteTask,
   getTask,
   approveTask,
+  archiveTask,
+
 };

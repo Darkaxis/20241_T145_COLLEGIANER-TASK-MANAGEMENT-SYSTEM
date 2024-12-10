@@ -9,6 +9,7 @@ import  passport  from '../utils/passport.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import loginServices from '../services/loginServices.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,7 +97,7 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
               });
         } else if (state.startsWith('login')) {
             // Handle login callback
-            const user = await eicServices.getUserByEmail(email);
+            const user = await loginServices.getUser(email);
         
             if (!user) {
                 return res.status(401).json({

@@ -48,8 +48,9 @@ async function updateTaskStatus(taskCard, columnId) {
         body: JSON.stringify(taskData),
         credentials: 'include'
     });
-    console.log(taskData)
-
+    taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1;  
+    console.log(taskCard.dataset.version)
+    
 
     // If status is Done, use the consolidated function
     if (newStatus === 'Done') {

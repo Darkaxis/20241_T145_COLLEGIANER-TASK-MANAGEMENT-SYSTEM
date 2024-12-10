@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
             tasks.tasks.forEach(task => createTask(task));
+            updateTaskCounts();
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
@@ -279,6 +280,7 @@ function updateTaskCard(taskCard) {
             })
 
             taskCard.remove();
+            
             updateTaskCounts();
         }
         taskMenu.classList.remove('show');
@@ -483,6 +485,8 @@ async function saveTaskEdits(taskCard) {
             body: JSON.stringify(updatedData),
             credentials: 'include'
         });
+        taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1;  
+        console.log(taskCard.dataset.version)
 
         if (!response.ok) {
             throw new Error('Failed to update task');
