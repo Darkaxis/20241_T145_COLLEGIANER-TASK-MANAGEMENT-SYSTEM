@@ -10,13 +10,12 @@ async function getUser(email){
         .collection("users")
         .where("emailSearch", "==", email.toLowerCase())
         .get();
-
+  
     if (userSnapshot.empty) {
         throw new Error("User not found");
     }
   
     const userData = userSnapshot.docs[0].data();
-
     return decrypt(userData.name)
 
 }
@@ -102,13 +101,13 @@ async function getAllTasks() {
     const tasks = await Promise.all(
         tasksSnapshot.docs.map(async (doc) => {
             const taskData = doc.data();
-            const assignedTo = await getUser(decrypt(taskData.assignedTo));
-            
+            const assignedTo = await getUser(decrypt(taskData.assignedTo));  
+ 
             return {
                 id: doc.id,
                 taskName: decrypt(taskData.taskName),
                 description: decrypt(taskData.description),
-                assignedTo,
+                assignedTo: assignedTo,
                 category: decrypt(taskData.category),
                 status: decrypt(taskData.status),
                 privacy: decrypt(taskData.privacy),
@@ -135,41 +134,46 @@ async function getAllTasks() {
   }
 }
 
-async function getTasksForUser(name) {
+async function getTasksForUser(email) {
   try {
-    const tasks = await db.runTransaction(async (transaction) => {
-      const visibleTasksSnapshot = await transaction.get(
-        db.collection("tasks").where("visibleTo", "array-contains", name)
-      );
-      const assignedTasksSnapshot = await transaction.get(
-        db.collection("tasks").where("assignedTo", "==", name)
-      );
+    // Get all tasks since we can't query encrypted fields
+    const tasksSnapshot = await db.collection("tasks").get();
+    const tasks = [];
 
-      const visibleTasks = [];
-      const assignedTasks = [];
-
-      visibleTasksSnapshot.forEach((doc) => {
-        const taskData = doc.data();
-        visibleTasks.push({
+    // Iterate through tasks and decrypt
+    for (const doc of tasksSnapshot.docs) {
+      const taskData = doc.data();
+      const decryptedAssignedTo = decrypt(taskData.assignedTo);
+      const assignedTo = await getUser(decrypt(taskData.assignedTo));  
+      
+      // Only include tasks assigned to this user
+      if (decryptedAssignedTo.toLowerCase() === email.toLowerCase()) {
+        tasks.push({
           id: doc.id,
-          ...taskData,
-          deadline: formatDeadline(taskData.deadline)
+          taskName: decrypt(taskData.taskName),
+          description: decrypt(taskData.description),
+          assignedTo: assignedTo,
+          category: decrypt(taskData.category),
+          status: decrypt(taskData.status),
+          privacy: decrypt(taskData.privacy),
+          link: decrypt(taskData.link),
+          deadline: formatDeadline(decrypt(taskData.deadline)),
+          // Non-encrypted fields
+          createdAt: taskData.createdAt,
+          updatedAt: taskData.updatedAt,
+          version: taskData.version,
+          googleTaskId: taskData.googleTaskId,
+          googleCalendarEventId: taskData.googleCalendarEventId
         });
-      });
+      }
+    }
 
-      assignedTasksSnapshot.forEach((doc) => {
-        const taskData = doc.data();
-        assignedTasks.push({
-          id: doc.id,
-          ...taskData,
-          deadline: formatDeadline(taskData.deadline)
-        });
-      });
+    return {
+      status: 200,
+      message: "Tasks retrieved successfully",
+      tasks
+    };
 
-      return [...new Set([...visibleTasks, ...assignedTasks])];
-    });
-
-    return { status: 200, message: "Tasks retrieved successfully", tasks };
   } catch (error) {
     console.error("Error getting tasks:", error);
     throw new Error("Error getting tasks");

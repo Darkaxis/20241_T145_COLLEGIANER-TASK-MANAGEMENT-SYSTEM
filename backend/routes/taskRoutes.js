@@ -47,9 +47,9 @@ taskRoutes.get('/get/user', async (req, res) => {
     try {
         const token = req.cookies.token;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const name = decoded.name;
-        console.log(name);
-        const tasks = await taskService.getTasksForUser(name);
+        const email = decoded.email;
+        const tasks = await taskService.getTasksForUser(email);
+
         res.status(200).send(tasks);
     } catch (error) {
         res.status(400).send(error.message);

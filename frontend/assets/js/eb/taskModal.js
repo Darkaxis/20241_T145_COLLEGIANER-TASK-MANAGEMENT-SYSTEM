@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         credentials: 'include'
     })
     const data = await response.json();
-
+    
     console.log(data);
     const users = data.data;
     const assignInput = document.getElementById('taskAssignInput');
     if (assignInput) {
         users.forEach(user => {
             const option = document.createElement('option');
-            option.value = user.name;
+            option.value = user.email;
             option.text = user.name;
             assignInput.appendChild(option);
         });
@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 link: document.getElementById('taskLinkInput').value.trim(),
                 category: document.getElementById('taskCategoryInput').value.trim()
             };
+        
 
             if (validateFormData(formData)) {
                 //send to server

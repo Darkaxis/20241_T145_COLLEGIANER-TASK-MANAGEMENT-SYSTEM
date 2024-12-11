@@ -10,6 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import loginServices from '../services/loginServices.js';
+import exp from 'constants';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,38 +64,21 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
         
         
 
-            if (state.startsWith('user')) {
-            //generate a random password 
-            const password = Math.random().toString(36).slice(-8);
-            console.log('   Password:', password);
-        
-            const status = googleMailServices.sendPass(email, password);
-            console.log(`Password sent to ${email} with status: ${status.status}`); 
-            
-            // Handle user callback
-            const role = tempData.role;
-            const combinedUserData = {
+        if (state.startsWith('user')) {
+            // Encode user data for URL
+            const userData = {
                 email: email,
                 name: name,
-                role: role,
+                role: tempData.role,
                 token: accessToken,
                 refreshToken: refreshToken,
-                password: password,
+                accessToken: accessToken,
                 profile: profile,
+                state: state
             };
-            
-            // Call addUser function from eicServices
-            const addUserResponse = await eicServices.addUser(combinedUserData);
-
-            // Clean up temporary data
-            deleteTempAdminData(state);
-
-            res.status(200).json({
-                message: 'OAuth callback handled successfully',
-                name,
-                email,
-                profile
-              });
+        
+            const encodedData = jwt.sign(userData, process.env.JWT_SECRET, {expiresIn: '3d'});
+            res.redirect(`https://localhost:4000/register?data=${encodedData}&name=${name}`);
         } else if (state.startsWith('login')) {
             // Handle login callback
             const user = await loginServices.getUser(email);

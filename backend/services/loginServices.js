@@ -5,9 +5,30 @@ import dotenv from "dotenv";
 import db from "../utils/firestoreClient.js";
 import {encrypt, decrypt} from "../utils/encrypt.js";
 
+
 dotenv.config();
 
+export async function registerUser(userData, password) {
+  
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const user = {
+      email: encrypt(userData.email),
+      emailSearch: userData.email.toLowerCase(),
+      password: hashedPassword,
+      name: encrypt(userData.name),
+      profile: encrypt(userData.profile),
+      refreshToken: userData.refreshToken,
+      token: userData.accessToken,
+      role: encrypt(userData.role),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      version: 1 
+    };
+    
+    const userRef = await db.collection("users").add(user);
 
+    return userRef.id;
+}
 
 
 export async function authenticateUser(email, password) {
@@ -71,5 +92,4 @@ export async function getUser(email) {
     };
 }
 
-console.log( await getUser('2201101373@student.buksu.edu.ph'))
-export default {getUser, authenticateUser}
+export default {getUser, authenticateUser, registerUser}

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { google } from "googleapis";
 import oauth2Client from "../utils/passport.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
+import { decrypt } from '../utils/encrypt.js';
 
 
 dotenv.config();
@@ -70,64 +71,36 @@ export async function getUserByEmail(email) {
   }
 }
 
-export async function addUser(userData) {
-  const { email, name, role, profile, password, token, refreshToken } = userData;
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  // Use Firestore transaction to ensure concurrency control
-  try {
-    await db.runTransaction(async (transaction) => {
-      // Check if the email already exists
-      const existingUserSnapshot = await transaction.get(
-        db.collection("users").where("email", "==", email)
-      );
-      
-      if (!existingUserSnapshot.empty) {
-        throw new Error("Email already exists");
-      }
-
-      const newUser = {
-        email,
-        name,
-        role,
-        token,
-        refreshToken,
-        password: hashedPassword,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        profile,
-      };
-
-      const userRef = db.collection("users").doc();
-      transaction.set(userRef, newUser);
-    });
-
-    return { status: 201, message: "User added successfully" };
-  } catch (error) {
-    console.error("Error adding user:", error);
-    if (error.message === "Email already exists") {
-      return { status: 400, message: "Email already exists" };
-    }
-    throw new Error("Error adding user");
-  }
-}
 
 // Function to get all users
 export async function getAllUsers() {
   try {
-    // Use Firestore transaction to ensure concurrency control
     const users = await db.runTransaction(async (transaction) => {
       const usersSnapshot = await transaction.get(db.collection("users"));
       if (usersSnapshot.empty) {
         return [];
       }
 
-      // Exclude password from the response
       return usersSnapshot.docs.map((doc) => {
-        const user = doc.data();
-        delete user.password;
-        return { id: doc.id, ...user };
+        const userData = doc.data();
+        
+        // Remove sensitive data
+        delete userData.password;
+        
+        // Decrypt fields
+        return {
+          id: doc.id,
+          email: decrypt(userData.email),
+          name: decrypt(userData.name),
+          role: decrypt(userData.role),
+          profile: decrypt(userData.profile),
+          // Non-encrypted fields
+          emailSearch: userData.emailSearch,
+          refreshToken: userData.refreshToken,
+          token: userData.token,
+          createdAt: userData.createdAt,
+          version: userData.version
+        };
       });
     });
 
@@ -193,7 +166,6 @@ export default {
 
   getUserProfile,
   getUserByEmail,
-  addUser,
 getAllUsers,
 updateUserRole,
 getLogs,

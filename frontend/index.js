@@ -47,6 +47,9 @@ app.get('/eic/archive', (req, res) => {
 app.get('/eic/activitylog', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eic/eic-activitylog.html'));
 });
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/register/welcome.html'));
+});
 // Start the server
 https.createServer(httpsOptions, app).listen(PORT, () => {
     console.log(`Server is running on https://localhost:${PORT}`);

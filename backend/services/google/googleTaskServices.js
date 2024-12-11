@@ -6,15 +6,22 @@ import db from '../../utils/firestoreClient.js';
 
 async function getUserTokens(email) {
   try {
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    const userSnapshot = await db
+      .collection('users')
+      .where('emailSearch', '==', email.toLowerCase())
+      .get();
+
     if (userSnapshot.empty) {
       throw new Error('User not found');
     }
+
     const userDoc = userSnapshot.docs[0];
+    const userData = userDoc.data();
+
     return {
-      access_token: userDoc.data().token,
-      refresh_token: userDoc.data().refreshToken
-    }; // Assuming tokens are stored in the user document
+      access_token: userData.token,
+      refresh_token: userData.refreshToken
+    };
   } catch (error) {
     console.error('Error getting user tokens:', error);
     throw new Error('Error getting user tokens');

@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             credentials: 'include' // Include cookies in the request
         });
         let usersData = await usersResponse.json();
-        users = usersData.data.map(user => user.name);
+        users = usersData.data.map(user => {user.name, user.email} );
 
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -119,7 +119,7 @@ function addTaskCardEventListeners(taskCard) {
         // Update assignTo dropdown
         const assignToSelect = document.getElementById('taskAssignTo');
         assignToSelect.innerHTML = users.map(user =>
-            `<option value="${user}" ${user === taskCard.dataset.assignedTo ? 'selected' : ''}>${user}</option>`
+            `<option value="${user.email}" ${user === taskCard.dataset.assignedTo ? 'selected' : ''}>${user.name}</option>`
         ).join('');
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';

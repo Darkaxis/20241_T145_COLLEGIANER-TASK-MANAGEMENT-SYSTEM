@@ -21,19 +21,19 @@ dotenv.config();
 
 // Initiate the OAuth flow
 eicRoutes.post('/add', async (req, res) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({
-            message: 'No token provided'
-        });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'Editor in Charge') {
-            return res.status(403).json({
-                message: 'Unauthorized'
-            });
-        }
-    const { email, role } = req.body;
+    // const token = req.cookies.token;
+    // if (!token) {
+    //     return res.status(401).json({
+    //         message: 'No token provided'
+    //     });
+    // }
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //     if (decoded.role !== 'Editor in Charge') {
+    //         return res.status(403).json({
+    //             message: 'Unauthorized'
+    //         });
+    //     }
+    // const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
     const state = `user-${uuidv4()}`; // Generate a unique state with type
@@ -49,7 +49,7 @@ eicRoutes.post('/add', async (req, res) => {
 
       const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
     console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
-    eicServices.logAction('User added', decoded.name, 'add');
+    // eicServices.logAction('User added', decoded.name, 'add');
     const status = await googleMailServices.sendOAuthLink(email, authUrl);
     if (!status) {
         return res.status(500).json({

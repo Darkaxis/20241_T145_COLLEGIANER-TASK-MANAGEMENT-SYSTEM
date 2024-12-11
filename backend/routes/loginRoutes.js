@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+
 dotenv.config();
 
 const loginRoutes = express.Router();
@@ -71,8 +72,18 @@ loginRoutes.get('/verify-token', async (req, res) => {
         res.status(401).json({ message: 'Invalid token' });
     }
 });
+loginRoutes.post('/register', async (req, res) => {
+    const {encodedData, password} = req.body;
 
-
+    const userData = jwt.verify(encodedData, process.env.JWT_SECRET);
+    try {
+        
+        const user = await loginServices.registerUser(userData, password);
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
 loginRoutes.post('/logout', (req, res) => {
     // Clear the token from the cookie
     res.clearCookie('token');
