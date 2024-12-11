@@ -4,7 +4,22 @@ import googleTaskServices from "./google/googleTaskServices.js";
 import googleCalendarServices from "./google/googleCalendarServices.js";
 import {encrypt, decrypt} from "../utils/encrypt.js";
 
+async function getUser(email){
+  
+    const userSnapshot = await db
+        .collection("users")
+        .where("emailSearch", "==", email.toLowerCase())
+        .get();
 
+    if (userSnapshot.empty) {
+        throw new Error("User not found");
+    }
+  
+    const userData = userSnapshot.docs[0].data();
+
+    return decrypt(userData.name)
+
+}
 
 
 function formatDeadline(isoString) {
@@ -81,29 +96,34 @@ async function createTask(taskData, userEmail) {
 async function getAllTasks() {
   try {
     const tasksSnapshot = await db.collection("tasks").get();
-    const tasks = [];
     
-    tasksSnapshot.forEach((doc) => {
-      const taskData = doc.data();
-      tasks.push({ 
-        id: doc.id,
-        taskName: decrypt(taskData.taskName),
-        description: decrypt(taskData.description),
-        assignedTo: decrypt(taskData.assignedTo),
-        category: decrypt(taskData.category),
-        status: decrypt(taskData.status),
-        privacy: decrypt(taskData.privacy),
-        link: decrypt(taskData.link),
-        deadline: formatDeadline(decrypt(taskData.deadline)),
-        // Non-encrypted fields
-        createdAt: taskData.createdAt,
-        updatedAt: taskData.updatedAt,
-        version: taskData.version,
-        googleTaskId: taskData.googleTaskId,
-        googleCalendarEventId: taskData.googleCalendarEventId
-      });
-    });
-
+  
+        // Map over tasks and wait for all promises to resolve
+    const tasks = await Promise.all(
+        tasksSnapshot.docs.map(async (doc) => {
+            const taskData = doc.data();
+            const assignedTo = await getUser(decrypt(taskData.assignedTo));
+            
+            return {
+                id: doc.id,
+                taskName: decrypt(taskData.taskName),
+                description: decrypt(taskData.description),
+                assignedTo,
+                category: decrypt(taskData.category),
+                status: decrypt(taskData.status),
+                privacy: decrypt(taskData.privacy),
+                link: decrypt(taskData.link),
+                deadline: formatDeadline(decrypt(taskData.deadline)),
+                // Non-encrypted fields
+                createdAt: taskData.createdAt,
+                updatedAt: taskData.updatedAt,
+                version: taskData.version,
+                googleTaskId: taskData.googleTaskId,
+                googleCalendarEventId: taskData.googleCalendarEventId
+            };
+        })
+    );
+    
     return { 
       status: 200, 
       message: "Tasks retrieved successfully", 

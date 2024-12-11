@@ -46,19 +46,24 @@ export async function getUserProfile(accessToken) {
 // Function to get user by email
 export async function getUserByEmail(email) {
   try {
-    // Use Firestore transaction to ensure concurrency control
-    const user = await db.runTransaction(async (transaction) => {
-      const userSnapshot = await transaction.get(
-        db.collection("users").where("email", "==", email)
-      );
-      if (userSnapshot.empty) {
-        throw new Error("User not found");
-      }
-      const userDoc = userSnapshot.docs[0];
-      return { id: userDoc.id, ...userDoc.data() };
-    });
+    const userSnapshot = await db
+        .collection("users")
+        .where("emailSearch", "==", email.toLowerCase())
+        .get();
 
-    return user;
+    if (userSnapshot.empty) {
+        throw new Error("User not found");
+    }
+
+    const userData = userSnapshot.docs[0].data();
+    
+    return {
+        id: userSnapshot.docs[0].id,
+        name: decrypt(userData.name),
+        email: decrypt(userData.email),
+        profile: decrypt(userData.profile),
+        role: decrypt(userData.role)
+    };
   } catch (error) {
     console.error("Error getting user by email:", error);
     throw new Error("Error getting user by email");
