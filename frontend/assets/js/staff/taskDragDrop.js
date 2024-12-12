@@ -1,28 +1,40 @@
-// Drag and Drop functionality
+// Disable drag and drop functionality for staff
 function allowDrop(ev) {
     ev.preventDefault();
+    // Do nothing else for staff
 }
 
 function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+    // Prevent dragging for staff
+    ev.preventDefault();
 }
 
 function drop(ev) {
+    // Prevent dropping for staff
     ev.preventDefault();
-    const data = ev.dataTransfer.getData("text");
-    const draggedElement = document.getElementById(data);
+}
 
-    if (draggedElement && ev.target.classList.contains('task-column')) {
-        ev.target.appendChild(draggedElement);
-        updateTaskStatus(draggedElement, ev.target.id);
-        setTimeout(updateTaskCounts, 0);
-    } else if (draggedElement && ev.target.closest('.task-column')) {
-        // If dropped on a task card or somewhere inside the column
-        const dropZone = ev.target.closest('.task-column');
-        dropZone.appendChild(draggedElement);
-        updateTaskStatus(draggedElement, dropZone.id);
-        setTimeout(updateTaskCounts, 0);
-    }
+// Optional: Add this to make task cards visually appear non-draggable
+document.addEventListener('DOMContentLoaded', function() {
+    const taskCards = document.querySelectorAll('.task-card');
+    taskCards.forEach(card => {
+        card.style.cursor = 'default'; // Change cursor to default instead of move
+        card.setAttribute('draggable', 'false'); // Disable draggable attribute
+    });
+});
+
+// If you're using a task card creation function, update it to not add drag attributes
+function createTaskCard(taskData) {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.id = `task-${taskData.id}`;
+    // Remove draggable attribute and ondragstart
+    // card.setAttribute('draggable', 'true');
+    // card.setAttribute('ondragstart', 'drag(event)');
+
+    // ... rest of your card creation code ...
+
+    return card;
 }
 
 async function updateTaskStatus(taskCard, columnId) {

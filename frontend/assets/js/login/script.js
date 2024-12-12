@@ -3,10 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
     checkTokenAndRedirect();
 
     const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', async (event) => {
+    loginForm.addEventListener('submit', async(event) => {
         event.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+
+        // Get the reCAPTCHA response token
+        const recaptchaToken = grecaptcha.getResponse();
+
+        if (!recaptchaToken) {
+            alert('Please complete the reCAPTCHA verification');
+            return;
+        }
 
         try {
             const response = await fetch('https://localhost:3000/api/v1/login/', {
@@ -14,8 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password }),
-                credentials: 'include' // Include cookies in the request
+                body: JSON.stringify({
+                    email,
+                    password,
+                    recaptchaToken
+                }),
+                credentials: 'include'
             });
 
             const result = await response.json();
@@ -27,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'GET',
                     credentials: 'include' // Include cookies in the request
                 });
-                
+
                 const userResult = await userResponse.json();
 
                 if (userResponse.ok) {
@@ -47,10 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 alert(`Login failed: ${result.message}`);
+                resetRecaptcha();
             }
         } catch (error) {
             console.error('Error during login:', error);
             alert('An error occurred during login. Please try again.');
+            resetRecaptcha();
         }
     });
 
@@ -73,7 +87,7 @@ async function checkTokenAndRedirect() {
             const role = userResult.user.role;
 
             // Redirect based on the role
-            if (role === 'Editor in Charge') { 
+            if (role === 'Editor in Charge') {
                 window.location.href = 'https://localhost:4000/eic/dashboard';
             } else if (role === 'Editorial Board') {
                 window.location.href = 'https://localhost:4000/eb/dashboard';
@@ -85,4 +99,12 @@ async function checkTokenAndRedirect() {
         console.error('Error verifying token:', error);
         // No need to alert the user here, just log the error
     }
+}
+
+window.onRecaptchaComplete = function() {
+    console.log('reCAPTCHA completed');
+};
+
+function resetRecaptcha() {
+    grecaptcha.reset();
 }

@@ -21,7 +21,7 @@ loginRoutes.post('/', async(req, res) => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+            body: `secret=${process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'}&response=${recaptchaToken}`
         });
 
         const recaptchaResult = await recaptchaVerify.json();
@@ -50,7 +50,7 @@ loginRoutes.post('/', async(req, res) => {
 });
 
 
-loginRoutes.get('/verify-token', async (req, res) => {
+loginRoutes.get('/verify-token', async(req, res) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
@@ -61,7 +61,7 @@ loginRoutes.get('/verify-token', async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         //check if token data is updated if not clear token and return 401
         const user = await loginServices.getUser(decoded.email);
-        
+
         if (user.role !== decoded.role) {
             res.clearCookie('token');
             return res.status(401).json({ message: 'Invalid token' });
@@ -72,12 +72,12 @@ loginRoutes.get('/verify-token', async (req, res) => {
         res.status(401).json({ message: 'Invalid token' });
     }
 });
-loginRoutes.post('/register', async (req, res) => {
-    const {encodedData, password} = req.body;
+loginRoutes.post('/register', async(req, res) => {
+    const { encodedData, password } = req.body;
 
     const userData = jwt.verify(encodedData, process.env.JWT_SECRET);
     try {
-        
+
         const user = await loginServices.registerUser(userData, password);
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
