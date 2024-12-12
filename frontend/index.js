@@ -29,6 +29,21 @@ app.use(express.static(path.join(__dirname, '/assets')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/index.html'));
 });
+
+// Add these new routes for staff
+app.get('/staff/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/staff/staff-dashboard.html'));
+});
+
+app.get('/staff/projects', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/staff/staff-projects.html'));
+});
+
+app.get('/staff/archive', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/staff/staff-archive.html'));
+});
+
+// Existing routes
 app.get('/eic/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eic/eic-dashboard.html'));
 });
@@ -50,6 +65,33 @@ app.get('/eic/activitylog', (req, res) => {
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/register/welcome.html'));
 });
+
+// EB routes
+app.get('/eb/projects', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/eb/eb-projects.html'));
+});
+
+app.get('/eb/archive', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/eb/eb-archive.html'));
+});
+
+// Adviser routes
+app.get('/adviser/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/adviser/adviser-dashboard.html'));
+});
+
+app.get('/adviser/projects', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/adviser/adviser-projects.html'));
+});
+
+app.get('/adviser/archive', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/adviser/adviser-archive.html'));
+});
+
+app.get('/adviser/accounts', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/adviser/adviser-accounts.html'));
+});
+
 // Start the server
 https.createServer(httpsOptions, app).listen(PORT, () => {
     console.log(`Server is running on https://localhost:${PORT}`);
