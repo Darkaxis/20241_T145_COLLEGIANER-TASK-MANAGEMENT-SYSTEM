@@ -35,37 +35,64 @@ eicRoutes.post('/add', async (req, res) => {
     //     }
     const { email, role } = req.body;
 
-    console.log(`Adding ${role} with email ${email} and role ${role}`);
-    const state = `user-${uuidv4()}`; // Generate a unique state with type
-    setTempAdminData(state, {email, role}); // Store the email, role, and type temporarily
-
-    const scopes = [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/tasks', // Add the Google Tasks scope
-         'https://www.googleapis.com/auth/calendar'
-
-      ];
-
-      const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
-    console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
-    // eicServices.logAction('User added', decoded.name, 'add');
-    const status = await googleMailServices.sendOAuthLink(email, authUrl);
-    if (!status) {
+        // Check if user already exists
+    try {
+        const user = await eicServices.getUserByEmail(email);
+        if (user) {
+            return res.status(409).json({
+                success: false,
+                message: "User already exists. Operation cancelled."
+            });
+        }
+    
+        console.log(`Adding ${role} with email ${email} and role ${role}`);
+        const state = `user-${uuidv4()}`; // Generate a unique state with type
+        setTempAdminData(state, {email, role}); // Store the email, role, and type temporarily
+    
+        const scopes = [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/tasks', // Add the Google Tasks scope
+             'https://www.googleapis.com/auth/calendar'
+    
+          ];
+    
+          const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
+        console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
+        // eicServices.logAction('User added', decoded.name, 'add');
+        const status = await googleMailServices.sendOAuthLink(email, authUrl);
+        if (!status) {
+            return res.status(500).json({
+                message: 'Failed to send OAuth link'
+            });
+        }
+        
+        if (status === 400) {
+            return res.status(400).json({
+                message: 'Invalid email address'
+            })};
+    
+    
+        res.status(200).json({
+            message: 'OAuth link sent successfully'
+        });
+    } catch (error) {
+        console.error("Error checking user:", error);
         return res.status(500).json({
-            message: 'Failed to send OAuth link'
+            success: false,
+            message: "Error checking user existence"
         });
     }
-    
-    if (status === 400) {
-        return res.status(400).json({
-            message: 'Invalid email address'
-        })};
+        
 
 
-    res.status(200).json({
-        message: 'OAuth link sent successfully'
-    });
+
+
+
+
+
+
+   
 });
 
 

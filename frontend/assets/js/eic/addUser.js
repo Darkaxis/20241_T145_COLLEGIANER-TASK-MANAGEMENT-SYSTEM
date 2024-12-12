@@ -151,7 +151,6 @@ async function saveUser() {
         const url = editUserIndex ?
             `https://localhost:3000/api/v1/eic/edit` :
             'https://localhost:3000/api/v1/eic/add';
-
         const response = await fetch(url, {
             method: editUserIndex ? 'PATCH' : 'POST',
             headers: {
@@ -161,10 +160,12 @@ async function saveUser() {
             body: JSON.stringify(userData)
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to save user');
-        }
-
+       if (response.status == 409){
+        alert('User already exists');
+       }
+       else if (response.ok){
+        alert('User added, awaiting user confirmation')
+       }
         // Refresh the page to show updated data
         location.reload();
 
