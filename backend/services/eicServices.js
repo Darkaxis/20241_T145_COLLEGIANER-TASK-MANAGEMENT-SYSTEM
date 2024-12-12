@@ -1,12 +1,10 @@
 import admin from "firebase-admin";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 import dotenv from "dotenv";
 import { google } from "googleapis";
 import oauth2Client from "../utils/passport.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
 import { encrypt, decrypt } from '../utils/encrypt.js';
-import e from "express";
 
 
 dotenv.config();

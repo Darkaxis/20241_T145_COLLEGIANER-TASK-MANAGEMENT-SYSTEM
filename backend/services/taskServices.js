@@ -281,6 +281,8 @@ async function approveTask(taskId) {
       transaction.update(taskRef, { status: "Done" });
     });
 
+    googleTaskServices.googleTaskStatusDone(taskId);
+
     return { status: 200, message: "Task approved successfully" };
   } catch (error) {
     console.error("Error approving task:", error);
