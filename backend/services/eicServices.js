@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 import { google } from "googleapis";
 import oauth2Client from "../utils/passport.js"; // Ensure shared OAuth client is imported
 import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
-import { decrypt } from '../utils/encrypt.js';
+import { encrypt, decrypt } from '../utils/encrypt.js';
+import e from "express";
 
 
 dotenv.config();
@@ -134,23 +135,33 @@ async function updateUserRole(email, role) {
 }
 
 export async function getLogs(){
-    try {
-        const logs = await db.collection("logs").get();
-        if (logs.empty) {
-            throw new Error("No logs found");
-        }
-        return logs.docs.map((doc) => doc.data());
-    } catch (error) {
-        console.error("Error getting logs:", error);
-        throw new Error("Error getting logs");
+  try {
+    const logs = await db.collection("logs").get();
+    if (logs.empty) {
+        return [];
     }
+
+    return logs.docs.map((doc) => {
+        const logData = doc.data();
+        return {
+            id: doc.id,
+            type: decrypt(logData.type),
+            action: decrypt(logData.action),
+            user: decrypt(logData.user),
+            timestamp: logData.timestamp,
+        };
+    });
+} catch (error) {
+    console.error("Error getting logs:", error);
+    throw new Error("Error getting logs");
+}
 }
 export async function logAction(action, user, type) {
     try {
         const log = {
-            type,
-            action,
-            user,
+            type: encrypt(type),
+            action: encrypt(action),
+            user: encrypt(user),
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
         };
         await db.collection("logs").add(log);
