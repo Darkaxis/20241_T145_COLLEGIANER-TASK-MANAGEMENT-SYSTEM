@@ -34,7 +34,7 @@ export async function registerUser(userData, password) {
 export async function authenticateUser(email, password) {
     const userSnapshot = await db
       .collection("users")
-      .where("email", "==", encrypt(email))
+      .where("emailSearch", "==", email.toLowerCase())
       .get();
       
     if (userSnapshot.empty) {

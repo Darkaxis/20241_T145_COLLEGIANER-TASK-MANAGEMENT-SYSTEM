@@ -33,7 +33,7 @@ eicRoutes.post('/add', async (req, res) => {
     //             message: 'Unauthorized'
     //         });
     //     }
-    // const { email, role } = req.body;
+    const { email, role } = req.body;
 
     console.log(`Adding ${role} with email ${email} and role ${role}`);
     const state = `user-${uuidv4()}`; // Generate a unique state with type
