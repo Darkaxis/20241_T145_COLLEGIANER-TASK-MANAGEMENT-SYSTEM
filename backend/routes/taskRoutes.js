@@ -16,11 +16,12 @@ taskRoutes.post('/create', async (req, res) => {
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
-        //     return res.status(403).json({ message: 'Unauthorized' });
-        // }
+        if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
     try {
         const taskData = req.body;
+        taskData.assignedBy = decoded.email;
         const newTask = await taskService.createTask(taskData, taskData.assignedTo);
         logAction('Task created', decoded.name, "create");
         res.status(201).send(newTask);

@@ -1,16 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import jwt from 'jsonwebtoken';
-import eicServices from '../services/eicServices.js'; // Import the admin services
-import oauth2Client from '../utils/passport.js'; // Import the shared OAuth client
+import eicServices, { logAction } from '../services/eicServices.js'; // Import the admin services
 import { setTempAdminData } from '../utils/tempData.js'; // Import temp data functions
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import googleMailServices from '../services/google/googleMailServices.js';
 import taskRoutes from './taskRoutes.js';
 import cookieParser from 'cookie-parser';
-import passport from '../utils/passport.js'
-import e from 'express';
+
 
 const eicRoutes = express.Router();
 eicRoutes.use('/tasks', taskRoutes);
@@ -21,18 +19,18 @@ dotenv.config();
 
 // Initiate the OAuth flow
 eicRoutes.post('/add', async (req, res) => {
-    // const token = req.cookies.token;
-    // if (!token) {
-    //     return res.status(401).json({
-    //         message: 'No token provided'
-    //     });
-    // }
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    //     if (decoded.role !== 'Editor in Charge') {
-    //         return res.status(403).json({
-    //             message: 'Unauthorized'
-    //         });
-    //     }
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Editor in Charge') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
     const { email, role } = req.body;
 
         // Check if user already exists
@@ -72,7 +70,7 @@ eicRoutes.post('/add', async (req, res) => {
                 message: 'Invalid email address'
             })};
     
-    
+        logAction('Added user',decoded.name, 'create' )
         res.status(200).json({
             message: 'OAuth link sent successfully'
         });

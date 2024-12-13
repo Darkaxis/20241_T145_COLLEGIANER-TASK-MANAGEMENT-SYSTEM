@@ -3,6 +3,7 @@ import db from "../utils/firestoreClient.js";
 import googleTaskServices from "./google/googleTaskServices.js";
 import googleCalendarServices from "./google/googleCalendarServices.js";
 import {encrypt, decrypt} from "../utils/encrypt.js";
+import { assign } from "nodemailer/lib/shared/index.js";
 
 async function getUser(email){
   
@@ -50,6 +51,7 @@ async function createTask(taskData, userEmail) {
       taskName: encrypt(taskData.taskName),
       description: encrypt(taskData.description),
       assignedTo: encrypt(taskData.assignedTo),
+      assignedBy: encrypt(taskData.assignedBy),
       category: encrypt(taskData.category),
       status: encrypt(taskData.status),
       privacy: encrypt(taskData.privacy),
