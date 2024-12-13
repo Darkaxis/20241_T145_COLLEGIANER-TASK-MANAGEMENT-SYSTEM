@@ -125,7 +125,7 @@ function addTaskCardEventListeners(taskCard) {
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
         // Handle Private Except case
-        const hideFromContainer = document.getElementById('hideFromUsersContainer');
+        /* const hideFromContainer = document.getElementById('hideFromUsersContainer');
         const hideFromInput = document.getElementById('hideFromUsers');
         if (taskCard.dataset.privacy === 'Private Except') {
             hideFromInput.value = taskCard.dataset.hideFrom || '';
@@ -133,7 +133,7 @@ function addTaskCardEventListeners(taskCard) {
         } else {
             hideFromInput.value = '';
             hideFromContainer.style.display = 'none';
-        }
+        } */
 
         // Setup edit button click handler
         const editButton = document.getElementById('editTaskButton');
@@ -194,11 +194,13 @@ function updateTaskCard(taskCard) {
     const privacyIcons = {
         'Public': 'fa-globe',
         'Private': 'fa-lock',
-        'Private Except': 'fa-user-secret'
+        // 'Private Except': 'fa-user-secret' // Commented out
     };
 
-    const privacyText = taskCard.dataset.privacy === 'Private Except' ?
-        `Private Except: ${taskCard.dataset.hideFrom}` :
+    // Comment out Private Except condition
+    const privacyText =
+        /* taskCard.dataset.privacy === 'Private Except' ?
+               `Private Except: ${taskCard.dataset.hideFrom}` : */
         taskCard.dataset.privacy;
 
     // Format the date properly
@@ -408,9 +410,9 @@ function enableEditMode() {
     const privacySelect = document.createElement('select');
     privacySelect.className = 'form-control';
     privacySelect.id = 'taskPrivacy';
-    privacySelect.onchange = () => toggleHideFromUsersInModal();
+    // privacySelect.onchange = () => toggleHideFromUsersInModal();
 
-    const privacyOptions = ['Public', 'Private', 'Private Except'];
+    const privacyOptions = ['Public', 'Private']; // Removed 'Private Except'
     privacyOptions.forEach(privacy => {
         const option = document.createElement('option');
         option.value = privacy;
@@ -422,14 +424,15 @@ function enableEditMode() {
     privacyInput.parentNode.replaceChild(privacySelect, privacyInput);
 
     // Show/hide the hideFromUsers field based on privacy
-    toggleHideFromUsersInModal();
+    // toggleHideFromUsersInModal();
 
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
     document.getElementById('saveEditButton').style.display = 'inline-block';
 }
 
-function toggleHideFromUsersInModal() {
+// Comment out entire toggleHideFromUsersInModal function
+/* function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
     const hideFromContainer = document.getElementById('hideFromUsersContainer');
     const hideFromInput = document.getElementById('hideFromUsers');
@@ -440,7 +443,7 @@ function toggleHideFromUsersInModal() {
     } else {
         hideFromContainer.style.display = 'none';
     }
-}
+} */
 
 // Add this function to save edits
 async function saveTaskEdits(taskCard) {
@@ -482,10 +485,11 @@ async function saveTaskEdits(taskCard) {
             throw new Error('Failed to update task');
         }
 
-        // Add hideFrom if privacy is Private Except
+        // Comment out hideFrom handling
+        /* // Add hideFrom if privacy is Private Except
         if (updatedData.privacy === 'Private Except') {
             updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-        }
+        } */
 
         // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {

@@ -17,10 +17,8 @@ document.addEventListener('DOMContentLoaded', async() => {
             credentials: 'include' // Include cookies in the request
         });
         let usersData = await usersResponse.json();
-        users = usersData.data.map(user => ({
-            name: user.name,
-            email: user.email
-        }));
+        users = usersData.data.map(user => user.name);
+
     } catch (error) {
         console.error('Error fetching users:', error);
     }
@@ -35,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async() => {
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
             tasks.tasks.forEach(task => createTask(task));
-            updateTaskCounts();
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
@@ -59,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async() => {
 function createTask(task) {
 
     const taskCard = document.createElement('div');
-    taskCard.dataset.version = task.version;
     taskCard.dataset.taskId = task.id;
     taskCard.className = 'task-card';
     taskCard.draggable = true;
@@ -123,21 +119,21 @@ function addTaskCardEventListeners(taskCard) {
         // Update assignTo dropdown
         const assignToSelect = document.getElementById('taskAssignTo');
         assignToSelect.innerHTML = users.map(user =>
-            `<option value="${user.email}" ${user.name === taskCard.dataset.assignedTo ? 'selected' : ''}>${user.email}</option>`
+            `<option value="${user}" ${user === taskCard.dataset.assignedTo ? 'selected' : ''}>${user}</option>`
         ).join('');
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
-        // Handle Private Except case
-        const hideFromContainer = document.getElementById('hideFromUsersContainer');
-        const hideFromInput = document.getElementById('hideFromUsers');
-        if (taskCard.dataset.privacy === 'Private Except') {
-            hideFromInput.value = taskCard.dataset.hideFrom || '';
-            hideFromContainer.style.display = 'block';
-        } else {
-            hideFromInput.value = '';
-            hideFromContainer.style.display = 'none';
-        }
+        // // Handle Private Except case
+        // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+        // const hideFromInput = document.getElementById('hideFromUsers');
+        // if (taskCard.dataset.privacy === 'Private Except') {
+        //     hideFromInput.value = taskCard.dataset.hideFrom || '';
+        //     hideFromContainer.style.display = 'block';
+        // } else {
+        //     hideFromInput.value = '';
+        //     hideFromContainer.style.display = 'none';
+        // }
 
         // Setup edit button click handler
         const editButton = document.getElementById('editTaskButton');
@@ -198,12 +194,12 @@ function updateTaskCard(taskCard) {
     const privacyIcons = {
         'Public': 'fa-globe',
         'Private': 'fa-lock',
-        'Private Except': 'fa-user-secret'
+        // 'Private Except': 'fa-user-secret'
     };
 
-    const privacyText = taskCard.dataset.privacy === 'Private Except' ?
-        `Private Except: ${taskCard.dataset.hideFrom}` :
-        taskCard.dataset.privacy;
+    // const privacyText = taskCard.dataset.privacy === 'Private Except' ?
+    //     `Private Except: ${taskCard.dataset.hideFrom}` :
+    taskCard.dataset.privacy;
 
     // Format the date properly
     let deadlineDisplay = 'No deadline set';
@@ -280,7 +276,6 @@ function updateTaskCard(taskCard) {
             })
 
             taskCard.remove();
-            
             updateTaskCounts();
         }
         taskMenu.classList.remove('show');
@@ -415,7 +410,7 @@ function enableEditMode() {
     privacySelect.id = 'taskPrivacy';
     privacySelect.onchange = () => toggleHideFromUsersInModal();
 
-    const privacyOptions = ['Public', 'Private', 'Private Except'];
+    const privacyOptions = ['Public', 'Private'];
     privacyOptions.forEach(privacy => {
         const option = document.createElement('option');
         option.value = privacy;
@@ -436,10 +431,10 @@ function enableEditMode() {
 
 function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
-    const hideFromContainer = document.getElementById('hideFromUsersContainer');
-    const hideFromInput = document.getElementById('hideFromUsers');
+    // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+    // const hideFromInput = document.getElementById('hideFromUsers');
 
-    if (privacySelect.value === 'Private Except') {
+    if (privacySelect.value === 'Private') {
         hideFromContainer.style.display = 'block';
         hideFromInput.removeAttribute('readonly');
     } else {
@@ -458,9 +453,6 @@ async function saveTaskEdits(taskCard) {
     const selectedDate = new Date(dateInput.value);
     selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
     const isoDate = selectedDate.toISOString();
-    //set to the email corresponding to the user
-    
-
 
     // Get updated values
     const updatedData = {
@@ -485,17 +477,15 @@ async function saveTaskEdits(taskCard) {
             body: JSON.stringify(updatedData),
             credentials: 'include'
         });
-        taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1;  
-        console.log(taskCard.dataset.version)
 
         if (!response.ok) {
             throw new Error('Failed to update task');
         }
 
-        // Add hideFrom if privacy is Private Except
-        if (updatedData.privacy === 'Private Except') {
-            updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-        }
+        // // Add hideFrom if privacy is Private Except
+        // if (updatedData.privacy === 'Private Except') {
+        //     updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+        // }
 
         // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {

@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         credentials: 'include'
     })
     const data = await response.json();
-    
+
     console.log(data);
     const users = data.data;
     const assignInput = document.getElementById('taskAssignInput');
     if (assignInput) {
         users.forEach(user => {
             const option = document.createElement('option');
-            option.value = user.email;
+            option.value = user.name;
             option.text = user.name;
             assignInput.appendChild(option);
         });
@@ -53,13 +53,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 description: document.getElementById('taskDescriptionInput').value.trim(),
                 status: document.getElementById('taskStatusInput').value,
                 privacy: document.getElementById('taskPrivacyInput').value,
-                hideFrom: document.getElementById('hideUserInput').value.trim(),
                 assignedTo: document.getElementById('taskAssignInput').value.trim(),
                 deadline: document.getElementById('taskDateInput').value,
                 link: document.getElementById('taskLinkInput').value.trim(),
                 category: document.getElementById('taskCategoryInput').value.trim()
             };
-        
 
             if (validateFormData(formData)) {
                 //send to server
@@ -198,13 +196,6 @@ function enableEditMode() {
     // Handle privacy dropdown
     const privacyInput = document.getElementById('taskPrivacy');
     privacyInput.disabled = false;
-    privacyInput.onchange = toggleHideFromUsersInModal;
-
-    // Enable hideFromUsers if needed
-    const hideFromInput = document.getElementById('hideFromUsers');
-    if (privacyInput.value === 'Private Except') {
-        hideFromInput.removeAttribute('readonly');
-    }
 
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
@@ -252,10 +243,6 @@ function disableEditMode() {
     // Disable privacy dropdown
     const privacyDropdown = document.getElementById('taskPrivacy');
     privacyDropdown.disabled = true;
-
-    // Disable hideFromUsers
-    const hideFromInput = document.getElementById('hideFromUsers');
-    hideFromInput.setAttribute('readonly', true);
 
     // Show Edit button, hide Save button
     document.getElementById('editTaskButton').style.display = 'inline-block';
@@ -374,11 +361,6 @@ async function saveTaskEdits(taskCard) {
         link: document.getElementById('taskLink').value,
         category: document.getElementById('taskDetailCategory').value
     };
-
-    // Add hideFrom if privacy is Private Except
-    if (updatedData.privacy === 'Private Except') {
-        updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-    }
 
     console.log('Sending update with data:', updatedData);
 

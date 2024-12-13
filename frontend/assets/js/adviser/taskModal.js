@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 moveTaskToDone(taskCard);
             }
         });
-
-
     }
 
     //fetch all user names
@@ -53,7 +51,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 description: document.getElementById('taskDescriptionInput').value.trim(),
                 status: document.getElementById('taskStatusInput').value,
                 privacy: document.getElementById('taskPrivacyInput').value,
-                hideFrom: document.getElementById('hideUserInput').value.trim(),
                 assignedTo: document.getElementById('taskAssignInput').value.trim(),
                 deadline: document.getElementById('taskDateInput').value,
                 link: document.getElementById('taskLinkInput').value.trim(),
@@ -91,10 +88,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (form) {
             form.reset();
             clearErrorMessages();
-            const hideInputContainer = document.getElementById('hideInputContainer');
-            if (hideInputContainer) {
-                hideInputContainer.style.display = 'none';
-            }
         }
     }
 
@@ -144,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // Toggle hide input function
-function toggleHideInput() {
+/* function toggleHideInput() {
     const privacySelect = document.getElementById('taskPrivacyInput');
     const hideInputContainer = document.getElementById('hideInputContainer');
 
@@ -155,7 +148,7 @@ function toggleHideInput() {
             hideInputContainer.style.display = 'none';
         }
     }
-}
+} */
 
 // Update the enableEditMode function
 function enableEditMode() {
@@ -199,11 +192,11 @@ function enableEditMode() {
     privacyInput.disabled = false;
     privacyInput.onchange = toggleHideFromUsersInModal;
 
-    // Enable hideFromUsers if needed
+    /* // Enable hideFromUsers if needed
     const hideFromInput = document.getElementById('hideFromUsers');
     if (privacyInput.value === 'Private Except') {
         hideFromInput.removeAttribute('readonly');
-    }
+    } */
 
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
@@ -252,9 +245,9 @@ function disableEditMode() {
     const privacyDropdown = document.getElementById('taskPrivacy');
     privacyDropdown.disabled = true;
 
-    // Disable hideFromUsers
+    /* // Disable hideFromUsers
     const hideFromInput = document.getElementById('hideFromUsers');
-    hideFromInput.setAttribute('readonly', true);
+    hideFromInput.setAttribute('readonly', true); */
 
     // Show Edit button, hide Save button
     document.getElementById('editTaskButton').style.display = 'inline-block';
@@ -318,7 +311,7 @@ function showTaskDetails(taskCard) {
     const privacySelect = document.getElementById('taskPrivacy');
     privacySelect.value = taskCard.dataset.privacy || 'Private';
 
-    // Handle hideFromUsers field
+    /* // Handle hideFromUsers field
     const hideFromContainer = document.getElementById('hideFromUsersContainer');
     const hideFromInput = document.getElementById('hideFromUsers');
 
@@ -328,14 +321,14 @@ function showTaskDetails(taskCard) {
     } else {
         hideFromContainer.style.display = 'none';
         hideFromInput.value = '';
-    }
+    } */
 
     // Ensure all fields are readonly initially
     disableEditMode();
 }
 
 // Add this function to handle hide from users toggle in modal
-function toggleHideFromUsersInModal() {
+/* function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
     const hideFromContainer = document.getElementById('hideFromUsersContainer');
     const hideFromInput = document.getElementById('hideFromUsers');
@@ -347,7 +340,7 @@ function toggleHideFromUsersInModal() {
         hideFromContainer.style.display = 'none';
         hideFromInput.value = '';
     }
-}
+} */
 
 // Update the saveTaskEdits function
 async function saveTaskEdits(taskCard) {
@@ -374,10 +367,10 @@ async function saveTaskEdits(taskCard) {
         category: document.getElementById('taskDetailCategory').value
     };
 
-    // Add hideFrom if privacy is Private Except
+    /* // Add hideFrom if privacy is Private Except
     if (updatedData.privacy === 'Private Except') {
         updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-    }
+    } */
 
     console.log('Sending update with data:', updatedData);
 

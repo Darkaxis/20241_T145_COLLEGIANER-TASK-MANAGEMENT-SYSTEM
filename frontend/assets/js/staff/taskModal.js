@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 description: document.getElementById('taskDescriptionInput').value.trim(),
                 status: document.getElementById('taskStatusInput').value,
                 privacy: document.getElementById('taskPrivacyInput').value,
-                hideFrom: document.getElementById('hideUserInput').value.trim(),
                 assignedTo: document.getElementById('taskAssignInput').value.trim(),
                 deadline: document.getElementById('taskDateInput').value,
                 link: document.getElementById('taskLinkInput').value.trim(),
@@ -159,23 +158,30 @@ function toggleHideInput() {
 
 // Update the enableEditMode function
 function enableEditMode() {
-    // Make inputs editable
-    const inputs = document.querySelectorAll('#taskDetailModal input, #taskDetailModal textarea');
+    // Make all inputs readonly by default
+    const inputs = document.querySelectorAll('#taskDetailModal input, #taskDetailModal textarea, #taskDetailModal select');
     inputs.forEach(input => {
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
+        input.setAttribute('readonly', true);
+        input.disabled = true;
+        input.classList.remove('editable');
     });
 
-    // Enable specific select elements
-    const editableSelects = ['taskStatus', 'taskPrivacy', 'taskAssignTo', 'taskSubmitTo'];
-    editableSelects.forEach(id => {
-        const select = document.getElementById(id);
-        if (select) {
-            select.disabled = false;
-            select.classList.add('editable');
+    // Only enable Transfer To and Submit To fields
+    const editableFields = ['taskTransferTo', 'taskSubmitTo'];
+    editableFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.removeAttribute('readonly');
+            field.disabled = false;
+            field.classList.add('editable');
         }
     });
 
+    // Show Save button, hide Edit button
+    document.getElementById('editTaskButton').style.display = 'none';
+    document.getElementById('saveEditButton').style.display = 'inline-block';
+
+    /* Comment out other field editing functionality
     // Create a status dropdown for editing
     const statusInput = document.getElementById('taskStatus');
     const currentStatus = statusInput.value;
@@ -194,30 +200,24 @@ function enableEditMode() {
 
     statusInput.parentNode.replaceChild(statusSelect, statusInput);
 
-    // Handle privacy dropdown
+    // Create a privacy dropdown for editing
     const privacyInput = document.getElementById('taskPrivacy');
-    privacyInput.disabled = false;
-    privacyInput.onchange = toggleHideFromUsersInModal;
+    const currentPrivacy = privacyInput.value;
+    const privacySelect = document.createElement('select');
+    privacySelect.className = 'form-control';
+    privacySelect.id = 'taskPrivacy';
 
-    // Enable hideFromUsers if needed
-    const hideFromInput = document.getElementById('hideFromUsers');
-    if (privacyInput.value === 'Private Except') {
-        hideFromInput.removeAttribute('readonly');
-    }
+    const privacyOptions = ['Public', 'Private'];
+    privacyOptions.forEach(privacy => {
+        const option = document.createElement('option');
+        option.value = privacy;
+        option.text = privacy;
+        option.selected = privacy === currentPrivacy;
+        privacySelect.appendChild(option);
+    });
 
-    // Show Save button, hide Edit button
-    document.getElementById('editTaskButton').style.display = 'none';
-    document.getElementById('saveEditButton').style.display = 'inline-block';
-
-    // Add date validation for edit mode
-    const dateInput = document.getElementById('taskDate');
-    if (dateInput) {
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.setAttribute('min', today);
-        dateInput.addEventListener('change', function() {
-            validateTaskDate(this);
-        });
-    }
+    privacyInput.parentNode.replaceChild(privacySelect, privacyInput);
+    */
 }
 
 // Update the disableEditMode function
@@ -318,18 +318,6 @@ function showTaskDetails(taskCard) {
     const privacySelect = document.getElementById('taskPrivacy');
     privacySelect.value = taskCard.dataset.privacy || 'Private';
 
-    // Handle hideFromUsers field
-    const hideFromContainer = document.getElementById('hideFromUsersContainer');
-    const hideFromInput = document.getElementById('hideFromUsers');
-
-    if (taskCard.dataset.privacy === 'Private Except') {
-        hideFromContainer.style.display = 'block';
-        hideFromInput.value = taskCard.dataset.hideFrom || '';
-    } else {
-        hideFromContainer.style.display = 'none';
-        hideFromInput.value = '';
-    }
-
     // Ensure all fields are readonly initially
     disableEditMode();
 }
@@ -351,38 +339,31 @@ function toggleHideFromUsersInModal() {
 
 // Update the saveTaskEdits function
 async function saveTaskEdits(taskCard) {
+    /* Comment out date validation since it's not editable
     const dateInput = document.getElementById('taskDate');
     if (!validateTaskDate(dateInput)) {
         return false;
     }
+    */
 
-    // Ensure date is properly formatted as ISO string
-    const selectedDate = new Date(dateInput.value);
-    selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-    const isoDate = selectedDate.toISOString();
-
-    // Get updated values
+    // Only get the editable fields
     const updatedData = {
         id: taskCard.dataset.taskId,
-        taskName: document.getElementById('taskTitle').value,
-        description: document.getElementById('taskDescription').value,
-        status: document.getElementById('taskStatus').value,
-        privacy: document.getElementById('taskPrivacy').value,
-        assignedTo: document.getElementById('taskAssignTo').value,
-        deadline: isoDate,
-        link: document.getElementById('taskLink').value,
-        category: document.getElementById('taskDetailCategory').value
+        transferTo: document.getElementById('taskTransferTo').value,
+        submitTo: document.getElementById('taskSubmitTo').value
+            /* Comment out other fields that shouldn't be editable
+            taskName: document.getElementById('taskTitle').value,
+            description: document.getElementById('taskDescription').value,
+            status: document.getElementById('taskStatus').value,
+            privacy: document.getElementById('taskPrivacy').value,
+            assignedTo: document.getElementById('taskAssignTo').value,
+            deadline: isoDate,
+            link: document.getElementById('taskLink').value,
+            category: document.getElementById('taskDetailCategory').value
+            */
     };
 
-    // Add hideFrom if privacy is Private Except
-    if (updatedData.privacy === 'Private Except') {
-        updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-    }
-
-    console.log('Sending update with data:', updatedData);
-
     try {
-        // Send to backend
         const taskId = taskCard.dataset.taskId;
         const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
             method: 'PUT',

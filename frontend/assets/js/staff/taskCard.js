@@ -193,13 +193,18 @@ function updateTaskCard(taskCard) {
 
     const privacyIcons = {
         'Public': 'fa-globe',
-        'Private': 'fa-lock',
-        'Private Except': 'fa-user-secret'
+        'Private': 'fa-lock'
+            /* Comment out Private Except
+            'Private Except': 'fa-user-secret'
+            */
     };
 
+    /* Comment out Private Except text handling
     const privacyText = taskCard.dataset.privacy === 'Private Except' ?
         `Private Except: ${taskCard.dataset.hideFrom}` :
         taskCard.dataset.privacy;
+    */
+    const privacyText = taskCard.dataset.privacy;
 
     // Format the date properly
     let deadlineDisplay = 'No deadline set';
@@ -237,7 +242,7 @@ function updateTaskCard(taskCard) {
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
                 <p><i class="fa-regular fa-calendar"></i> ${deadlineDisplay}</p>
                 <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
-                  <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
+                <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
             </div>
         </div>
@@ -378,12 +383,7 @@ function enableEditMode() {
         input.removeAttribute('readonly');
         input.classList.add('editable');
     });
-    // Make category input editable
-    const categoryInput = document.getElementById('taskDetailCategory');
-    if (categoryInput) {
-        categoryInput.removeAttribute('readonly');
-        categoryInput.classList.add('editable');
-    }
+
     // Create a status dropdown for editing
     const statusInput = document.getElementById('taskStatus');
     const currentStatus = statusInput.value;
@@ -408,9 +408,14 @@ function enableEditMode() {
     const privacySelect = document.createElement('select');
     privacySelect.className = 'form-control';
     privacySelect.id = 'taskPrivacy';
+    /* Comment out onchange event for hideFromUsers
     privacySelect.onchange = () => toggleHideFromUsersInModal();
+    */
 
+    const privacyOptions = ['Public', 'Private'];
+    /* Comment out Private Except option
     const privacyOptions = ['Public', 'Private', 'Private Except'];
+    */
     privacyOptions.forEach(privacy => {
         const option = document.createElement('option');
         option.value = privacy;
@@ -421,25 +426,9 @@ function enableEditMode() {
 
     privacyInput.parentNode.replaceChild(privacySelect, privacyInput);
 
-    // Show/hide the hideFromUsers field based on privacy
+    /* Comment out hideFromUsers toggle
     toggleHideFromUsersInModal();
-
-    // Show Save button, hide Edit button
-    document.getElementById('editTaskButton').style.display = 'none';
-    document.getElementById('saveEditButton').style.display = 'inline-block';
-}
-
-function toggleHideFromUsersInModal() {
-    const privacySelect = document.getElementById('taskPrivacy');
-    const hideFromContainer = document.getElementById('hideFromUsersContainer');
-    const hideFromInput = document.getElementById('hideFromUsers');
-
-    if (privacySelect.value === 'Private Except') {
-        hideFromContainer.style.display = 'block';
-        hideFromInput.removeAttribute('readonly');
-    } else {
-        hideFromContainer.style.display = 'none';
-    }
+    */
 }
 
 // Add this function to save edits
@@ -449,12 +438,10 @@ async function saveTaskEdits(taskCard) {
         return false;
     }
 
-    // Ensure date is properly formatted as ISO string
     const selectedDate = new Date(dateInput.value);
-    selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+    selectedDate.setHours(12, 0, 0, 0);
     const isoDate = selectedDate.toISOString();
 
-    // Get updated values
     const updatedData = {
         taskName: document.getElementById('taskTitle').value,
         description: document.getElementById('taskDescription').value,
@@ -464,10 +451,12 @@ async function saveTaskEdits(taskCard) {
         deadline: isoDate,
         link: document.getElementById('taskLink').value,
         category: document.getElementById('taskDetailCategory').value
+            /* Comment out hideFrom
+            hideFrom: document.getElementById('hideFromUsers').value
+            */
     };
 
     try {
-        // send to backend
         const taskId = taskCard.dataset.taskId;
         const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
             method: 'PUT',
@@ -482,10 +471,11 @@ async function saveTaskEdits(taskCard) {
             throw new Error('Failed to update task');
         }
 
-        // Add hideFrom if privacy is Private Except
+        /* Comment out hideFrom handling
         if (updatedData.privacy === 'Private Except') {
             updatedData.hideFrom = document.getElementById('hideFromUsers').value;
         }
+        */
 
         // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {

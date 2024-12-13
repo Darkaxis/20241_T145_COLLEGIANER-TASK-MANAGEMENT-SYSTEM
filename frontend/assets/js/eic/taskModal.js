@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (assignInput) {
         users.forEach(user => {
             const option = document.createElement('option');
-            option.value = user.email;
+            option.value = user.name;
             option.text = user.name;
             assignInput.appendChild(option);
         });
@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 description: document.getElementById('taskDescriptionInput').value.trim(),
                 status: document.getElementById('taskStatusInput').value,
                 privacy: document.getElementById('taskPrivacyInput').value,
-                hideFrom: document.getElementById('hideUserInput').value.trim(),
                 assignedTo: document.getElementById('taskAssignInput').value.trim(),
                 deadline: document.getElementById('taskDateInput').value,
                 link: document.getElementById('taskLinkInput').value.trim(),
@@ -64,17 +63,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 //send to server
                 const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
                     method: 'POST',
-                    credentials: 'include',
-                    mode: 'cors',
+                    include: 'credentials',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
-                if (response.ok) {
+
                 createTask(formData);
                 closeAndResetModal();
-                }
             }
         });
     }
@@ -146,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // Toggle hide input function
+/* Comment out toggleHideInput function
 function toggleHideInput() {
     const privacySelect = document.getElementById('taskPrivacyInput');
     const hideInputContainer = document.getElementById('hideInputContainer');
@@ -158,6 +156,7 @@ function toggleHideInput() {
         }
     }
 }
+*/
 
 // Update the enableEditMode function
 function enableEditMode() {
@@ -199,13 +198,16 @@ function enableEditMode() {
     // Handle privacy dropdown
     const privacyInput = document.getElementById('taskPrivacy');
     privacyInput.disabled = false;
+    /* Comment out hideFromUsers toggle
     privacyInput.onchange = toggleHideFromUsersInModal;
+    */
 
-    // Enable hideFromUsers if needed
+    /* Comment out hideFromUsers handling
     const hideFromInput = document.getElementById('hideFromUsers');
     if (privacyInput.value === 'Private Except') {
         hideFromInput.removeAttribute('readonly');
     }
+    */
 
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
@@ -320,7 +322,7 @@ function showTaskDetails(taskCard) {
     const privacySelect = document.getElementById('taskPrivacy');
     privacySelect.value = taskCard.dataset.privacy || 'Private';
 
-    // Handle hideFromUsers field
+    /* Comment out hideFromUsers container handling
     const hideFromContainer = document.getElementById('hideFromUsersContainer');
     const hideFromInput = document.getElementById('hideFromUsers');
 
@@ -331,12 +333,13 @@ function showTaskDetails(taskCard) {
         hideFromContainer.style.display = 'none';
         hideFromInput.value = '';
     }
+    */
 
     // Ensure all fields are readonly initially
     disableEditMode();
 }
 
-// Add this function to handle hide from users toggle in modal
+/* Comment out toggleHideFromUsersInModal function
 function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
     const hideFromContainer = document.getElementById('hideFromUsersContainer');
@@ -350,6 +353,7 @@ function toggleHideFromUsersInModal() {
         hideFromInput.value = '';
     }
 }
+*/
 
 // Update the saveTaskEdits function
 async function saveTaskEdits(taskCard) {
@@ -376,10 +380,11 @@ async function saveTaskEdits(taskCard) {
         category: document.getElementById('taskDetailCategory').value
     };
 
-    // Add hideFrom if privacy is Private Except
+    /* Comment out hideFrom handling
     if (updatedData.privacy === 'Private Except') {
         updatedData.hideFrom = document.getElementById('hideFromUsers').value;
     }
+    */
 
     console.log('Sending update with data:', updatedData);
 
