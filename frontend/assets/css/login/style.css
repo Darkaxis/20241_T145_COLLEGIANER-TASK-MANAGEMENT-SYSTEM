@@ -614,3 +614,60 @@
             margin: 0 0 10px 0;
         }
     }
+    
+    .forgot-password {
+        display: inline-flex;
+        align-items: center;
+        color: #3b82f6;
+        font-size: 14px;
+        text-decoration: none;
+        margin-top: 1px;
+        margin-bottom: -6px;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        text-align: right;
+        width: 40%;
+    }
+    
+    .forgot-password a {
+        color: #3b82f6;
+        font-size: 14px;
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+    }
+    
+    .forgot-password a:hover {
+        color: #2563eb;
+        text-decoration: underline !important;
+    }
+    /* Update form group spacing */
+    
+    .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .form-group:last-of-type {
+        margin-bottom: 5px;
+    }
+    /* Adjust spacing for elements below reCAPTCHA */
+    
+    .login-btn {
+        margin-top: 10px;
+    }
+    
+    .or {
+        margin: 20px 0;
+    }
+    
+    .google {
+        margin-top: -10px;
+        margin-bottom: 20px !important;
+    }
+    /* Add this to ensure proper spacing */
+    
+    .d-flex.justify-content-end {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }

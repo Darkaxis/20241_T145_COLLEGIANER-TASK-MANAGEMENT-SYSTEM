@@ -270,9 +270,23 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer" style="border: none;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">Save</button>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <!-- Status toggle container -->
+                        <div id="statusToggleContainer" style="display: none;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="toggleUserStatusBtn" checked onchange="toggleUserStatus(this)">
+                                <label class="form-check-label" for="toggleUserStatusBtn">
+                                    <span class="status-text">Enabled</span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Action buttons -->
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="saveUser()">Save</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -45,6 +45,12 @@ document.addEventListener('DOMContentLoaded', async() => {
                 </button>
             </td>
         `;
+
+        // Add disabled class if status is false
+        if (user.status === false) {
+            newRow.classList.add('user-disabled');
+        }
+
         table.appendChild(newRow);
     });
 
@@ -67,16 +73,29 @@ function openAddUserModal(isEdit = false, rowIndex = null) {
     document.getElementById('addUserModalLabel').textContent = isEdit ? 'Edit User' : 'Add User';
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
 
+    // Get the status toggle container
+    const statusToggleContainer = document.getElementById('statusToggleContainer');
+
     if (isEdit) {
         const row = document.getElementById('userTableBody').rows[rowIndex];
-        emailInput.value = row.cells[1].textContent; // Get email from the correct column
-        emailInput.readOnly = true; // Make email field readonly when editing
-        emailInput.classList.add('bg-light'); // Optional: add visual indication that it's readonly
-        document.getElementById('role').value = row.cells[2].textContent; // Get role from the correct column
+        emailInput.value = row.cells[1].textContent;
+        emailInput.readOnly = true;
+        emailInput.classList.add('bg-light');
+        document.getElementById('role').value = row.cells[2].textContent;
+
+        // Show and set status toggle
+        statusToggleContainer.style.display = 'block';
+        const toggleBtn = document.getElementById('toggleUserStatusBtn');
+        const isEnabled = !row.classList.contains('user-disabled');
+        toggleBtn.checked = isEnabled;
+        toggleBtn.parentElement.querySelector('.status-text').textContent =
+            isEnabled ? 'Enabled' : 'Disabled';
     } else {
         document.getElementById('addUserForm').reset();
-        emailInput.readOnly = false; // Make email field editable for new users
-        emailInput.classList.remove('bg-light'); // Remove readonly visual indication
+        emailInput.readOnly = false;
+        emailInput.classList.remove('bg-light');
+        // Hide status toggle for new users
+        statusToggleContainer.style.display = 'none';
     }
 
     const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
@@ -160,12 +179,11 @@ async function saveUser() {
             body: JSON.stringify(userData)
         });
 
-       if (response.status == 409){
-        alert('User already exists');
-       }
-       else if (response.ok){
-        alert('User added, awaiting user confirmation')
-       }
+        if (response.status == 409) {
+            alert('User already exists');
+        } else if (response.ok) {
+            alert('User added, awaiting user confirmation')
+        }
         // Refresh the page to show updated data
         location.reload();
 
@@ -292,5 +310,26 @@ function adjustLayoutForZoom() {
         dashboard.classList.add('zoomed-out-more');
     } else {
         dashboard.classList.remove('zoomed-out', 'zoomed-out-more');
+    }
+}
+
+function toggleUserStatus(checkbox) {
+    const row = checkbox.closest('tr');
+    const statusText = checkbox.parentElement.querySelector('.status-text');
+    
+    if (row) {
+        if (!checkbox.checked) {
+            row.classList.add('user-disabled');
+            statusText.textContent = 'Disabled';
+        } else {
+            row.classList.remove('user-disabled');
+            statusText.textContent = 'Enabled';
+        }
+    }
+
+    // Update the status text in modal if open
+    const modalStatusText = document.querySelector('#addUserModal .status-text');
+    if (modalStatusText) {
+        modalStatusText.textContent = checkbox.checked ? 'Enabled' : 'Disabled';
     }
 }

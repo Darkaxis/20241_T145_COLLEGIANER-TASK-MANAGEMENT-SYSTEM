@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Task Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/passReset.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="images/Collegianer logo.png" alt="Collegianer">
+        </div>
+        <h1>Reset Your Password</h1>
+        <p>Enter your email address and we'll send you a link to reset your password.</p>
+
+        <form action="#" method="POST" id="resetForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <button type="submit" class="button">Send Reset Link</button>
+
+            <div class="back-to-login">
+                <a href="index.html">Back to Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('resetForm');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            // Redirect to confirmation page
+            window.location.href = 'resetConfirmation.html';
+        });
+    </script>
+</body>
+
+</html>

@@ -30,6 +30,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/index.html'));
 });
 
+// New routes
+app.get('/login/passReset', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/login/passReset.html'));
+});
+app.get('/login/newPass', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/login/newPass.html'));
+});
+
+app.get('/login/resetConfirmation', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/login/resetConfirmation.html'));
+});
+
 // Add these new routes for staff
 app.get('/staff/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/staff/staff-dashboard.html'));
