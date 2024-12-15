@@ -113,7 +113,7 @@ async function sendOAuthLink(email, link) {
             font-size: 28px;
             font-weight: 700;
             margin: 0 0 16px 0;
-            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            background: linear-gradient(135deg,rgb(243, 243, 243) 0%, #334155 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
@@ -172,7 +172,7 @@ async function sendOAuthLink(email, link) {
 <body>
     <div class="container">
         <div class="logo">
-            <img src="https://cdn.discordapp.com/attachments/536052278797402149/1308966763026845707/Collegianer_logo.png?ex=673fddcb&is=673e8c4b&hm=56f4b37ed3b07f30eb2e5e1fb94f51e5989344cee7c0ec7d62c943f8c6ada563&" alt="Collegianer">
+            <img src="https://idoxb68.sufydely.com/Collegianer%20logo.png" alt="Collegianer">
         </div>
         <h1>Task Management System</h1>
         <p>Greetings, you have been invited to use the task management system of Collegianer.</p>
@@ -205,5 +205,9 @@ async function sendOAuthLink(email, link) {
         return 500;
     }
 }
+
+
+
+
 
 export default{ sendOAuthLink };
