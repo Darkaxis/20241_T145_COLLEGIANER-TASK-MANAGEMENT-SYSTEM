@@ -1,30 +1,31 @@
-import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Create a Nodemailer transporter using SMTP
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+const oAuth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URL
+);
 
-// Function to send the email with the OAuth link
+// Set the credentials (you should have a refresh token stored)
+oAuth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
+
 async function sendOAuthLink(email, link) {
     if (!email || !email.endsWith('buksu.edu.ph')) {
-        return 400 ;
+        return 400;
     }
 
-  
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Complete Your Registration',
-        text: `Please complete your registration by clicking the following link: ${link}`,
-        html: `<!DOCTYPE html>
+    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+
+    const messageParts = [
+        'From: ' + process.env.EMAIL_USER,
+        'To: ' + email,
+        'Subject: Complete Your Registration',
+        'Content-Type: text/html; charset=utf-8',
+        'MIME-Version: 1.0',
+        `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -181,26 +182,28 @@ async function sendOAuthLink(email, link) {
 </body>
 
 </html>`
-    };
+    ];
+
+    const message = messageParts.join('\n');
+
+    const encodedMessage = Buffer.from(message)
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-        return { status: 200, message: 'OAuth link sent successfully' };
+        await gmail.users.messages.send({
+            userId: 'me',
+            requestBody: {
+                raw: encodedMessage,
+            },
+        });
+        return 200;
     } catch (error) {
         console.error('Error sending email:', error);
-        return { status: 500, message: 'Error sending email' };
+        return 500;
     }
 }
-async function forgotPassword(email, link) {
-    if (!email || !email.endsWith('buksu.edu.ph')) {
-        return 400 ;
-    }
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Reset Pass'}
-    }
-    
-export default { sendOAuthLink,forgotPassword };
+export default{ sendOAuthLink };

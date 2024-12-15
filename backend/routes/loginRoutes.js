@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import googleMailSercive from '../services/googleMailService.js';
+//import googleMailService from '../services/google/googleMailService.js';
 
 dotenv.config();
 
