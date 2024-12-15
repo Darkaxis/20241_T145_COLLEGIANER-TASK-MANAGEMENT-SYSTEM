@@ -192,29 +192,15 @@ async function sendOAuthLink(email, link) {
         return { status: 500, message: 'Error sending email' };
     }
 }
-
-async function sendPass(email, password) {
-    //email must end in @buksu.edu.ph
-    if (!email || !email.endsWith('@buksu.edu.ph')) {
-        return { status: 400, message: 'Invalid email' };
+async function forgotPassword(email, link) {
+    if (!email || !email.endsWith('buksu.edu.ph')) {
+        return 400 ;
     }
-  
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Password Recovery',
-        text: `Your password is: ${password}`,
-        html: `<p>Your password is: ${password}</p>`
-    };
-
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-        return { status: 200, message: 'Password sent successfully' };
-    } catch (error) {
-       return { status: 500, message: 'Error sending email' };
+        subject: 'Reset Pass'}
     }
     
-}
-
-export default { sendOAuthLink, sendPass };
+export default { sendOAuthLink,forgotPassword };

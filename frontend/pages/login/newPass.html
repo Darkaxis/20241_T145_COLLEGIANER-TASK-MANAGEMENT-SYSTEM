@@ -66,73 +66,8 @@
         </div>
     </div>
 
-    <script>
-        // Password visibility toggle
-        document.querySelectorAll('.toggle-password').forEach(button => {
-            button.addEventListener('click', function() {
-                const input = this.parentElement.querySelector('input');
-                const icon = this.querySelector('i');
-
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            });
-        });
-
-        // Password validation
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm-password');
-        const form = document.getElementById('newPasswordForm');
-
-        password.addEventListener('input', validatePassword);
-
-        function validatePassword() {
-            const value = password.value;
-
-            document.getElementById('length').className = value.length >= 8 ? 'valid' : 'invalid';
-            document.getElementById('uppercase').className = /[A-Z]/.test(value) ? 'valid' : 'invalid';
-            document.getElementById('lowercase').className = /[a-z]/.test(value) ? 'valid' : 'invalid';
-            document.getElementById('number').className = /[0-9]/.test(value) ? 'valid' : 'invalid';
-            document.getElementById('special').className = /[!@#$%^&*]/.test(value) ? 'valid' : 'invalid';
-        }
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const value = password.value;
-            const isValid = value.length >= 8 &&
-                /[A-Z]/.test(value) &&
-                /[a-z]/.test(value) &&
-                /[0-9]/.test(value) &&
-                /[!@#$%^&*]/.test(value);
-
-            if (!isValid) {
-                alert('Please meet all password requirements');
-                return;
-            }
-
-            if (password.value !== confirmPassword.value) {
-                alert('Passwords do not match');
-                return;
-            }
-
-            // Show custom alert
-            const customAlert = document.getElementById('customAlert');
-            customAlert.classList.add('show');
-        });
-
-        function closeAlert() {
-            const customAlert = document.getElementById('customAlert');
-            customAlert.classList.remove('show');
-            // Redirect after closing alert
-            window.location.href = 'index.html';
-        }
+    <script src="/js/resetpass/resetpass.js">
+       
     </script>
 </body>
 

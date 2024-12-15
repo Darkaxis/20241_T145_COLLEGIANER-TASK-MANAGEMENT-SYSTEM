@@ -92,4 +92,22 @@ export async function getUser(email) {
     };
 }
 
+
+export async function resetPassword(email, password) {
+    const userSnapshot = await db
+        .collection("users")
+        .where("emailSearch", "==", email.toLowerCase())
+        .get();
+
+    if (userSnapshot.empty) {
+        throw new Error("User not found");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.collection("users").doc(userSnapshot.docs[0].id).update({
+        password: hashedPassword
+    });
+}
+
 export default {getUser, authenticateUser, registerUser}

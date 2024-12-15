@@ -31,14 +31,14 @@ app.get('/', (req, res) => {
 });
 
 // New routes
-app.get('/login/passReset', (req, res) => {
+app.get('/password_reset', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/passReset.html'));
 });
-app.get('/login/newPass', (req, res) => {
+app.get('/new_password', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/newPass.html'));
 });
 
-app.get('/login/resetConfirmation', (req, res) => {
+app.get('/password_reset/confirm', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/resetConfirmation.html'));
 });
 
