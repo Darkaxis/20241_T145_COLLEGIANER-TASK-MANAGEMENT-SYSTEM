@@ -35,5 +35,4 @@ export async function getEditorDetails(editorId) {
 export default {
     getEditorDetails,
     getUserByEmail,
-    
 };

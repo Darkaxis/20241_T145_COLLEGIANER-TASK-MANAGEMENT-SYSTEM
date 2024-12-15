@@ -197,7 +197,7 @@ function updateTaskCard(taskCard) {
         // 'Private Except': 'fa-user-secret'
     };
 
-    // const privacyText = taskCard.dataset.privacy === 'Private Except' ?
+   
     //     `Private Except: ${taskCard.dataset.hideFrom}` :
     taskCard.dataset.privacy;
 
@@ -236,7 +236,7 @@ function updateTaskCard(taskCard) {
             <div class="task-card-body">
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
                 <p><i class="fa-regular fa-calendar"></i> ${deadlineDisplay}</p>
-                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
+                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i></p>
                   <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
             </div>

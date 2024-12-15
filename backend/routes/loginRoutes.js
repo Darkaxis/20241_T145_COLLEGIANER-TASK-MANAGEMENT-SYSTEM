@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-//import googleMailService from '../services/google/googleMailService.js';
+import googleMailService from '../services/google/googleMailServices.js';
 
 dotenv.config();
 
@@ -92,30 +92,30 @@ loginRoutes.post('/logout', (req, res) => {
 });
 
 
-loginRoutes.put('/forgot-password', async(req, res) => {
+loginRoutes.post('/forgot-password', async(req, res) => {
     const { email } = req.body;
-    //encode to jwt
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const link = `https://localhost:4000/new_password?token=${token}`;
     try {
         const verify = await loginServices.getUser(email);
         if (!verify) {
             return res.status(400).json({ message: 'User not found' });
         }
-        await loginServices.forgotPassword(email, link);
+        await googleMailService.forgotPassword(email, link);
         res.status(200).json({ message: 'Password reset email sent' });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
-loginRoutes.put('/reset-password/:token', async(req, res) => {
-    const token = req.params.token;
+loginRoutes.put('/reset-password', async(req, res) => {
+    const token = req.body.encodedData;
     const email = jwt.verify(token, process.env.JWT_SECRET).email;
-    const { password } = req.body;
-    try {
+    const password  = req.body.password;
+    try {   
         await loginServices.resetPassword(email, password);
         res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {
+        console.error('Reset password error:', error);
         res.status(400).json({ message: error.message });
     }
 });

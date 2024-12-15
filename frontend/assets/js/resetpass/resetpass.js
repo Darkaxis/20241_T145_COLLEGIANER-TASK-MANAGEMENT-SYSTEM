@@ -2,17 +2,14 @@
 
 
 
-
-
 document.addEventListener('DOMContentLoaded', async function() {
     
     const password = document.getElementById('password');
     password.addEventListener('input', validatePassword);
     const confirmPassword = document.getElementById('confirm-password');
-    const form = document.getElementById('passwordForm');
+    const form = document.getElementById('newPasswordForm');
     const urlParams = new URLSearchParams(window.location.search);
     const encodedData = urlParams.get('token');
-    
     
     
     form.addEventListener('submit', async function(e) {
@@ -35,9 +32,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
     
         }   
+        
         try {
-            const response = await fetch('https://localhost:3000/api/v1/login/resetpassword', {
-                method: 'POST',
+            const response = await fetch('https://localhost:3000/api/v1/login/reset-password', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -49,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
             
             if (response.ok) {
-                alert('Registration successful');
+                alert('Password reset successful');
                 window.location.href = '/';
             }
         } catch (error) {

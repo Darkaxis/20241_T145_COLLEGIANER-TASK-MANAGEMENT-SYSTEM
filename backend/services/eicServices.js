@@ -62,7 +62,8 @@ export async function getUserByEmail(email) {
         name: decrypt(userData.name),
         email: decrypt(userData.email),
         profile: decrypt(userData.profile),
-        role: decrypt(userData.role)
+        role: decrypt(userData.role),
+        disabled: userData.disabled || false,
     };
   } catch (error) {
     console.error("Error getting user by email:", error);
@@ -98,6 +99,7 @@ export async function getAllUsers() {
           refreshToken: userData.refreshToken,
           token: userData.token,
           createdAt: userData.createdAt,
+          disabled: userData.disabled || false,
           version: userData.version
         };
       });
@@ -110,7 +112,7 @@ export async function getAllUsers() {
   }
 }
 
-export async function updateUserRole(email, role) {
+export async function updateUser(email, role, disabled) { 
  try {  
   const userSnapshot = await db
       .collection("users")
@@ -124,6 +126,7 @@ export async function updateUserRole(email, role) {
   const userDoc = userSnapshot.docs[0];
   const userData = userDoc.data();
   userData.role = encrypt(role);
+  userData.disabled = disabled;
 
   await userDoc.ref.update(userData);
   return true;
@@ -178,7 +181,7 @@ export default {
   getUserProfile,
   getUserByEmail,
 getAllUsers,
-updateUserRole,
+updateUser,
 getLogs,
 logAction,
 

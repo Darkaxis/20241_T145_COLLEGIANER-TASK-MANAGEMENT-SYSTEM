@@ -37,7 +37,7 @@
     <script>
         const form = document.getElementById('resetForm');
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
 
@@ -45,9 +45,21 @@
                 alert('Please enter your email address');
                 return;
             }
-
-            // Redirect to confirmation page
-            window.location.href = 'resetConfirmation.html';
+            
+            const response = await fetch('https://localhost:3000/api/v1/login/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email
+                })
+            });
+            if (!response.ok) {
+                alert('An error occurred. Please try again later.');
+                return;
+            }
+            window.location.href = '/confirm';
         });
     </script>
 </body>

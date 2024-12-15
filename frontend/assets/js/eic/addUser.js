@@ -35,10 +35,11 @@ document.addEventListener('DOMContentLoaded', async() => {
         }
 
         const newRow = document.createElement('tr');
-        newRow.innerHTML = `
+            newRow.innerHTML = `
             <td>${user.name}</td>
             <td id="userEmail">${user.email}</td>
             <td id="userRole">${user.role}</td>
+            <td id="userDisabled">${user.disabled ? 'Disabled' : 'Enabled'}</td>
             <td>
                 <button class="btn btn-sm btn-warning" onclick="openAddUserModal(true, this.parentNode.parentNode.rowIndex - 1)">
                     <i class="fas fa-edit"></i>
@@ -138,6 +139,8 @@ async function saveUser() {
 
     const email = document.getElementById('email').value.trim();
     const userRole = document.getElementById('role').value;
+    const userDisabledCheckbox = document.querySelector('#toggleUserStatusBtn');
+    const userDisabled = userDisabledCheckbox ? userDisabledCheckbox.checked : false;
     const editUserIndex = document.getElementById('editUserIndex').value;
     let hasErrors = false;
 
@@ -161,12 +164,15 @@ async function saveUser() {
         return;
     }
 
-    try {
+        try {
+            
         const userData = {
             email,
-            role: userRole
+            role: userRole,
+            disabled: userDisabled // Ensure this variable is defined and holds the correct value
         };
-
+        
+    
         const url = editUserIndex ?
             `https://localhost:3000/api/v1/eic/edit` :
             'https://localhost:3000/api/v1/eic/add';
@@ -178,15 +184,15 @@ async function saveUser() {
             credentials: 'include',
             body: JSON.stringify(userData)
         });
-
+    
         if (response.status == 409) {
             alert('User already exists');
         } else if (response.ok) {
-            alert('User added, awaiting user confirmation')
+            alert('User added, awaiting user confirmation');
         }
         // Refresh the page to show updated data
         location.reload();
-
+    
     } catch (error) {
         console.error('Error saving user:', error);
         alert('An error occurred while saving the user. Please try again.');
@@ -257,6 +263,7 @@ function showUsersByRole(role) {
                 name: allRows[i].cells[0].textContent,
                 email: allRows[i].cells[1].textContent,
                 role: userRole
+                
             });
         }
     }

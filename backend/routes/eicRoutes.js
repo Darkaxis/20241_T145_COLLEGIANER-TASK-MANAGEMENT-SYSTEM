@@ -138,8 +138,9 @@ eicRoutes.patch('/edit', async (req, res) => {
         });
     }
 
-    const { email, role } = req.body;
-    const status = await eicServices.updateUserRole(email, role);
+    const { email, role, disabled } = req.body;
+    console.log(`Updating user ${email} with role ${role} and disabled ${disabled}`);
+    const status = await eicServices.updateUser(email, role, disabled);
     if (!status) {
         return res.status(500).json({
             message: 'Failed to update user role'

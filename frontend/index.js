@@ -38,18 +38,17 @@ app.get('/new_password', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/newPass.html'));
 });
 
-app.get('/password_reset/confirm', (req, res) => {
+app.get('/new_password/confirm', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/resetConfirmation.html'));
 });
+
 
 // Add these new routes for staff
 app.get('/staff/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/staff/staff-dashboard.html'));
 });
 
-app.get('/staff/projects', (req, res) => {
-    res.sendFile(path.join(__dirname, '/pages/staff/staff-projects.html'));
-});
+
 
 app.get('/staff/archive', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/staff/staff-archive.html'));
@@ -65,9 +64,6 @@ app.get('/eic/accounts', (req, res) => {
 app.get('/eb/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eb/eb-dashboard.html'));
 });
-app.get('/eic/projects', (req, res) => {
-    res.sendFile(path.join(__dirname, '/pages/eic/eic-projects.html'));
-});
 app.get('/eic/archive', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eic/eic-archive.html'));
 });
@@ -78,10 +74,6 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/register/welcome.html'));
 });
 
-// EB routes
-app.get('/eb/projects', (req, res) => {
-    res.sendFile(path.join(__dirname, '/pages/eb/eb-projects.html'));
-});
 
 app.get('/eb/archive', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/eb/eb-archive.html'));

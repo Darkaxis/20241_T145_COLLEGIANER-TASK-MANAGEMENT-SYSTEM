@@ -47,7 +47,9 @@ export async function authenticateUser(email, password) {
     if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
-
+    if (userData.disabled) {
+      throw new Error("User is disabled");
+    }
     // Decrypt user data for JWT
     const decryptedUserData = {
       name: decrypt(userData.name),
@@ -88,21 +90,20 @@ export async function getUser(email) {
         name: decrypt(userData.name),
         email: decrypt(userData.email),
         profile: decrypt(userData.profile),
-        role: decrypt(userData.role)
+        role: decrypt(userData.role),
     };
 }
 
 
 export async function resetPassword(email, password) {
+
     const userSnapshot = await db
         .collection("users")
         .where("emailSearch", "==", email.toLowerCase())
         .get();
-
     if (userSnapshot.empty) {
         throw new Error("User not found");
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.collection("users").doc(userSnapshot.docs[0].id).update({
@@ -110,4 +111,4 @@ export async function resetPassword(email, password) {
     });
 }
 
-export default {getUser, authenticateUser, registerUser}
+export default {getUser, authenticateUser, registerUser, resetPassword};

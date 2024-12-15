@@ -13,7 +13,8 @@ async function getUser(email){
         .get();
   
     if (userSnapshot.empty) {
-        throw new Error("User not found");
+        console.log("User not found");
+        return;
     }
   
     const userData = userSnapshot.docs[0].data();
@@ -143,31 +144,37 @@ async function getTasksForUser(email) {
     const tasks = [];
 
     // Iterate through tasks and decrypt
-    for (const doc of tasksSnapshot.docs) {
-      const taskData = doc.data();
-      const decryptedAssignedTo = decrypt(taskData.assignedTo);
-      const assignedTo = await getUser(decrypt(taskData.assignedTo));  
-      
-      // Only include tasks assigned to this user
-      if (decryptedAssignedTo.toLowerCase() === email.toLowerCase()) {
-        tasks.push({
-          id: doc.id,
-          taskName: decrypt(taskData.taskName),
-          description: decrypt(taskData.description),
-          assignedTo: assignedTo,
-          category: decrypt(taskData.category),
-          status: decrypt(taskData.status),
-          privacy: decrypt(taskData.privacy),
-          link: decrypt(taskData.link),
-          deadline: formatDeadline(decrypt(taskData.deadline)),
-          // Non-encrypted fields
-          createdAt: taskData.createdAt,
-          updatedAt: taskData.updatedAt,
-          version: taskData.version,
-          googleTaskId: taskData.googleTaskId,
-          googleCalendarEventId: taskData.googleCalendarEventId
-        });
-      }
+       for (const doc of tasksSnapshot.docs) {
+        const taskData = doc.data();
+        const decryptedAssignedTo = decrypt(taskData.assignedTo);
+        console.log(decryptedAssignedTo);
+        try {
+            const assignedTo = await getUser(decryptedAssignedTo);
+            
+            // Only include tasks assigned to this user
+            if (decryptedAssignedTo.toLowerCase() === email.toLowerCase()) {
+                tasks.push({
+                    id: doc.id,
+                    taskName: decrypt(taskData.taskName),
+                    description: decrypt(taskData.description),
+                    assignedTo: assignedTo,
+                    category: decrypt(taskData.category),
+                    status: decrypt(taskData.status),
+                    privacy: decrypt(taskData.privacy),
+                    link: decrypt(taskData.link),
+                    deadline: formatDeadline(decrypt(taskData.deadline)),
+                    // Non-encrypted fields
+                    createdAt: taskData.createdAt,
+                    updatedAt: taskData.updatedAt,
+                    version: taskData.version,
+                    googleTaskId: taskData.googleTaskId,
+                    googleCalendarEventId: taskData.googleCalendarEventId
+                });
+            }
+        } catch (error) {
+            console.error(`Error getting user for task ${doc.id}:`, error);
+            // Optionally, you can continue to the next task or handle the error as needed
+        }
     }
 
     return {
@@ -280,7 +287,7 @@ async function approveTask(taskId) {
       if (taskData.status !== "Checking") {
         throw new Error("Task is not pending approval");
       }
-      transaction.update(taskRef, { status: "Done" });
+      transaction.update(taskRef, { status: "Done", version: taskData.version + 1 });
     });
 
     googleTaskServices.googleTaskStatusDone(taskId);
@@ -291,7 +298,7 @@ async function approveTask(taskId) {
     throw new Error("Error approving task");
   }
 }
-export async function archiveTask(taskId, userId) {
+export async function archiveTask(taskId, email) {
   try {
     // Use Firestore transaction
     await db.runTransaction(async (transaction) => {
@@ -308,14 +315,15 @@ export async function archiveTask(taskId, userId) {
       const archivedBy = taskData.archivedBy || [];
 
       // Check if user already archived
-      if (archivedBy.includes(userId)) {
+      if (archivedBy.includes(email)) {
         throw new Error("Task already archived by user");
       }
 
       // Add user to archived array
       transaction.update(taskRef, {
-        archivedBy: [...archivedBy, userId],
-        lastArchivedAt: admin.firestore.FieldValue.serverTimestamp()
+        archivedBy: [...archivedBy, email],
+        lastArchivedAt: admin.firestore.FieldValue.serverTimestamp(),
+        version: taskData.version + 1
       });
     });
 
@@ -325,7 +333,7 @@ export async function archiveTask(taskId, userId) {
     throw new Error("Error archiving task");
   }
 }
-export async function getArchivedTask(taskId, userId) {
+export async function getArchivedTask(taskId, email) {
   try {
     const taskRef = db.collection("tasks").doc(taskId);
     const taskDoc = await taskRef.get();
@@ -338,7 +346,7 @@ export async function getArchivedTask(taskId, userId) {
     const archivedBy = taskData.archivedBy || [];
 
     // Check if task is archived by this user
-    if (!archivedBy.includes(userId)) {
+    if (!archivedBy.includes(email)) {
       throw new Error("Task not archived by user");
     }
 
