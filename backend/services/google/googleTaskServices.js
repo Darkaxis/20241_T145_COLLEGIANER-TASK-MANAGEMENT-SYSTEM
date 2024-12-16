@@ -27,13 +27,22 @@ async function getUserTokens(email) {
     throw new Error('Error getting user tokens');
   }
 }
-async function googleTaskStatusDone(taskId) {
+
+async function googleTaskStatusDone(googleTaskId, email) {
+  if (!googleTaskId) {
+    throw new Error('Missing Google Task ID');
+  }
+
+  const tokens = await getUserTokens(email);
+  oauth2Client.setCredentials(tokens);
+
+
   try {
     const task = google.tasks({ version: 'v1', auth: oauth2Client });
-    const response = await task.tasks.update({
+    const response = await task.tasks.patch({
       tasklist: '@default',
-      task: taskId,
-      requestBody: {
+      task: googleTaskId,
+      resource: {
         status: 'completed'
       }
     });
@@ -42,7 +51,7 @@ async function googleTaskStatusDone(taskId) {
     console.error('Error updating task status:', error);
     throw error;
   }
-}
+} 
 
 
 async function addTaskToGoogleTasks(taskData, email) {

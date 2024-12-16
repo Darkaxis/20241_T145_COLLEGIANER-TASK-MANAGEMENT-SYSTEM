@@ -35,12 +35,23 @@ async function updateTaskStatus(taskCard, columnId) {
 
     const newStatus = statusMap[columnId] || 'To Do';
 
-    taskCard.dataset.status = newStatus;
+    const taskId = taskCard.dataset.taskId;
+    // If status is Done, use the consolidated function
+    if (newStatus === 'Done') {
+        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/approve/${taskId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        moveTaskToDone(taskCard);
+    } else {
+        updateTaskCard(taskCard);
+        taskCard.dataset.status = newStatus;
     //send to backend
     const taskData = taskCard.dataset;
     taskData.status = newStatus;
-    const taskId = taskCard.dataset.taskId;
-
     const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
         method: 'PUT',
         headers: {
@@ -49,15 +60,7 @@ async function updateTaskStatus(taskCard, columnId) {
         body: JSON.stringify(taskData),
         credentials: 'include'
     });
-    taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1;
-    console.log(taskCard.dataset.version)
-
-
-    // If status is Done, use the consolidated function
-    if (newStatus === 'Done') {
-        moveTaskToDone(taskCard);
-    } else {
-        updateTaskCard(taskCard);
+    taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1
     }
 
 }

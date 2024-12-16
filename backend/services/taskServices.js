@@ -99,17 +99,16 @@ async function createTask(taskData) {
   }
 }
 
-async function getAllTasks() {
+async function getAllTask(name) {
   try {
     const tasksSnapshot = await db.collection("tasks").get();
 
-    // Map over tasks and wait for all promises to resolve
     const tasks = await Promise.all(
       tasksSnapshot.docs.map(async (doc) => {
         const taskData = doc.data();
 
-        // Exclude archived tasks
-        if (taskData.archived) {
+        // Exclude task if archived by user
+        if (taskData.archivedBy && taskData.archivedBy.includes(name)) {
           return null;
         }
 
@@ -123,7 +122,6 @@ async function getAllTasks() {
           privacy: decrypt(taskData.privacy),
           link: decrypt(taskData.link),
           deadline: formatDeadline(decrypt(taskData.deadline)),
-          // Non-encrypted fields
           createdAt: taskData.createdAt,
           updatedAt: taskData.updatedAt,
           version: taskData.version,
@@ -133,7 +131,6 @@ async function getAllTasks() {
       })
     );
 
-    // Filter out null values (archived tasks)
     const filteredTasks = tasks.filter(task => task !== null);
 
     return {
@@ -147,7 +144,6 @@ async function getAllTasks() {
   }
 }
 
-export { getAllTasks };
 async function getTasksForUser(name) {
   try {
     // Get all tasks since we can't query encrypted fields
@@ -156,7 +152,11 @@ async function getTasksForUser(name) {
     for (const doc of tasksSnapshot.docs) {
       const taskData = doc.data();
       const decryptedAssignedTo = decrypt(taskData.assignedTo);
-      if (decryptedAssignedTo === name && !taskData.archived) {
+
+      // Exclude task if archived by user
+      const isArchivedByUser = taskData.archivedBy && taskData.archivedBy.includes(name);
+
+      if (decryptedAssignedTo === name && !isArchivedByUser) {
         tasks.push({
           id: doc.id,
           taskName: decrypt(taskData.taskName),
@@ -168,7 +168,6 @@ async function getTasksForUser(name) {
           link: decrypt(taskData.link),
           deadline: formatDeadline(decrypt(taskData.deadline)),
           // Non-encrypted fields
-          
           createdAt: taskData.createdAt,
           updatedAt: taskData.updatedAt,
           version: taskData.version,
@@ -285,6 +284,7 @@ async function deleteTask(taskId) {
 }
 
 async function approveTask(taskId) {
+  let taskData = null;
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -293,15 +293,15 @@ async function approveTask(taskId) {
       if (!taskDoc.exists) {
         throw new Error("Task not found");
       }
-      const taskData = taskDoc.data();
-      if (taskData.status !== "Checking") {
-        throw new Error("Task is not pending approval");
-      }
+       taskData = taskDoc.data();
+      // if (taskData.status !== "Checking") {
+      //   throw new Error("Task is not pending approval");
+      // }
       transaction.update(taskRef, { status: "Done", version: taskData.version + 1 });
     });
-
-    googleTaskServices.googleTaskStatusDone(taskId);
-
+    
+    const email = await getUser(decrypt(taskData.assignedTo));
+    await googleTaskServices.googleTaskStatusDone(taskData.googleTaskId, email);
     return { status: 200, message: "Task approved successfully" };
   } catch (error) {
     console.error("Error approving task:", error);
@@ -380,13 +380,29 @@ export async function getAllArchivedTasks(name) {
       .orderBy("lastArchivedAt", "desc")
       .get();
 
-    const archivedTasks = [];
-    tasksSnapshot.forEach(doc => {
-      archivedTasks.push({
+    const archivedTasks = tasksSnapshot.docs.map(doc => {
+      const taskData = doc.data();
+
+      return {
         id: doc.id,
-        ...doc.data(),
-        isArchived: true
-      });
+        taskName: decrypt(taskData.taskName),
+        description: decrypt(taskData.description),
+        assignedTo: decrypt(taskData.assignedTo),
+        assignedBy: decrypt(taskData.assignedBy),
+        category: decrypt(taskData.category),
+        status: decrypt(taskData.status),
+        privacy: decrypt(taskData.privacy),
+        link: decrypt(taskData.link),
+        deadline: formatDeadline(decrypt(taskData.deadline)),
+        // Non-encrypted fields
+        createdAt: taskData.createdAt,
+        updatedAt: taskData.updatedAt,
+        version: taskData.version,
+        googleTaskId: taskData.googleTaskId,
+        googleCalendarEventId: taskData.googleCalendarEventId,
+        isArchived: true,
+        archivedAt: taskData.lastArchivedAt
+      };
     });
 
     return archivedTasks;
@@ -442,7 +458,7 @@ export async function transferTask(taskId, user) {
 
 export default {
   createTask,
-  getAllTasks,
+  getAllTask,
   getTasksForUser,
   editTask,
   deleteTask,

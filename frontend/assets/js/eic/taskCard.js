@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
+                
             });
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());

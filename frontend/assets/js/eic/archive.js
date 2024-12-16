@@ -1,20 +1,19 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    const response = await fetch('https://localhost:3000/api/v1/eic/archives', {
+    const response = await fetch('https://localhost:3000/api/v1/eic/tasks/archives', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
-        }
+            
+        },
+        credentials: 'include'
+        
     });
 
     const data = await response.json();
 
-    // Initialize localStorage with data if empty OR if there are no tasks
-    if (!localStorage.getItem('completedTasks') || JSON.parse(localStorage.getItem('completedTasks')).length === 0) {
-        localStorage.setItem('completedTasks', JSON.stringify(data.data));
-    }
-
-    // Get completed tasks from localStorage
-    const completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || [];
+    const completedTasks = data.tasks;
+    console.log(completedTasks);
+   
 
     function displayCompletedTasks() {
         const tableBody = document.querySelector('.table-body');
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const archiveItem = document.createElement('div');
             archiveItem.className = 'archive-item';
             archiveItem.innerHTML = `
-                <div class="col-task task-name-clickable">${task.name}</div>
+                <div class="col-task task-name-clickable">${task.taskName}</div>
                 <div class="col-assigned">${task.assignedBy}</div>
                 <div class="col-actions">
                     <button class="action-btn restore">
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <i class="fas fa-undo"></i>
                 </div>
                 <h3>Restore Task</h3>
-                <p>Are you sure you want to restore "${task.name}"?</p>
+                <p>Are you sure you want to restore "${task.taskName}"?</p>
                 <div class="modal-buttons">
                     <button class="cancel-btn">Cancel</button>
                     <button class="confirm-btn">Restore</button>
@@ -103,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <i class="fas fa-trash"></i>
                 </div>
                 <h3>Delete Task</h3>
-                <p>Are you sure you want to permanently delete "${task.name}"?</p>
+                <p>Are you sure you want to permanently delete "${task.taskName}"?</p>
                 <div class="modal-buttons">
                     <button class="cancel-btn">Cancel</button>
                     <button class="confirm-btn delete">Delete</button>
@@ -165,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const modal = document.getElementById('taskDetailModal');
 
         // Update modal content
-        document.getElementById('taskDetailTitle').textContent = task.name;
+        document.getElementById('taskDetailTitle').textContent = task.taskName;
         document.getElementById('taskDetailAssignedBy').textContent = task.assignedBy;
         document.getElementById('taskDetailAssignedTo').textContent = task.assignedTo || 'Not specified';
         document.getElementById('taskDetailDeadline').textContent = task.deadline || 'No deadline set';

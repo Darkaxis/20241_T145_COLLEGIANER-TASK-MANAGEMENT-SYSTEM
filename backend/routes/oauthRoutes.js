@@ -1,19 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import eicServices from '../services/eicServices.js';
 import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../utils/tempData.js';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import googleMailServices from '../services/google/googleMailServices.js';
 import  passport  from '../utils/passport.js';
-import fs from 'fs';
-import path from 'path';
+
 import { fileURLToPath } from 'url';
 import loginServices from '../services/loginServices.js';
-import exp from 'constants';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 dotenv.config();
 

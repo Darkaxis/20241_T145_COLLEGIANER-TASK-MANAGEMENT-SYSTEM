@@ -15,13 +15,13 @@ taskRoutes.post('/create', async (req, res) => {
             return res.status(401).json({ message: 'No token provided' });
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
+        
+        if (decoded.role !== 'Editor in Charge' && decoded.role !== 'Editorial Board') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
     try {
         const taskData = req.body;
-        taskData.assignedBy = decoded.email;
+        taskData.assignedBy = decoded.name;
         const newTask = await taskService.createTask(taskData, taskData.assignedTo);
         logAction('Task created', decoded.name, "create");
         res.status(201).send(newTask);
@@ -35,8 +35,13 @@ taskRoutes.post('/create', async (req, res) => {
 
 
 taskRoutes.get('/get/all', async (req, res) => {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const name = decoded.name;
+    
     try {
-        const tasks = await taskService.getAllTasks();
+        const tasks = await taskService.getAllTask(name);
+        console.log(tasks);
         res.status(200).send(tasks);
     } catch (error) {
         res.status(400).send(error.message);
@@ -44,6 +49,11 @@ taskRoutes.get('/get/all', async (req, res) => {
 }); 
 //get task by user email
 taskRoutes.get('/get/user', async (req, res) => {
+    const token = req.cookies.token;  
+        
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
 
 
     try {
@@ -61,7 +71,15 @@ taskRoutes.get('/get/user', async (req, res) => {
 taskRoutes.put('/edit/:id', async (req, res) => {
     
     const token = req.cookies.token;
+    
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    if (decoded.role !== 'Editor in Charge' && decoded.role !== 'Editorial Board') {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
 
     try {
         const taskId = req.params.id;
@@ -77,8 +95,18 @@ taskRoutes.put('/edit/:id', async (req, res) => {
 });     
 
 taskRoutes.delete('/delete/:id', async (req, res) => {
-    const token = req.cookies.token;
+    
+    const token = req.cookies.token;  
+        
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    if (decoded.role !== 'Editor in Charge' && decoded.role !== 'Editorial Board') {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
+   
     try {
         const taskId = req.params.id;
         const deletedTask = await taskService.deleteTask(taskId);
@@ -90,6 +118,11 @@ taskRoutes.delete('/delete/:id', async (req, res) => {
 });
 
 taskRoutes.get('/get/:id', async (req, res) => {
+    const token = req.cookies.token;  
+        
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
     try {
         const taskId = req.params.id;
         const task = await taskService.getTask(taskId);
@@ -100,8 +133,16 @@ taskRoutes.get('/get/:id', async (req, res) => {
 });
 
 taskRoutes.patch('/approve/:id', async (req, res) => {
-    const token = req.cookies.token;
+    const token = req.cookies.token;  
+        
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({ message: 'Unauthorized' });
+    }
     try {
         const taskId = req.params.id;
         const task = await taskService.approveTask(taskId);
@@ -148,15 +189,17 @@ taskRoutes.get('/archive/:id', async (req, res) => {
 
 // Get all archived tasks for user
 taskRoutes.get('/archives', async (req, res) => {
-    const token = req.cookies.token;
-    
-    if (!token) {
+    const token = req.cookies.token; 
+        
+    if(!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
+    
+   
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        console.log(decoded);
         const archivedTasks = await taskService.getAllArchivedTasks(decoded.name);
         
         res.status(200).json({
