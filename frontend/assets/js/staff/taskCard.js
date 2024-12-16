@@ -217,15 +217,11 @@ function updateTaskCard(taskCard) {
                         <i class="fas fa-ellipsis-h"></i>
                     </button>
                     <div class="task-menu">
-                        <button class="task-menu-item mark-done-btn">
-                            <i class="fas fa-check"></i> Mark as Done
-                        </button>
+                       
                         <button class="task-menu-item archive-btn">
                             <i class="fas fa-archive"></i> Archive
                         </button>
-                        <button class="task-menu-item delete-btn">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
+                       
                     </div>
                 </div>
             </div>

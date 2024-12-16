@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             const response = await fetch('https://localhost:3000/api/v1/adviser/tasks/get/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
-                
+
             });
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
@@ -228,9 +228,7 @@ function updateTaskCard(taskCard) {
                         <button class="task-menu-item archive-btn">
                             <i class="fas fa-archive"></i> Archive
                         </button>
-                        <button class="task-menu-item delete-btn">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
+                       
                     </div>
                 </div>
             </div>
@@ -295,7 +293,7 @@ function archiveTask(taskCard) {
         method: 'PATCH',
         credentials: 'include'
     });
-    
+
     taskCard.remove();
     // You might want to store it in an archive list or send to backend
 }
