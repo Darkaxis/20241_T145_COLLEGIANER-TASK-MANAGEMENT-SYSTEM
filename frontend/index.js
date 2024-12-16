@@ -1,12 +1,10 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import dotenv from 'dotenv';
 import https from 'https';
 import fs from 'fs';
 import cors from 'cors';
-dotenv.config();
+
 
 const httpsOptions = {
     key: fs.readFileSync('./certs/localhost-key.pem'),
@@ -19,7 +17,7 @@ const __filename = fileURLToPath(
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 app.use(cors());
 
 // Serve static files from the frontend folder

@@ -62,7 +62,6 @@ async function updateTaskStatus(taskCard, columnId) {
     });
     taskCard.dataset.version = parseInt(taskCard.dataset.version) + 1
     }
-
 }
 
 // Helper function to get status from column ID

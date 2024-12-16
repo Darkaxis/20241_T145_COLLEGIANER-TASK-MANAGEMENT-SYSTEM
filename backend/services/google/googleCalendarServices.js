@@ -64,31 +64,36 @@ async function addEventToGoogleCalendar(eventData, email) {
   }
 }
 
-async function updateEventInGoogleCalendars(googleCalendarEventId ,eventData, email) {
-  if (!eventData.googleCalendarEventId) {
+async function updateEventInGoogleCalendars(googleCalendarEventId, eventData, email) {
+  const tokens = await getUserTokens(email);
+  oAuth2Client.setCredentials(tokens);
+  if (!googleCalendarEventId) {
     throw new Error('Calendar Event ID is required for update');
   }
-
   try {
-    const tokens = await getUserTokens(email);
-    oAuth2Client.setCredentials(tokens);
+    
 
     const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-    
+
+    // Fetch the existing event
+    const existingEvent = await calendar.events.get({
+      calendarId: 'primary',
+      eventId: googleCalendarEventId,
+    });
+    const endDate = new Date(eventData.deadline).toISOString();
+    // Update only the necessary fields, keeping the existing start date and time
     const event = {
       summary: eventData.taskName,
       description: eventData.description,
-      start: {
-        dateTime: eventData.createdAt,
-        timeZone: 'Asia/Manila',
-      },
+      start: existingEvent.data.start, // Keep the existing start date and time
       end: {
-        dateTime: eventData.deadline,
+        dateTime: endDate,
         timeZone: 'Asia/Manila',
       },
+      reminders: existingEvent.data.reminders, // Keep the existing reminders
     };
 
-    const response = await calendar.events.update({
+    const response = await calendar.events.patch({
       calendarId: 'primary',
       eventId: googleCalendarEventId,
       requestBody: event,
@@ -96,16 +101,16 @@ async function updateEventInGoogleCalendars(googleCalendarEventId ,eventData, em
 
     return {
       ...eventData,
-      googleCalendarEventId: response.data.id
+      googleCalendarEventId: response.data.id,
     };
   } catch (error) {
-    console.error('Error updating event:', error);
-    throw error;
+    return;
+      
   }
 }
 
-async function deleteGoogleCalendarEvent(eventData, email) {
-  if (!eventData.googleCalendarEventId) {
+async function deleteGoogleCalendarEvent(googleCalendarEventId,eventData, email) {
+  if (!googleCalendarEventId) {
     throw new Error('Calendar Event ID is required for deletion');
   }
 
@@ -117,7 +122,7 @@ async function deleteGoogleCalendarEvent(eventData, email) {
     
     await calendar.events.delete({
       calendarId: 'primary',
-      eventId: eventData.googleCalendarEventId,
+      eventId: googleCalendarEventIds,
     });
     
     return true;

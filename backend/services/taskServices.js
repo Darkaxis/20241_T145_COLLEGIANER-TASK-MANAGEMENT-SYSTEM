@@ -240,10 +240,11 @@ async function editTask(taskId, taskData) {
     const task = taskDoc.data();
     const googleTaskId = task.googleTaskId;
     const googleCalendarEventId = task.googleCalendarEventId;
+    
     const email = await getUser(decrypt(task.assignedTo));
       
       googleTaskServices.updateTaskInGoogleTasks(googleTaskId, taskData, email);
-      googleCalendarServices.updateEventInGoogleCalendar(googleCalendarEventId, taskData, email);
+      googleCalendarServices.updateEventInGoogleCalendars(googleCalendarEventId, taskData, email);
       
 
     return { status: 200, message: "Task updated successfully" };
