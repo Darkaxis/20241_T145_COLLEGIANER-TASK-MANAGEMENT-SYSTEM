@@ -11,11 +11,13 @@ document.addEventListener('DOMContentLoaded', async() => {
     let eicCount = 0;
     let ebCount = 0;
     let staffCount = 0;
+    let adviserCount = 0;
 
     const table = document.getElementById('userTableBody');
     const totalAdmins = document.getElementById('totalAdmins');
     const totalEditorials = document.getElementById('totalEditorials');
     const totalStaff = document.getElementById('totalStaff');
+    const totalAdvisers = document.getElementById('totalAdvisers');
 
     // Clear existing table content
     table.innerHTML = '';
@@ -32,10 +34,13 @@ document.addEventListener('DOMContentLoaded', async() => {
             case 'Staff':
                 staffCount++;
                 break;
+            case 'Adviser':
+                adviserCount++;
+                break;
         }
 
         const newRow = document.createElement('tr');
-            newRow.innerHTML = `
+        newRow.innerHTML = `
             <td>${user.name}</td>
             <td id="userEmail">${user.email}</td>
             <td id="userRole">${user.role}</td>
@@ -59,6 +64,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     totalAdmins.textContent = eicCount;
     totalEditorials.textContent = ebCount;
     totalStaff.textContent = staffCount;
+    totalAdvisers.textContent = adviserCount;
 
     // Add window resize listener to handle zoom changes
     window.addEventListener('resize', () => {
@@ -164,15 +170,15 @@ async function saveUser() {
         return;
     }
 
-        try {
-            
+    try {
+
         const userData = {
             email,
             role: userRole,
             disabled: userDisabled // Ensure this variable is defined and holds the correct value
         };
-        
-    
+
+
         const url = editUserIndex ?
             `https://localhost:3000/api/v1/eic/edit` :
             'https://localhost:3000/api/v1/eic/add';
@@ -184,7 +190,7 @@ async function saveUser() {
             credentials: 'include',
             body: JSON.stringify(userData)
         });
-    
+
         if (response.status == 409) {
             alert('User already exists');
         } else if (response.ok) {
@@ -192,7 +198,7 @@ async function saveUser() {
         }
         // Refresh the page to show updated data
         location.reload();
-    
+
     } catch (error) {
         console.error('Error saving user:', error);
         alert('An error occurred while saving the user. Please try again.');
@@ -211,14 +217,17 @@ function updateCounters(oldRole, newRole) {
         // Decrease old role counter
         let oldCounterId;
         switch (oldRole) {
-            case 'eic':
+            case 'Editor in Charge':
                 oldCounterId = 'totalAdmins';
                 break;
-            case 'eb':
+            case 'Editorial Board':
                 oldCounterId = 'totalEditorials';
                 break;
-            case 'staff':
+            case 'Staff':
                 oldCounterId = 'totalStaff';
+                break;
+            case 'Adviser':
+                oldCounterId = 'totalAdvisers';
                 break;
         }
 
@@ -232,7 +241,7 @@ function updateCounters(oldRole, newRole) {
     let newCounterId;
 
     switch (newRole) {
-        case 'Admin':
+        case 'Editor in Charge':
             newCounterId = 'totalAdmins';
 
             break;
@@ -242,6 +251,9 @@ function updateCounters(oldRole, newRole) {
             break;
         case 'Staff':
             newCounterId = 'totalStaff';
+            break;
+        case 'Adviser':
+            newCounterId = 'totalAdvisers';
             break;
     }
 
@@ -263,7 +275,7 @@ function showUsersByRole(role) {
                 name: allRows[i].cells[0].textContent,
                 email: allRows[i].cells[1].textContent,
                 role: userRole
-                
+
             });
         }
     }
