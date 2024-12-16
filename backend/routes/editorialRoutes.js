@@ -23,12 +23,13 @@ editorialRoutes.get('/users', async (req, res) => {
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'Staff') {
+        console.log(decoded);
+        if (decoded.role !== 'Editorial Board') {
             return res.status(403).json({
                 message: 'Unauthorized'
             });
         }
-        const users = await adviserServices.getAllUsers();
+        const users = await editorialServices.getAllUsers();
         res.status(200).json({
             message: 'Users retrieved successfully',
             data: users
