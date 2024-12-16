@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STAFF Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Canterbury&display=swap" />
+    <link rel="stylesheet" href="/css/staff/staff.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="/css/staff/archive.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="/css/staff/notification.css" /> -->
+    <link rel="stylesheet" href="/css/staff/profile-card.css" />
+    <link rel="stylesheet" href="/css/staff/mark.css">
+
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-head d-flex align-items-center">
+            <img src="/images/staff/unnamed (1).png" alt="Profile Picture" class="brand-logo" style="max-width: 60px; margin-top: 10px;">
+            <div class="ms-3">
+                <span class="collegianer">Collegianer</span><br>
+                <p class="task-management-system">Task Management System</p>
+            </div>
+        </div>
+        <hr class="sidebar-divider">
+
+        <div class="sidebar-section">
+            <a href="/staff/dashboard" class="sidebar-link">
+                <span class="icon"><i class="fa-solid fa-house"></i></span> Home
+            </a>
+            <!-- <a href="/staff/projects" class="sidebar-link">
+                <span class="icon"><i class="fa-solid fa-folder"></i></span> Projects
+            </a> -->
+            <a href="#" class="sidebar-link active">
+                <span class="icon"><i class="fa-solid fa-box-archive"></i></span> Archive
+            </a>
+            <!-- <a href="/staff/activitylog" class="sidebar-link">
+                <span class="icon"><i class="fa-solid fa-user"></i></span> Activity Log
+            </a>
+            <a href="/staff/accounts" class="sidebar-link ">
+                <span class="icon"><i class="fa-solid fa-users" style="margin-left: -5px;"></i></span> Accounts
+            </a> -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navbar with notification and profile -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <h3 style="width: 100%;">Archive</h3>
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <div class="ms-auto d-flex align-items-center">
+                            <!-- Notification Dropdown (Currently Disabled)
+                            <div class="dropdown me-3">
+                                <button class="btn notification-button" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">3</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end notification-menu" aria-labelledby="notificationDropdown">
+                                    <div class="notification-header">
+                                        <div class="d-flex justify-content-between align-items-center px-3 py-2">
+                                            <span class="fw-bold">Notifications</span>
+                                            <a href="#" class="text-primary text-decoration-none small">Mark all as read</a>
+                                        </div>
+                                        <hr class="dropdown-divider m-0">
+                                    </div>
+
+                                    <div class="notification-scroll-area">
+                                        <div class="notification-section">
+                                            <div class="notification-date px-3 py-1">Today</div>
+                                            <div class="notification-item unread">
+                                                <a class="dropdown-item py-2" href="#">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="notification-icon bg-primary">
+                                                            <i class="fas fa-tasks text-white"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="notification-text">New task assigned: Homepage Design</div>
+                                                            <div class="notification-time">2 minutes ago</div>
+                                                        </div>
+                                                        <div class="unread-indicator"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="notification-section">
+                                            <div class="notification-date px-3 py-1">Yesterday</div>
+                                            <div class="notification-item">
+                                                <a class="dropdown-item py-2" href="#">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="notification-icon bg-success">
+                                                            <i class="fas fa-check-circle text-white"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="notification-text">Task completed: Database Setup</div>
+                                                            <div class="notification-time">1 day ago</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="notification-section">
+                                            <div class="notification-date px-3 py-1">Previous</div>
+                                            <div class="notification-item">
+                                                <a class="dropdown-item py-2" href="#">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="notification-icon bg-warning">
+                                                            <i class="fas fa-exclamation-circle text-white"></i>
+                                                        </div>
+                                                        <div class="ms-3">
+                                                            <div class="notification-text">Deadline approaching: Frontend Development</div>
+                                                            <div class="notification-time">2 days ago</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="notification-footer">
+                                        <hr class="dropdown-divider m-0">
+                                        <div class="text-center p-2">
+                                            <a href="#" class="text-primary text-decoration-none">View all notifications</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            -->
+
+                        </div>
+                        <!-- Profile Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn profile-button" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img id="profileImage" src="/images/eic/user.png" alt="Profile Picture" class="profile-img">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="overflow: hidden;">
+                                <li class="dropdown-item d-flex align-items-center">
+                                    <img id="dropdownProfileImage" src="/images/eic/user.png" alt="Profile Picture" style="width: 30px; height: 30px; margin-right: 10px; border-radius: 100%;">
+                                    <p class="profilename" id="profileName">Name</p>
+                                </li>
+                                <li class="dropdown-item d-flex align-items-center" id="viewProfile">
+                                    <i class="fas fa-user" style="margin-right: 10px;"></i>
+                                    <span id="profileText">Profile</span>
+                                </li>
+                                <!-- <li class="dropdown-item d-flex align-items-center" id="muteNotif">
+                                    <i class="fas fa-volume-mute" style="margin-right: 10px;"></i>
+                                    <span id="muteNotif">Mute notifications</span>
+                                </li> -->
+                                <li class="dropdown-item d-flex align-items-center" id="logout">
+                                    <i class="fas fa-sign-out-alt" style="margin-right: 10px;"></i>
+                                    <span id="logout">Logout</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Archive List -->
+        <div class="archive-list-container">
+            <div class="list-header">
+                <h3><i class="fas fa-archive me-2"></i>Completed Tasks</h3>
+            </div>
+
+            <div class="archive-table">
+                <div class="table-header">
+                    <div class="col-task">Task Name</div>
+                    <div class="col-assigned">Assigned By</div>
+                    <div class="col-actions">Actions</div>
+                </div>
+
+                <div class="table-body scrollable-content">
+                    <!-- Archive Items -->
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Add this right before the closing body tag -->
+    <div class="profile-card" id="profileCard">
+        <div class="profile-card-content">
+            <button class="close-profile" id="closeProfile">
+                    <i class="fas fa-times"></i>
+                </button>
+
+            <div class="profile-banner"></div>
+
+            <div class="profile-image">
+                <img class="fas fa-user-circle" id="sidebarprofileImage" style="border-radius: 50%;">
+                <div class="online-status"></div>
+            </div>
+
+            <div class="profile-details">
+                <div class="profile-name" id="sidebarprofileName"> </div>
+                <div class="profile-position"></div>
+
+                <div class="profile-info-section">
+                    <div class="profile-field" data-type="email">
+                        <div class="field-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="field-content">
+                            <label>Email</label>
+                            <p id="sidebarEmail"></p>
+                        </div>
+                    </div>
+
+                    <div class="profile-field" data-type="role">
+                        <div class="field-icon">
+                            <i class="fas fa-id-badge"></i>
+                        </div>
+                        <div class="field-content">
+                            <label>Role</label>
+                            <p id="sidebarRole"></p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="profile-field" data-type="date">
+                        <div class="field-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="task-detail-modal" id="taskDetailModal">
+        <div class="task-detail-content">
+            <div class="task-detail-header">
+                <h3 id="taskDetailTitle"></h3>
+                <button class="close-btn" onclick="closeTaskDetail()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="task-detail-body">
+                <div class="detail-group">
+                    <label><i class="fas fa-check-circle detail-icon"></i>Status</label>
+                    <p class="status-completed"><i class="fas fa-check-circle"></i> Completed</p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user-tie detail-icon"></i>Assigned By</label>
+                    <p id="taskDetailAssignedBy"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user detail-icon"></i>Assigned To</label>
+                    <p id="taskDetailAssignedTo"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-calendar-alt detail-icon"></i>Date Completed</label>
+                    <p id="taskDetailDeadline"></p>
+                </div>
+
+                <div class="detail-group full-width">
+                    <label><i class="fas fa-align-left detail-icon"></i>Description</label>
+                    <p id="taskDetailDescription"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-tags detail-icon"></i>Category</label>
+                    <p id="taskDetailCategory"></p>
+                </div>
+
+                <div class="detail-group">
+                    <label><i class="fas fa-user-shield detail-icon"></i>Privacy</label>
+                    <p id="taskDetailPrivacy"></p>
+                </div>
+
+                <div class="detail-group full-width" id="taskDetailLinkContainer">
+                    <label><i class="fas fa-link detail-icon"></i>Links</label>
+                    <p id="taskDetailLink"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="/js/staff/kanban.js"></script>
+    <script src="/js/staff/profile.js"></script>
+    <script src="/js/staff/archive.js"></script>
+</body>
+
+</html>
