@@ -1,17 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    // Initialize Mark as Done button handler
-    const markAsDoneBtn = document.getElementById('markAsDoneBtn');
-    if (markAsDoneBtn) {
-        markAsDoneBtn.addEventListener('click', function() {
-            const taskId = document.getElementById('taskDetailModal').dataset.currentTaskId;
-            const taskCard = document.getElementById(taskId);
-            if (taskCard) {
-                moveTaskToDone(taskCard);
-            }
-        });
-
-
-    }
+   
 
     //fetch all user names
     const response = await fetch('https://localhost:3000/api/v1/staff/users', {
@@ -240,9 +228,7 @@ function disableEditMode() {
 
 
 
-    // Show Edit button, hide Save button
-    document.getElementById('editTaskButton').style.display = 'inline-block';
-    document.getElementById('saveEditButton').style.display = 'none';
+   
 }
 
 // Add this function to handle date validation in the task detail modal
@@ -333,8 +319,8 @@ async function saveTaskEdits(taskCard) {
     // Only get the editable fields
     const updatedData = {
         id: taskCard.dataset.taskId,
-        transferTo: document.getElementById('taskTransferTo').value,
-        submitTo: document.getElementById('taskSubmitTo').value
+        //transferTo: document.getElementById('taskTransferTo').value,
+        //submitTo: document.getElementById('taskSubmitTo').value
             /* Comment out other fields that shouldn't be editable
             taskName: document.getElementById('taskTitle').value,
             description: document.getElementById('taskDescription').value,
@@ -349,23 +335,23 @@ async function saveTaskEdits(taskCard) {
 
     try {
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
-            method: 'PUT',
+        const response = await fetch(`https://localhost:3000/api/v1/staff/tasks/submit/${taskId}`, {
+            method: 'PATCH',
+            credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(updatedData),
-            credentials: 'include'
-        });
+              'Content-Type': 'application/json'
+            }
+          });
 
-        console.log('Response status:', response.status);
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Server error:', errorData);
-            throw new Error(`Failed to update task: ${errorData.message || 'Unknown error'}`);
-        }
+          if (response.ok) {
+            alert('Task submitted successfully');
+            // Refresh task list
+            window.location.reload();
+          } else {
+            console.error('Failed to submit task:', response.statusText);
+            alert('Failed to submit task');
+            window.location.reload();
+          }
 
         const responseData = await response.json();
         console.log('Update successful:', responseData);
@@ -395,6 +381,6 @@ async function saveTaskEdits(taskCard) {
 
     } catch (error) {
         console.error('Error updating task:', error);
-        alert(`Failed to update task: ${error.message}`);
+        alert(`Task not assigned to user cant be submitted`);
     }
 }

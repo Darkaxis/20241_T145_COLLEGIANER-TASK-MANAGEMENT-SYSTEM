@@ -422,7 +422,7 @@ export async function getAllArchivedTasks(name) {
     throw new Error("Error getting archived tasks");
   }
 }
-export async function submitTask(taskId) {
+export async function submitTask(taskId, name) {
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -432,9 +432,14 @@ export async function submitTask(taskId) {
         throw new Error("Task not found");
       }
       const taskData = taskDoc.data();
-      if (taskData.status !== "To Do") {
+      if (decrypt(taskData.status) !== "In Progress") {
+        console.log(decrypt(taskData.status));
         throw new Error("Task is not pending approval");
       }
+      if (decrypt(taskData.assignedTo) !== name) {
+        throw new Error("Task is not assigned to user");
+      }
+
       transaction.update(taskRef, { status: "Checking" });
     });
 

@@ -1,6 +1,19 @@
 let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
+
+
+
+
+   
+
+
+
+
+
+
+
+
     try {
         const response = await fetch('https://localhost:3000/api/v1/staff/tasks/get/all', {
             method: 'GET',
@@ -83,6 +96,8 @@ function createTask(task) {
     }
 }
 
+
+
 function addTaskCardEventListeners(taskCard) {
     taskCard.addEventListener('dragstart', handleDragStart);
     taskCard.addEventListener('dragenter', handleDragEnter);
@@ -133,7 +148,7 @@ function addTaskCardEventListeners(taskCard) {
         }
 
         // Setup save button click handler
-        const saveButton = document.getElementById('saveEditButton');
+        const saveButton = document.getElementById('submitTaskButton');
         if (saveButton) {
             saveButton.onclick = () => saveTaskEdits(taskCard);
         }
@@ -529,9 +544,7 @@ function disableEditMode() {
         privacySelect.parentNode.replaceChild(privacyInput, privacySelect);
     }
 
-    // Show Edit button, hide Save button
-    document.getElementById('editTaskButton').style.display = 'inline-block';
-    document.getElementById('saveEditButton').style.display = 'none';
+    
 }
 
 function getColumnIdFromStatus(status) {

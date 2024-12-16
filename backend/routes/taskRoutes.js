@@ -1,6 +1,7 @@
 import express from 'express';
 import taskService from '../services/taskServices.js';
 import jwt from 'jsonwebtoken';
+
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { logAction } from '../services/eicServices.js';
@@ -36,6 +37,10 @@ taskRoutes.post('/create', async (req, res) => {
 
 taskRoutes.get('/get/all', async (req, res) => {
     const token = req.cookies.token;
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const name = decoded.name;
     
@@ -304,10 +309,11 @@ taskRoutes.patch('/submit/:taskId', async (req, res) => {
     //handle submitting assigned task
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     try {
         const taskId = req.params.taskId;
-
-        const result = await taskService.submitTask(taskId);
+        
+        const result = await taskService.submitTask(taskId, decoded.name);
         logAction('Task submitted', decoded.name, "update");
         res.status(200).json(result);
     } catch (error) {

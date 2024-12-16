@@ -181,7 +181,7 @@ async function saveUser() {
         if (response.status == 409) {
             alert('User already exists');
         } else if (response.ok) {
-            alert('User added, awaiting user confirmation');
+            alert('Successfully saved user');
         }
         // Refresh the page to show updated data
         location.reload();
