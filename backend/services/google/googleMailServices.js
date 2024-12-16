@@ -383,6 +383,7 @@ async function forgotPassword(email, link) {
                 raw: encodedMessage,
             },
         });
+       
         return 200;
     } catch (error) {
         console.error('Error sending email:', error);

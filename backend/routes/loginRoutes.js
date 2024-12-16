@@ -101,7 +101,9 @@ loginRoutes.post('/forgot-password', async(req, res) => {
         if (!verify) {
             return res.status(400).json({ message: 'User not found' });
         }
-        await googleMailService.forgotPassword(email, link);
+        
+        const response = await googleMailService.forgotPassword(email, link);
+        console.log('Email response:', response);
         res.status(200).json({ message: 'Password reset email sent' });
     } catch (error) {
         res.status(400).json({ message: error.message });
