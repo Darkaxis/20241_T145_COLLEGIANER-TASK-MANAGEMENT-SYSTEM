@@ -159,38 +159,6 @@ taskRoutes.patch('/approve/:id', async (req, res) => {
 }
 );
 
-// Add these routes after existing ones
-
-// Get single archived task
-taskRoutes.get('/archive/:id', async (req, res) => {
-    const token = req.cookies.token;
-    
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const taskId = req.params.id;
-        
-        const archivedTask = await taskService.getArchivedTask(taskId, decoded.email);
-        
-        res.status(200).json({
-            message: 'Archived task retrieved successfully',
-            task: archivedTask
-        });
-
-    } catch (error) {
-        console.error('Get archived task error:', error);
-        if (error.message === 'Task not found') {
-            return res.status(404).json({ message: error.message });
-        }
-        res.status(500).json({ 
-            message: 'Error retrieving archived task',
-            error: error.message 
-        });
-    }
-});
 
 // Get all archived tasks for user
 taskRoutes.get('/archives', async (req, res) => {
