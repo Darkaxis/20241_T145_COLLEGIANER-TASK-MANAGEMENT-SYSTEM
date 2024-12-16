@@ -1,13 +1,18 @@
 function openAddUserModal(isEdit = false, rowIndex = null) {
+    const emailInput = document.getElementById('email');
     document.getElementById('addUserModalLabel').textContent = isEdit ? 'Edit User' : 'Add User';
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
 
     if (isEdit) {
         const row = document.getElementById('userTableBody').rows[rowIndex];
-        document.getElementById('email').value = row.cells[3].textContent;
-        document.getElementById('role').value = row.cells[4].textContent;
+        emailInput.value = row.cells[1].textContent; // Get email from the table
+        emailInput.readOnly = true; // Make email readonly for editing
+        emailInput.classList.add('bg-light');
+        document.getElementById('role').value = row.cells[2].textContent;
     } else {
         document.getElementById('addUserForm').reset();
+        emailInput.readOnly = false;
+        emailInput.classList.remove('bg-light');
     }
 
     const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));

@@ -80,30 +80,17 @@ function openAddUserModal(isEdit = false, rowIndex = null) {
     document.getElementById('addUserModalLabel').textContent = isEdit ? 'Edit User' : 'Add User';
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
 
-    // // Get the status toggle container
-    // const statusToggleContainer = document.getElementById('statusToggleContainer');
-
-    // if (isEdit) {
-    //     const row = document.getElementById('userTableBody').rows[rowIndex];
-    //     emailInput.value = row.cells[1].textContent;
-    //     emailInput.readOnly = true;
-    //     emailInput.classList.add('bg-light');
-    //     document.getElementById('role').value = row.cells[2].textContent;
-
-    //     // Show and set status toggle
-    //     statusToggleContainer.style.display = 'block';
-    //     const toggleBtn = document.getElementById('toggleUserStatusBtn');
-    //     const isEnabled = !row.classList.contains('user-disabled');
-    //     toggleBtn.checked = isEnabled;
-    //     toggleBtn.parentElement.querySelector('.status-text').textContent =
-    //         isEnabled ? 'Enabled' : 'Disabled';
-    // } else {
-    //     document.getElementById('addUserForm').reset();
-    //     emailInput.readOnly = false;
-    //     emailInput.classList.remove('bg-light');
-    //     // Hide status toggle for new users
-    //     statusToggleContainer.style.display = 'none';
-    // }
+    if (isEdit) {
+        const row = document.getElementById('userTableBody').rows[rowIndex];
+        emailInput.value = row.cells[1].textContent; // Get email from the table
+        emailInput.readOnly = true; // Make email readonly for editing
+        emailInput.classList.add('bg-light');
+        document.getElementById('role').value = row.cells[2].textContent;
+    } else {
+        document.getElementById('addUserForm').reset();
+        emailInput.readOnly = false;
+        emailInput.classList.remove('bg-light');
+    }
 
     const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
     addUserModal.show();
@@ -329,26 +316,5 @@ function adjustLayoutForZoom() {
         dashboard.classList.add('zoomed-out-more');
     } else {
         dashboard.classList.remove('zoomed-out', 'zoomed-out-more');
-    }
-}
-
-function toggleUserStatus(checkbox) {
-    const row = checkbox.closest('tr');
-    const statusText = checkbox.parentElement.querySelector('.status-text');
-    
-    if (row) {
-        if (!checkbox.checked) {
-            row.classList.add('user-disabled');
-            statusText.textContent = 'Disabled';
-        } else {
-            row.classList.remove('user-disabled');
-            statusText.textContent = 'Enabled';
-        }
-    }
-
-    // Update the status text in modal if open
-    const modalStatusText = document.querySelector('#addUserModal .status-text');
-    if (modalStatusText) {
-        modalStatusText.textContent = checkbox.checked ? 'Enabled' : 'Disabled';
     }
 }
