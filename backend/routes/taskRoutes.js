@@ -257,6 +257,48 @@ taskRoutes.patch('/archive/:id', async (req, res) => {
         });
     }
 });
+taskRoutes.patch('/unarchive/:id', async (req, res) => {
+    const token = req.cookies.token;
+    
+    // Token validation
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const taskId = req.params.id;
+        console.log(taskId);
+        
+        // Pass user ID from token
+        const result = await taskService.unarchiveTask(taskId, decoded.name);
+        
+        // Log action
+        logAction('Task unarchived', decoded.name, "update");
+        
+        // Return success response
+        res.status(200).json({
+            message: 'Task unarchived successfully',
+            taskId: taskId
+        });
+
+    } catch (error) {
+        console.error('Unarchive task error:', error);
+        
+        if (error.message === 'Task not found') {
+            return res.status(404).json({ message: error.message });
+        }
+        if (error.message === 'Task not archived by user') {
+            return res.status(400).json({ message: error.message });
+        }
+        
+        res.status(500).json({ 
+            message: 'Error unarchiving task',
+            error: error.message 
+        });
+    }
+});
 
 taskRoutes.patch('/submit/:taskId', async (req, res) => {
     //handle submitting assigned task

@@ -454,7 +454,33 @@ export async function transferTask(taskId, user) {
     throw new Error("Error approving task");
   }
 }
-
+export async function unarchiveTask(taskId, name){
+try{
+  await db.runTransaction(async (transaction) => {
+    const taskRef = db.collection("tasks").doc(taskId);
+    const taskDoc = await transaction.get(taskRef);
+    if (!taskDoc.exists) {
+      throw new Error("Task not found");
+    }
+    const taskData = taskDoc.data();
+    const archivedBy = taskData.archivedBy || [];
+    const index = archivedBy.indexOf(name);
+    if (index === -1) {
+      throw new Error("Task not archived by user");
+    }
+    archivedBy.splice(index, 1);
+    transaction.update(taskRef, {
+      archivedBy,
+      version: taskData.version + 1
+    });
+  } );
+  return { status: 200, message: "Task unarchived successfully" };
+}
+catch (error) {
+  console.error("Error approving task:", error);
+  throw new Error("Error approving task");
+}
+}
 
 export default {
   createTask,
@@ -468,5 +494,6 @@ export default {
   transferTask,
   getArchivedTask,
   archiveTask,
-  getAllArchivedTasks
+  getAllArchivedTasks,
+  unarchiveTask,
 };

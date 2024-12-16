@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <button class="action-btn restore">
                         <i class="fas fa-undo"></i> Restore
                     </button>
+                    <button class="action-btn delete">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
                 <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
             `;
@@ -51,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    function restoreItem(task, element) {
+    async function restoreItem(task, element) {
         const modal = document.createElement('div');
         modal.className = 'custom-modal';
         modal.innerHTML = `
@@ -73,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             modal.remove();
         };
 
-        modal.querySelector('.confirm-btn').onclick = () => {
+        modal.querySelector('.confirm-btn').onclick = async () => {
             element.classList.add('fade-out');
             const index = completedTasks.findIndex(t => t.id === task.id);
             if (index > -1) {
@@ -81,12 +84,23 @@ document.addEventListener('DOMContentLoaded', async function() {
                 localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
             }
 
-            setTimeout(() => {
-                element.remove();
-                checkEmptyState();
-                showNotification('Task restored successfully');
-                modal.remove();
-            }, 300);
+            const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/unarchive/${task.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                setTimeout(() => {
+                    element.remove();
+                    checkEmptyState();
+                    showNotification('Task restored successfully');
+                    modal.remove();
+                }, 300);
+            }
+            
         };
     }
 
