@@ -148,6 +148,45 @@ function addTaskCardEventListeners(taskCard) {
 
         // Show the modal using Bootstrap
         const modal = new bootstrap.Modal(taskDetailModal);
+        const taskStatus = taskCard.dataset.status;
+        const taskId = taskCard.dataset.taskId;
+        const footer = document.querySelector('.modal-footer');
+    // Check if the task status is 'To Do'
+    if (taskStatus === 'To Do') {
+        // Create a button to move the task to 'In Progress'
+        const moveToInProgressButton = document.createElement('button');
+        moveToInProgressButton.textContent = 'Move to In Progress';
+        moveToInProgressButton.classList.add('btn', 'btn-primary', 'progess');
+        // Add an event listener to handle the button click
+        moveToInProgressButton.addEventListener('click', async () => {
+            const updateResponse = await fetch(`https://localhost:3000/api/v1/staff/tasks/movetoinprogress/${taskId}`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'In Progress' })
+            });
+            console.log(updateResponse)
+            if (updateResponse.status == 200) {
+                alert('Task moved to In Progress');
+                // Optionally, you can update the UI to reflect the status change
+            }else{
+                alert('Task not assigned to user cannot move to in progress');
+            }
+        
+        });
+
+            footer.appendChild(moveToInProgressButton);
+    }
+    else {
+        // Remove the button if it exists
+        const existingButton = footer.querySelector('.progess');
+        if (existingButton) {
+            footer.removeChild(existingButton);
+        }
+    }
+
         modal.show();
     });
 }

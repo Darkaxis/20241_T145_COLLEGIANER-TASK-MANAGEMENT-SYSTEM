@@ -58,7 +58,7 @@ function saveUser() {
     const email = document.getElementById('email').value.trim();
     const role = document.getElementById('role').value;
     const editUserIndex = document.getElementById('editUserIndex').value;
-
+    
     // Validate inputs
     let hasErrors = false;
 

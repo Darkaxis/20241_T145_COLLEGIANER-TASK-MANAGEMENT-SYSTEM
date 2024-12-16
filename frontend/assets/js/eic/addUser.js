@@ -135,6 +135,7 @@ async function saveUser() {
     const userDisabledCheckbox = document.querySelector('#toggleUserStatusBtn');
     const userDisabled = userDisabledCheckbox ? userDisabledCheckbox.checked : false;
     const editUserIndex = document.getElementById('editUserIndex').value;
+    console.log(editUserIndex);
     let hasErrors = false;
 
     // Only validate email for new users

@@ -315,7 +315,7 @@ async function saveTaskEdits(taskCard) {
         return false;
     }
     */
-
+    
     // Only get the editable fields
     const updatedData = {
         id: taskCard.dataset.taskId,
@@ -333,6 +333,34 @@ async function saveTaskEdits(taskCard) {
             */
     };
 
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //
     try {
         const taskId = taskCard.dataset.taskId;
         const response = await fetch(`https://localhost:3000/api/v1/staff/tasks/submit/${taskId}`, {

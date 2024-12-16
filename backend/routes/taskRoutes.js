@@ -130,6 +130,7 @@ taskRoutes.get('/get/:id', async (req, res) => {
     try {
         const taskId = req.params.id;
         const task = await taskService.getTask(taskId);
+    
         res.status(200).send(task);
     } catch (error) {
         res.status(404).send(error.message);
@@ -157,6 +158,27 @@ taskRoutes.patch('/approve/:id', async (req, res) => {
     }
 }
 );
+
+taskRoutes.patch('/movetoinprogress/:id',async (req, res) => {
+    const token = req.cookies.token;  
+        
+    if(!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+   const taskId = req.params.id;
+   const task = await taskService.moveToInProgress(taskId, decoded.name);
+   logAction('Task updated', decoded.name, "update");
+
+   res.status(task.status).send(task);
+} catch (error) {
+   res.status(404).send(error.message);
+}
+});
+
+
+
 
 
 // Get all archived tasks for user

@@ -264,7 +264,26 @@ async function getTask(taskId) {
       if (!taskDoc.exists) {
         throw new Error("Task not found");
       }
-      return { id: taskDoc.id, ...taskDoc.data() };
+      //decrypting the task data
+      const taskData = taskDoc.data();
+      return {
+        id: taskDoc.id,
+        taskName: decrypt(taskData.taskName),
+        description: decrypt(taskData.description),
+        assignedTo: decrypt(taskData.assignedTo),
+        assignedBy: decrypt(taskData.assignedBy),
+        category: decrypt(taskData.category),
+        status: decrypt(taskData.status),
+        privacy: decrypt(taskData.privacy),
+        link: decrypt(taskData.link),
+        deadline: formatDeadline(decrypt(taskData.deadline)),
+        // Non-encrypted fields
+        createdAt: taskData.createdAt,
+        updatedAt: taskData.updatedAt,
+        version: taskData.version,
+        googleTaskId: taskData.googleTaskId,
+        googleCalendarEventId: taskData.googleCalendarEventId
+      };
     });
 
     return { status: 200, message: "Task retrieved successfully", task };
@@ -496,6 +515,31 @@ catch (error) {
   throw new Error("Error approving task");
 }
 }
+export async function moveToInProgress(taskId, name) {
+  try {
+    const taskRef = db.collection('tasks').doc(taskId);
+    const taskDoc = await taskRef.get();
+
+    if (!taskDoc.exists) {
+      throw new Error('Task not found');
+    }
+    const taskData = taskDoc.data();
+    if (decrypt(taskData.status) !== 'To Do') {
+      return { status: 400, message: 'Task status is not "To Do". Cannot move to "In Progress".' };
+    }
+    if (decrypt(taskData.assignedTo) !== name) {
+      return { status: 400, message: 'Task is not assigned to user. Cannot move to "In Progress".' };
+    }
+    await taskRef.update({
+      status: encrypt('In Progress')
+    });
+
+    return { status: 200, message: 'Task moved to In Progress successfully' };
+  } catch (error) {
+    console.error('Error moving task to In Progress:', error);
+    return { status: 500, message: 'Error moving task to In Progress' };
+  }
+}
 
 export default {
   createTask,
@@ -511,4 +555,5 @@ export default {
   archiveTask,
   getAllArchivedTasks,
   unarchiveTask,
+  moveToInProgress
 };

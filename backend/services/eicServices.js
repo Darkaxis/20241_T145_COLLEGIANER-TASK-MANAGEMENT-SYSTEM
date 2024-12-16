@@ -32,8 +32,7 @@ export async function getUserByEmail(email) {
     
     };
   } catch (error) {
-    console.error("Error getting user by email:", error);
-    throw new Error("Error getting user by email");
+    return null;
   }
 }
 
