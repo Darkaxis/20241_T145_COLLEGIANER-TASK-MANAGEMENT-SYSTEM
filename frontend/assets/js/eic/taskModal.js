@@ -163,22 +163,7 @@ async function enableEditMode() {
     });
 
 
-    const submitTo = document.getElementById('taskSubmitTo');
-
-    const users = await fetch('https://localhost:3000/api/v1/eic/editors', {
-        method: 'GET',
-        credentials: 'include'
-    });
-
-    const data = await users.json();
-    const editors = data.data;
-
-    editors.forEach(editor => {
-    const option = document.createElement('option');
-    option.value = editor.name;
-    option.textContent = editor.name;
-    submitTo.appendChild(option);
-});
+   ;
     // Create a status dropdown for editing
     const statusInput = document.getElementById('taskStatus');
     const currentStatus = statusInput.value;
