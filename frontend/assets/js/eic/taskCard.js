@@ -271,10 +271,7 @@ function updateTaskCard(taskCard) {
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            })
+
 
             taskCard.remove();
             updateTaskCounts();

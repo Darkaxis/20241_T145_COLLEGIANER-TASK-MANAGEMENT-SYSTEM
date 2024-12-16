@@ -377,6 +377,7 @@ async function saveTaskEdits(taskCard) {
     try {
         // Send to backend
         const taskId = taskCard.dataset.taskId;
+        console.log(taskId);
         const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {

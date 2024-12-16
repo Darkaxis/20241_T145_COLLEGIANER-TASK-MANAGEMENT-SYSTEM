@@ -432,10 +432,10 @@ export async function submitTask(taskId, name) {
         throw new Error("Task not found");
       }
       const taskData = taskDoc.data();
-      if (decrypt(taskData.status) !== "In Progress") {
-        console.log(decrypt(taskData.status));
-        throw new Error("Task is not pending approval");
-      }
+      // if (decrypt(taskData.status) !== "In Progress") {
+      //   console.log(decrypt(taskData.status));
+      //   throw new Error("Task is not pending approval");
+      // }
       if (decrypt(taskData.assignedTo) !== name) {
         throw new Error("Task is not assigned to user");
       }

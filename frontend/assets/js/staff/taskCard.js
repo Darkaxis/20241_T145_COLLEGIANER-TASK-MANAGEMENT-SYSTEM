@@ -2,24 +2,14 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
 
-
-
-
-   
-
-
-
-
-
-
-
-
     try {
         const response = await fetch('https://localhost:3000/api/v1/staff/tasks/get/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
+        
         const tasks = await response.json();
+         
         tasks.tasks.forEach(task => createTask(task));
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -253,41 +243,21 @@ function updateTaskCard(taskCard) {
     // Add event listeners for the menu
     const menuToggle = taskCard.querySelector('.task-menu-toggle');
     const taskMenu = taskCard.querySelector('.task-menu');
-    const markDoneBtn = taskCard.querySelector('.mark-done-btn');
+   
     const archiveBtn = taskCard.querySelector('.archive-btn');
-    const deleteBtn = taskCard.querySelector('.delete-btn');
+  
 
     menuToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         taskMenu.classList.toggle('show');
     });
 
-    markDoneBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        moveTaskToDone(taskCard);
-        taskMenu.classList.remove('show');
-    });
-
+   
     archiveBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         archiveTask(taskCard);
         taskMenu.classList.remove('show');
     });
-
-    deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/staff/tasks/delete/${taskCard.dataset.taskId}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            })
-
-            taskCard.remove();
-            updateTaskCouants();
-        }
-        taskMenu.classList.remove('show');
-    });
-
     // Close menu when clicking outside
     document.addEventListener('click', () => {
         taskMenu.classList.remove('show');
