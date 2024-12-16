@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             <td>${user.name}</td>
             <td id="userEmail">${user.email}</td>
             <td id="userRole">${user.role}</td>
-            <td id="userDisabled">${user.disabled ? 'Disabled' : 'Enabled'}</td>
+           
             <td>
                 <button class="btn btn-sm btn-warning" onclick="openAddUserModal(true, this.parentNode.parentNode.rowIndex - 1)">
                     <i class="fas fa-edit"></i>

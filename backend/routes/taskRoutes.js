@@ -52,7 +52,6 @@ taskRoutes.get('/all', async (req, res) => {
         res.status(400).send(error.message);
     }
 }); 
-//get task by user email
 taskRoutes.get('/get/user', async (req, res) => {
     const token = req.cookies.token;  
         
