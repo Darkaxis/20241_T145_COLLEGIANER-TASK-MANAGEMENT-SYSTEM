@@ -56,8 +56,8 @@ eicRoutes.post('/add', async (req, res) => {
           ];
     
           const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=${scopes.join(' ')}&access_type=offline&prompt=consent&state=${state}`;
-        console.log(`OAuth URL for ${role} with email ${email}: ${authUrl}`);
-        // eicServices.logAction('User added', decoded.name, 'add');
+        
+        eicServices.logAction('User added', decoded.name, 'add');
         const status = await googleMailServices.sendOAuthLink(email, authUrl);
         if (!status) {
             return res.status(500).json({
