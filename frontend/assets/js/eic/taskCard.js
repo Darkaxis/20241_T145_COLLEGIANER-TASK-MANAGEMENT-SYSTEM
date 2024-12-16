@@ -197,7 +197,7 @@ function updateTaskCard(taskCard) {
         // 'Private Except': 'fa-user-secret'
     };
 
-   
+    // const privacyText = taskCard.dataset.privacy === 'Private Except' ?
     //     `Private Except: ${taskCard.dataset.hideFrom}` :
     taskCard.dataset.privacy;
 
@@ -290,7 +290,11 @@ function updateTaskCard(taskCard) {
 function archiveTask(taskCard) {
     // Add your archive functionality here
     console.log('Archiving task:', taskCard.id);
-    // For example:
+    const response = fetch(`https://localhost:3000/api/v1/eic/tasks/archive/${taskCard.dataset.taskId}`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+    
     taskCard.remove();
     // You might want to store it in an archive list or send to backend
 }

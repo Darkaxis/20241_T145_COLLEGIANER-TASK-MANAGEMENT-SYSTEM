@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 link: document.getElementById('taskLinkInput').value.trim(),
                 category: document.getElementById('taskCategoryInput').value.trim()
             };
-
+    
             if (validateFormData(formData)) {
                 //send to server
                 const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
                     method: 'POST',
-                    include: 'credentials',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -142,24 +142,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 });
 
-// Toggle hide input function
-/* Comment out toggleHideInput function
-function toggleHideInput() {
-    const privacySelect = document.getElementById('taskPrivacyInput');
-    const hideInputContainer = document.getElementById('hideInputContainer');
-
-    if (privacySelect && hideInputContainer) {
-        if (privacySelect.value === 'Private Except') {
-            hideInputContainer.style.display = 'block';
-        } else {
-            hideInputContainer.style.display = 'none';
-        }
-    }
-}
-*/
 
 // Update the enableEditMode function
-function enableEditMode() {
+async function enableEditMode() {
     // Make inputs editable
     const inputs = document.querySelectorAll('#taskDetailModal input, #taskDetailModal textarea');
     inputs.forEach(input => {
@@ -177,6 +162,23 @@ function enableEditMode() {
         }
     });
 
+
+    const submitTo = document.getElementById('taskSubmitTo');
+
+    const users = await fetch('https://localhost:3000/api/v1/eic/editors', {
+        method: 'GET',
+        credentials: 'include'
+    });
+
+    const data = await users.json();
+    const editors = data.data;
+
+    editors.forEach(editor => {
+    const option = document.createElement('option');
+    option.value = editor.name;
+    option.textContent = editor.name;
+    submitTo.appendChild(option);
+});
     // Create a status dropdown for editing
     const statusInput = document.getElementById('taskStatus');
     const currentStatus = statusInput.value;
@@ -257,8 +259,7 @@ function disableEditMode() {
     privacyDropdown.disabled = true;
 
     // Disable hideFromUsers
-    const hideFromInput = document.getElementById('hideFromUsers');
-    hideFromInput.setAttribute('readonly', true);
+   
 
     // Show Edit button, hide Save button
     document.getElementById('editTaskButton').style.display = 'inline-block';

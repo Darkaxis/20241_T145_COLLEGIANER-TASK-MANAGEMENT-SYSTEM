@@ -173,7 +173,35 @@ export async function logAction(action, user, type) {
         throw new Error("Error logging action");
     }
 }
+export async function getEditors() {
+    try {
+        const usersSnapshot = await db.collection("users").get();
+        
+        if (usersSnapshot.empty) {
+            return [];
+        }
 
+        return usersSnapshot.docs
+            .map((doc) => {
+                const userData = doc.data();
+                return {
+                    id: doc.id,
+                    email: decrypt(userData.email),
+                    name: decrypt(userData.name),
+                    profile: decrypt(userData.profile),
+                    role: decrypt(userData.role),
+                    disabled: userData.disabled || false,
+                };
+            })
+            .filter((user) => {
+                const decryptedRole = user.role;
+                return decryptedRole === "Editor in Charge" || decryptedRole === "Editorial Board";
+            });
+    } catch (error) {
+        console.error("Error getting editors:", error);
+        throw new Error("Error getting editors");
+    }
+}
 
 
 export default {
@@ -184,5 +212,5 @@ getAllUsers,
 updateUser,
 getLogs,
 logAction,
-
+getEditors,
 };

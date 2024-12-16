@@ -16,9 +16,9 @@ taskRoutes.post('/create', async (req, res) => {
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
-            return res.status(403).json({ message: 'Unauthorized' });
-        }
+        // if (decoded.role !== 'Editor in Charge' || decoded.role !== 'Editorial Board') {
+        //     return res.status(403).json({ message: 'Unauthorized' });
+        // }
     try {
         const taskData = req.body;
         taskData.assignedBy = decoded.email;
@@ -27,6 +27,7 @@ taskRoutes.post('/create', async (req, res) => {
         res.status(201).send(newTask);
 
     } catch (error) {
+        console.log(error);
         res.status(400).send(error.message);
     }
 });
@@ -48,8 +49,8 @@ taskRoutes.get('/get/user', async (req, res) => {
     try {
         const token = req.cookies.token;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const email = decoded.email;
-        const tasks = await taskService.getTasksForUser(email);
+        const name = decoded.name;
+        const tasks = await taskService.getTasksForUser(name);
 
         res.status(200).send(tasks);
     } catch (error) {
@@ -156,7 +157,7 @@ taskRoutes.get('/archives', async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        const archivedTasks = await taskService.getAllArchivedTasks(decoded.email);
+        const archivedTasks = await taskService.getAllArchivedTasks(decoded.name);
         
         res.status(200).json({
             message: 'Archived tasks retrieved successfully',
@@ -182,10 +183,11 @@ taskRoutes.patch('/archive/:id', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
         const taskId = req.params.id;
         
         // Pass user ID from token
-        const result = await taskService.archiveTask(taskId, decoded.email);
+        const result = await taskService.archiveTask(taskId, decoded.name);
         
         // Log action
         logAction('Task archived', decoded.name, "update");
