@@ -47,9 +47,6 @@ export async function authenticateUser(email, password) {
     if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
-    if (userData.disabled) {
-      throw new Error("User is disabled");
-    }
     // Decrypt user data for JWT
     const decryptedUserData = {
       name: decrypt(userData.name),

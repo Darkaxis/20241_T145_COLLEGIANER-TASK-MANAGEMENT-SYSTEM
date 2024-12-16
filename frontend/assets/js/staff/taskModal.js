@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     //fetch all user names
-    const response = await fetch('https://localhost:3000/api/v1/eic/users', {
+    const response = await fetch('https://localhost:3000/api/v1/staff/users', {
         method: 'GET',
         credentials: 'include'
     })
@@ -59,20 +59,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 category: document.getElementById('taskCategoryInput').value.trim()
             };
 
-            if (validateFormData(formData)) {
-                //send to server
-                const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
-                    method: 'POST',
-                    include: 'credentials',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                createTask(formData);
-                closeAndResetModal();
-            }
         });
     }
 
@@ -252,9 +238,7 @@ function disableEditMode() {
     const privacyDropdown = document.getElementById('taskPrivacy');
     privacyDropdown.disabled = true;
 
-    // Disable hideFromUsers
-    const hideFromInput = document.getElementById('hideFromUsers');
-    hideFromInput.setAttribute('readonly', true);
+    
 
     // Show Edit button, hide Save button
     document.getElementById('editTaskButton').style.display = 'inline-block';

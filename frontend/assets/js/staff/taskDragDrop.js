@@ -51,15 +51,7 @@ async function updateTaskStatus(taskCard, columnId) {
     //send to backend
     const taskData = taskCard.dataset;
     taskData.status = newStatus;
-    const taskId = taskCard.dataset.taskId;
-    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(taskData),
-        credentials: 'include'
-    });
+    const taskId = taskCard.dataset.taskId
     console.log(taskData)
 
 

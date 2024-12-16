@@ -1,64 +1,43 @@
 import express from 'express';
 import staffServices from '../services/staffServices.js';
-import taskServices from '../services/taskServices.js';
+import bodyParser from 'body-parser';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import taskRoutes from './taskRoutes.js';
+dotenv.config();
+
 
 const staffRoutes = express.Router();
-
-staffRoutes.post('/login', (req, res) => {
-    //handle user login
-});
-
-staffRoutes.post('/logout', (req, res) => {
-    //handle user logout
-    try {
-        staffServices.logoutUser();
-        res.status(200).json({
-            message: 'User logged out successfully'
-        });
-    } catch (error) {
-        res.status(400).json({
-            message: 'User logout failed'
+staffRoutes.use('/tasks', taskRoutes);
+staffRoutes.use(bodyParser.json());
+staffRoutes.use(bodyParser.urlencoded({ extended: true }));
+staffRoutes.use(cookieParser());
+staffRoutes.get('/users', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({
+            message: 'No token provided'
         });
     }
-});
-
-staffRoutes.get('/:id', (req, res) => {
-    //handle getting user ID
+    
     try {
-        const userId = req.params.id;
-        const user = staffServices.getUserDetails(userId);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.role !== 'Staff') {
+            return res.status(403).json({
+                message: 'Unauthorized'
+            });
+        }
+        const users = await staffServices.getAllUsers();
         res.status(200).json({
-            message: 'User details retrieved successfully',
-            data: user
+            message: 'Users retrieved successfully',
+            data: users
         });
     } catch (error) {
         res.status(404).json({
-            message: 'User not found'
+            message: 'Users not found',
+            error: error.message
         });
     }
 });
-
-staffRoutes.get('/tasks/:id', (req, res) => {
-    //handle getting user tasks
-    try {
-        const userId = req.params.id;
-        const tasks = taskServices.getAllTasks(userId);
-        res.status(200).json(tasks);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-staffRoutes.post('/tasks/:taskId/submit', async (req, res) => {
-    //handle submitting assigned task
-    try {
-        const taskId = req.params.taskId;
-        const submissionData = req.body; // Data related to the task submission
-        const result = await taskServices.submitTask(taskId, submissionData);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
 export default staffRoutes;

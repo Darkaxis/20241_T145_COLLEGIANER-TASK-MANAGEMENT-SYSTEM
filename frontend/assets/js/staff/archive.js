@@ -34,9 +34,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <button class="action-btn restore">
                         <i class="fas fa-undo"></i> Restore
                     </button>
-                    <button class="action-btn delete">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
+                    
                 </div>
                 <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
             `;
@@ -48,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             // Existing event listeners
             archiveItem.querySelector('.action-btn.restore').addEventListener('click', () => restoreItem(task, archiveItem));
-            archiveItem.querySelector('.action-btn.delete').addEventListener('click', () => deleteItem(task, archiveItem));
+            
 
             tableBody.appendChild(archiveItem);
         });
@@ -104,54 +102,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         };
     }
 
-    async function deleteItem(task, element) {
-        const modal = document.createElement('div');
-        modal.className = 'custom-modal';
-        modal.innerHTML = `
-            <div class="modal-content delete">
-                <div class="modal-icon">
-                    <i class="fas fa-trash"></i>
-                </div>
-                <h3>Delete Task</h3>
-                <p>Are you sure you want to permanently delete "${task.taskName}"?</p>
-                <div class="modal-buttons">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="confirm-btn delete">Delete</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        modal.querySelector('.cancel-btn').onclick = () => {
-            modal.remove();
-        };
-
-        modal.querySelector('.confirm-btn').onclick = async () => {
-            element.classList.add('fade-out');
-            const index = completedTasks.findIndex(t => t.id === task.id);
-            if (index > -1) {
-                completedTasks.splice(index, 1);
-                localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
-            }
-
-            const response = await fetch(`https://localhost:3000/api/v1/staff/tasks/delete/${task.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include'
-            });
-
-
-            if (response.ok) {
-            setTimeout(() => {
-                element.remove();
-                checkEmptyState();
-                showNotification('Task deleted successfully');
-                modal.remove();
-            }, 300);
-        }}
-    }
+  
 
     function checkEmptyState() {
         const tableBody = document.querySelector('.table-body');

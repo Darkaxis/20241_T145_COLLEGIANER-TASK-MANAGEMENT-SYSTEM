@@ -124,16 +124,7 @@ function addTaskCardEventListeners(taskCard) {
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
-        // Handle Private Except case
-        const hideFromContainer = document.getElementById('hideFromUsersContainer');
-        const hideFromInput = document.getElementById('hideFromUsers');
-        if (taskCard.dataset.privacy === 'Private Except') {
-            hideFromInput.value = taskCard.dataset.hideFrom || '';
-            hideFromContainer.style.display = 'block';
-        } else {
-            hideFromInput.value = '';
-            hideFromContainer.style.display = 'none';
-        }
+    
 
         // Setup edit button click handler
         const editButton = document.getElementById('editTaskButton');
@@ -275,13 +266,13 @@ function updateTaskCard(taskCard) {
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`, {
+            fetch(`https://localhost:3000/api/v1/staff/tasks/delete/${taskCard.dataset.taskId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
 
             taskCard.remove();
-            updateTaskCounts();
+            updateTaskCouants();
         }
         taskMenu.classList.remove('show');
     });
@@ -295,7 +286,10 @@ function updateTaskCard(taskCard) {
 function archiveTask(taskCard) {
     // Add your archive functionality here
     console.log('Archiving task:', taskCard.id);
-    // For example:
+    const response = fetch(`https://localhost:3000/api/v1/staff/tasks/archive/${taskCard.dataset.taskId}`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
     taskCard.remove();
     // You might want to store it in an archive list or send to backend
 }
@@ -458,19 +452,8 @@ async function saveTaskEdits(taskCard) {
 
     try {
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedData),
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update task');
-        }
-
+       
+      
         /* Comment out hideFrom handling
         if (updatedData.privacy === 'Private Except') {
             updatedData.hideFrom = document.getElementById('hideFromUsers').value;

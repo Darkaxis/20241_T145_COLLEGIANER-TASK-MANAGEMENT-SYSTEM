@@ -46,8 +46,9 @@ app.get('/new_password/confirm', (req, res) => {
 app.get('/staff/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/staff/staff-dashboard.html'));
 });
-app.get('/staff/archive', (req, res) => { });
-
+app.get('/staff/archive', (req, res) => { 
+    res.sendFile(path.join(__dirname, '/pages/staff/staff-archive.html'));
+});
 
 app.get('/staff/archive', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/staff/staff-archive.html'));
