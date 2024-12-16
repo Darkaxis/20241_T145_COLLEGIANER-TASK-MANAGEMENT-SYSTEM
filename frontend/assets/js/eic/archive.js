@@ -34,9 +34,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <button class="action-btn restore">
                         <i class="fas fa-undo"></i> Restore
                     </button>
-                    <button class="action-btn delete">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
                 </div>
                 <p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>
             `;
