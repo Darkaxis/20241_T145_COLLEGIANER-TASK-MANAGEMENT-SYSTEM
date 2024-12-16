@@ -53,6 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (role === 'Staff') {
                         window.location.href = 'https://localhost:4000/staff/dashboard';
                     }
+                    else if (role === "Adviser"){
+                        window.location.href = 'https://localhost:4000/adviser/dashboard';
+                    }
                 } else {
                     console.error('Error verifying token:', userResult.message);
                     alert('Error verifying token. Please try again.');

@@ -2,7 +2,7 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
     try {
-        const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+        const response = await fetch('https://localhost:3000/api/v1/adviser/tasks/get/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         console.error('Error fetching tasks:', error);
     }
     try {
-        let usersResponse = await fetch('https://localhost:3000/api/v1/eic/users', {
+        let usersResponse = await fetch('https://localhost:3000/api/v1/adviser/users', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const myTask = document.getElementById('myTask');
     myTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/user', {
+            const response = await fetch('https://localhost:3000/api/v1/adviser/tasks/get/user', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
             });
@@ -40,9 +40,10 @@ document.addEventListener('DOMContentLoaded', async() => {
     const allTask = document.getElementById('allTask');
     allTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+            const response = await fetch('https://localhost:3000/api/v1/adviser/tasks/get/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
+                
             });
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
@@ -124,16 +125,16 @@ function addTaskCardEventListeners(taskCard) {
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
-        // Handle Private Except case
-        /* const hideFromContainer = document.getElementById('hideFromUsersContainer');
-        const hideFromInput = document.getElementById('hideFromUsers');
-        if (taskCard.dataset.privacy === 'Private Except') {
-            hideFromInput.value = taskCard.dataset.hideFrom || '';
-            hideFromContainer.style.display = 'block';
-        } else {
-            hideFromInput.value = '';
-            hideFromContainer.style.display = 'none';
-        } */
+        // // Handle Private Except case
+        // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+        // const hideFromInput = document.getElementById('hideFromUsers');
+        // if (taskCard.dataset.privacy === 'Private Except') {
+        //     hideFromInput.value = taskCard.dataset.hideFrom || '';
+        //     hideFromContainer.style.display = 'block';
+        // } else {
+        //     hideFromInput.value = '';
+        //     hideFromContainer.style.display = 'none';
+        // }
 
         // Setup edit button click handler
         const editButton = document.getElementById('editTaskButton');
@@ -194,14 +195,12 @@ function updateTaskCard(taskCard) {
     const privacyIcons = {
         'Public': 'fa-globe',
         'Private': 'fa-lock',
-        // 'Private Except': 'fa-user-secret' // Commented out
+        // 'Private Except': 'fa-user-secret'
     };
 
-    // Comment out Private Except condition
-    const privacyText =
-        /* taskCard.dataset.privacy === 'Private Except' ?
-               `Private Except: ${taskCard.dataset.hideFrom}` : */
-        taskCard.dataset.privacy;
+    // const privacyText = taskCard.dataset.privacy === 'Private Except' ?
+    //     `Private Except: ${taskCard.dataset.hideFrom}` :
+    taskCard.dataset.privacy;
 
     // Format the date properly
     let deadlineDisplay = 'No deadline set';
@@ -238,7 +237,7 @@ function updateTaskCard(taskCard) {
             <div class="task-card-body">
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
                 <p><i class="fa-regular fa-calendar"></i> ${deadlineDisplay}</p>
-                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
+                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i></p>
                   <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
             </div>
@@ -272,7 +271,7 @@ function updateTaskCard(taskCard) {
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`, {
+            fetch(`https://localhost:3000/api/v1/adviser/tasks/delete/${taskCard.dataset.taskId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
@@ -292,7 +291,11 @@ function updateTaskCard(taskCard) {
 function archiveTask(taskCard) {
     // Add your archive functionality here
     console.log('Archiving task:', taskCard.id);
-    // For example:
+    const response = fetch(`https://localhost:3000/api/v1/adviser/tasks/archive/${taskCard.dataset.taskId}`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+    
     taskCard.remove();
     // You might want to store it in an archive list or send to backend
 }
@@ -410,9 +413,9 @@ function enableEditMode() {
     const privacySelect = document.createElement('select');
     privacySelect.className = 'form-control';
     privacySelect.id = 'taskPrivacy';
-    // privacySelect.onchange = () => toggleHideFromUsersInModal();
+    privacySelect.onchange = () => toggleHideFromUsersInModal();
 
-    const privacyOptions = ['Public', 'Private']; // Removed 'Private Except'
+    const privacyOptions = ['Public', 'Private'];
     privacyOptions.forEach(privacy => {
         const option = document.createElement('option');
         option.value = privacy;
@@ -424,26 +427,25 @@ function enableEditMode() {
     privacyInput.parentNode.replaceChild(privacySelect, privacyInput);
 
     // Show/hide the hideFromUsers field based on privacy
-    // toggleHideFromUsersInModal();
+    toggleHideFromUsersInModal();
 
     // Show Save button, hide Edit button
     document.getElementById('editTaskButton').style.display = 'none';
     document.getElementById('saveEditButton').style.display = 'inline-block';
 }
 
-// Comment out entire toggleHideFromUsersInModal function
-/* function toggleHideFromUsersInModal() {
+function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
-    const hideFromContainer = document.getElementById('hideFromUsersContainer');
-    const hideFromInput = document.getElementById('hideFromUsers');
+    // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+    // const hideFromInput = document.getElementById('hideFromUsers');
 
-    if (privacySelect.value === 'Private Except') {
+    if (privacySelect.value === 'Private') {
         hideFromContainer.style.display = 'block';
         hideFromInput.removeAttribute('readonly');
     } else {
         hideFromContainer.style.display = 'none';
     }
-} */
+}
 
 // Add this function to save edits
 async function saveTaskEdits(taskCard) {
@@ -472,7 +474,7 @@ async function saveTaskEdits(taskCard) {
     try {
         // send to backend
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+        const response = await fetch(`https://localhost:3000/api/v1/adviser/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -485,11 +487,10 @@ async function saveTaskEdits(taskCard) {
             throw new Error('Failed to update task');
         }
 
-        // Comment out hideFrom handling
-        /* // Add hideFrom if privacy is Private Except
-        if (updatedData.privacy === 'Private Except') {
-            updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-        } */
+        // // Add hideFrom if privacy is Private Except
+        // if (updatedData.privacy === 'Private Except') {
+        //     updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+        // }
 
         // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {

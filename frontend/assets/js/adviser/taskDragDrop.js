@@ -40,7 +40,7 @@ async function updateTaskStatus(taskCard, columnId) {
     const taskData = taskCard.dataset;
     taskData.status = newStatus;
     const taskId = taskCard.dataset.taskId;
-    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+    const response = await fetch(`https://localhost:3000/api/v1/adviser/tasks/edit/${taskId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
