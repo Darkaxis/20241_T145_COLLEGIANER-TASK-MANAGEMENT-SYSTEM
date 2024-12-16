@@ -80,30 +80,30 @@ function openAddUserModal(isEdit = false, rowIndex = null) {
     document.getElementById('addUserModalLabel').textContent = isEdit ? 'Edit User' : 'Add User';
     document.getElementById('editUserIndex').value = isEdit ? rowIndex : '';
 
-    // Get the status toggle container
-    const statusToggleContainer = document.getElementById('statusToggleContainer');
+    // // Get the status toggle container
+    // const statusToggleContainer = document.getElementById('statusToggleContainer');
 
-    if (isEdit) {
-        const row = document.getElementById('userTableBody').rows[rowIndex];
-        emailInput.value = row.cells[1].textContent;
-        emailInput.readOnly = true;
-        emailInput.classList.add('bg-light');
-        document.getElementById('role').value = row.cells[2].textContent;
+    // if (isEdit) {
+    //     const row = document.getElementById('userTableBody').rows[rowIndex];
+    //     emailInput.value = row.cells[1].textContent;
+    //     emailInput.readOnly = true;
+    //     emailInput.classList.add('bg-light');
+    //     document.getElementById('role').value = row.cells[2].textContent;
 
-        // Show and set status toggle
-        statusToggleContainer.style.display = 'block';
-        const toggleBtn = document.getElementById('toggleUserStatusBtn');
-        const isEnabled = !row.classList.contains('user-disabled');
-        toggleBtn.checked = isEnabled;
-        toggleBtn.parentElement.querySelector('.status-text').textContent =
-            isEnabled ? 'Enabled' : 'Disabled';
-    } else {
-        document.getElementById('addUserForm').reset();
-        emailInput.readOnly = false;
-        emailInput.classList.remove('bg-light');
-        // Hide status toggle for new users
-        statusToggleContainer.style.display = 'none';
-    }
+    //     // Show and set status toggle
+    //     statusToggleContainer.style.display = 'block';
+    //     const toggleBtn = document.getElementById('toggleUserStatusBtn');
+    //     const isEnabled = !row.classList.contains('user-disabled');
+    //     toggleBtn.checked = isEnabled;
+    //     toggleBtn.parentElement.querySelector('.status-text').textContent =
+    //         isEnabled ? 'Enabled' : 'Disabled';
+    // } else {
+    //     document.getElementById('addUserForm').reset();
+    //     emailInput.readOnly = false;
+    //     emailInput.classList.remove('bg-light');
+    //     // Hide status toggle for new users
+    //     statusToggleContainer.style.display = 'none';
+    // }
 
     const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
     addUserModal.show();
