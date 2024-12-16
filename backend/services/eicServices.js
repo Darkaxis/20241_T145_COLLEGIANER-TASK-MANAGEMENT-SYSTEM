@@ -137,27 +137,30 @@ catch (error) {
 }
 }
 
-export async function getLogs(){
+export async function getLogs() {
   try {
-    const logs = await db.collection("logs").get();
-    if (logs.empty) {
-        return [];
+    const logsSnapshot = await db.collection("logs")
+      .orderBy("timestamp", "desc")
+      .get();
+
+    if (logsSnapshot.empty) {
+      return [];
     }
 
-    return logs.docs.map((doc) => {
-        const logData = doc.data();
-        return {
-            id: doc.id,
-            type: decrypt(logData.type),
-            action: decrypt(logData.action),
-            user: decrypt(logData.user),
-            timestamp: logData.timestamp,
-        };
+    return logsSnapshot.docs.map((doc) => {
+      const logData = doc.data();
+      return {
+        id: doc.id,
+        type: decrypt(logData.type),
+        action: decrypt(logData.action),
+        user: decrypt(logData.user),
+        timestamp: logData.timestamp,
+      };
     });
-} catch (error) {
+  } catch (error) {
     console.error("Error getting logs:", error);
     throw new Error("Error getting logs");
-}
+  }
 }
 export async function logAction(action, user, type) {
     try {

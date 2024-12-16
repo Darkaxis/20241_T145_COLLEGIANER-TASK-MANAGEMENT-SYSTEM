@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         };
     }
 
-    function deleteItem(task, element) {
+    async function deleteItem(task, element) {
         const modal = document.createElement('div');
         modal.className = 'custom-modal';
         modal.innerHTML = `
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             modal.remove();
         };
 
-        modal.querySelector('.confirm-btn').onclick = () => {
+        modal.querySelector('.confirm-btn').onclick = async () => {
             element.classList.add('fade-out');
             const index = completedTasks.findIndex(t => t.id === task.id);
             if (index > -1) {
@@ -134,13 +134,23 @@ document.addEventListener('DOMContentLoaded', async function() {
                 localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
             }
 
+            const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${task.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+
+            if (response.ok) {
             setTimeout(() => {
                 element.remove();
                 checkEmptyState();
                 showNotification('Task deleted successfully');
                 modal.remove();
             }, 300);
-        };
+        }}
     }
 
     function checkEmptyState() {

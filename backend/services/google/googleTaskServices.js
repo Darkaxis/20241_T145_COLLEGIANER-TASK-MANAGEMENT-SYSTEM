@@ -85,8 +85,8 @@ async function addTaskToGoogleTasks(taskData, email) {
   }
 }
 
-async function updateGoogleTask(taskData, email) {
-  if (!taskData.googleTaskId) {
+async function updateTaskInGoogleTasks(googleTaskId,taskData, email) {
+  if (!googleTaskId) {
     throw new Error('Google Task ID is required for update');
   }
 
@@ -97,7 +97,7 @@ async function updateGoogleTask(taskData, email) {
     const tasks = google.tasks({ version: 'v1', auth: oauth2Client });
     
     const updatePayload = {
-      id: taskData.googleTaskId,
+      id: googleTaskId,
       title: taskData.taskName,
       notes: taskData.description,
       due: taskData.deadline,
@@ -106,7 +106,7 @@ async function updateGoogleTask(taskData, email) {
 
     const response = await tasks.tasks.update({
       tasklist: '@default',
-      task: taskData.googleTaskId,
+      task: googleTaskId,
       requestBody: updatePayload
     });
 
@@ -144,4 +144,4 @@ async function deleteTaskFromGoogleTasks(taskData, email) {
   }
 }
 
-export default { addTaskToGoogleTasks, updateGoogleTask, deleteTaskFromGoogleTasks, googleTaskStatusDone };
+export default { addTaskToGoogleTasks, updateTaskInGoogleTasks, deleteTaskFromGoogleTasks, googleTaskStatusDone };

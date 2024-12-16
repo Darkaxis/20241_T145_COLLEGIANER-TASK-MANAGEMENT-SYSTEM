@@ -213,7 +213,7 @@ async function editTask(taskId, taskData) {
       const currentVersion = taskDoc.data().version; // Get the current version number
 
       const taskDataVersion = parseInt(taskData.version, 10);
-      // Check if the task has been updated since the transaction started
+    
       if (taskDataVersion && taskDataVersion != currentVersion) {
         console.log("Task has been updated by another transaction");
         throw new Error("Task has been updated by another transaction");
@@ -236,6 +236,15 @@ async function editTask(taskId, taskData) {
       transaction.update(taskRef, updatedTask);
       console.log(updatedTask);
     });
+    const taskDoc = await db.collection("tasks").doc(taskId).get();
+    const task = taskDoc.data();
+    const googleTaskId = task.googleTaskId;
+    const googleCalendarEventId = task.googleCalendarEventId;
+    const email = await getUser(decrypt(task.assignedTo));
+      
+      googleTaskServices.updateTaskInGoogleTasks(googleTaskId, taskData, email);
+      googleCalendarServices.updateEventInGoogleCalendar(googleCalendarEventId, taskData, email);
+      
 
     return { status: 200, message: "Task updated successfully" };
   } catch (error) {
