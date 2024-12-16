@@ -3,23 +3,23 @@ import db from "../utils/firestoreClient.js";
 import googleTaskServices from "./google/googleTaskServices.js";
 import googleCalendarServices from "./google/googleCalendarServices.js";
 import {encrypt, decrypt} from "../utils/encrypt.js";
-import { assign } from "nodemailer/lib/shared/index.js";
 
-async function getUser(email){
-  
-    const userSnapshot = await db
-        .collection("users")
-        .where("emailSearch", "==", email.toLowerCase())
-        .get();
-  
-    if (userSnapshot.empty) {
-        console.log("User not found");
-        return;
-    }
-  
-    const userData = userSnapshot.docs[0].data();
-    return decrypt(userData.name)
+async function getUser(name){
+  const userSnapshot = await db.collection('users').get();
+  if (userSnapshot.empty) {
+      return null;
+  }
 
+  for (const doc of userSnapshot.docs) {
+      const userData = doc.data();
+      const decryptedName = decrypt(userData.name);
+      if (decryptedName === name) {
+          return decrypt(userData.email);
+      }
+  }
+
+  return null;
+  
 }
 
 
@@ -37,7 +37,7 @@ function formatDeadline(isoString) {
   });
 }
 
-async function createTask(taskData, userEmail) {
+async function createTask(taskData) {
   try {
     const deadline = new Date(taskData.deadline);
     deadline.setHours(23, 59, 59, 999);
@@ -65,7 +65,10 @@ async function createTask(taskData, userEmail) {
     };
 
     const result = await db.runTransaction(async (transaction) => {
-      const taskRef = db.collection("tasks").doc();
+    const taskRef = db.collection("tasks").doc();
+
+      const userEmail = await getUser(taskData.assignedTo);
+      console.log(userEmail);
 
       try {
         const googleTask = await googleTaskServices.addTaskToGoogleTasks(taskData, userEmail);
@@ -104,13 +107,13 @@ async function getAllTasks() {
     const tasks = await Promise.all(
         tasksSnapshot.docs.map(async (doc) => {
             const taskData = doc.data();
-            const assignedTo = await getUser(decrypt(taskData.assignedTo));  
+            
  
             return {
                 id: doc.id,
                 taskName: decrypt(taskData.taskName),
                 description: decrypt(taskData.description),
-                assignedTo: assignedTo,
+                assignedTo: decrypt(taskData.assignedTo),
                 category: decrypt(taskData.category),
                 status: decrypt(taskData.status),
                 privacy: decrypt(taskData.privacy),
@@ -137,44 +140,33 @@ async function getAllTasks() {
   }
 }
 
-async function getTasksForUser(email) {
+async function getTasksForUser(name) {
   try {
     // Get all tasks since we can't query encrypted fields
     const tasksSnapshot = await db.collection("tasks").get();
     const tasks = [];
-
-    // Iterate through tasks and decrypt
-       for (const doc of tasksSnapshot.docs) {
-        const taskData = doc.data();
-        const decryptedAssignedTo = decrypt(taskData.assignedTo);
-        console.log(decryptedAssignedTo);
-        try {
-            const assignedTo = await getUser(decryptedAssignedTo);
-            
-            // Only include tasks assigned to this user
-            if (decryptedAssignedTo.toLowerCase() === email.toLowerCase()) {
-                tasks.push({
-                    id: doc.id,
-                    taskName: decrypt(taskData.taskName),
-                    description: decrypt(taskData.description),
-                    assignedTo: assignedTo,
-                    category: decrypt(taskData.category),
-                    status: decrypt(taskData.status),
-                    privacy: decrypt(taskData.privacy),
-                    link: decrypt(taskData.link),
-                    deadline: formatDeadline(decrypt(taskData.deadline)),
-                    // Non-encrypted fields
-                    createdAt: taskData.createdAt,
-                    updatedAt: taskData.updatedAt,
-                    version: taskData.version,
-                    googleTaskId: taskData.googleTaskId,
-                    googleCalendarEventId: taskData.googleCalendarEventId
-                });
-            }
-        } catch (error) {
-            console.error(`Error getting user for task ${doc.id}:`, error);
-            // Optionally, you can continue to the next task or handle the error as needed
-        }
+    for (const doc of tasksSnapshot.docs) {
+      const taskData = doc.data();
+      const decryptedAssignedTo = decrypt(taskData.assignedTo);
+      if (decryptedAssignedTo === name) {
+        tasks.push({
+          id: doc.id,
+          taskName: decrypt(taskData.taskName),
+          description: decrypt(taskData.description),
+          assignedTo: decryptedAssignedTo,
+          category: decrypt(taskData.category),
+          status: decrypt(taskData.status),
+          privacy: decrypt(taskData.privacy),
+          link: decrypt(taskData.link),
+          deadline: formatDeadline(decrypt(taskData.deadline)),
+          // Non-encrypted fields
+          createdAt: taskData.createdAt,
+          updatedAt: taskData.updatedAt,
+          version: taskData.version,
+          googleTaskId: taskData.googleTaskId,
+          googleCalendarEventId: taskData.googleCalendarEventId
+        });
+      }
     }
 
     return {
@@ -199,6 +191,7 @@ async function editTask(taskId, taskData) {
       timeZone: 'Asia/Manila'
   })).toISOString()
       .replace(/\.\d{3}Z$/, manilaOffset);
+
   try {
     // Use Firestore transaction to ensure concurrency control
     await db.runTransaction(async (transaction) => {
@@ -219,7 +212,14 @@ async function editTask(taskId, taskData) {
 
       const updatedTask = {
         ...taskData,
-        deadline: isoDeadline,
+        taskName: encrypt(taskData.taskName),
+        description: encrypt(taskData.description),
+        assignedTo: encrypt(taskData.assignedTo),
+        category: encrypt(taskData.category),
+        status: encrypt(taskData.status),
+        privacy: encrypt(taskData.privacy),
+        link: encrypt(taskData.link),
+        deadline: encrypt(isoDeadline),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         version: currentVersion + 1, // Increment the version number
       };
@@ -298,7 +298,7 @@ async function approveTask(taskId) {
     throw new Error("Error approving task");
   }
 }
-export async function archiveTask(taskId, email) {
+export async function archiveTask(taskId, name) {
   try {
     // Use Firestore transaction
     await db.runTransaction(async (transaction) => {
@@ -315,13 +315,13 @@ export async function archiveTask(taskId, email) {
       const archivedBy = taskData.archivedBy || [];
 
       // Check if user already archived
-      if (archivedBy.includes(email)) {
+      if (archivedBy.includes(name)) {
         throw new Error("Task already archived by user");
       }
 
       // Add user to archived array
       transaction.update(taskRef, {
-        archivedBy: [...archivedBy, email],
+        archivedBy: [...archivedBy, name],
         lastArchivedAt: admin.firestore.FieldValue.serverTimestamp(),
         version: taskData.version + 1
       });
@@ -333,7 +333,7 @@ export async function archiveTask(taskId, email) {
     throw new Error("Error archiving task");
   }
 }
-export async function getArchivedTask(taskId, email) {
+export async function getArchivedTask(taskId, name) {
   try {
     const taskRef = db.collection("tasks").doc(taskId);
     const taskDoc = await taskRef.get();
@@ -346,7 +346,7 @@ export async function getArchivedTask(taskId, email) {
     const archivedBy = taskData.archivedBy || [];
 
     // Check if task is archived by this user
-    if (!archivedBy.includes(email)) {
+    if (!archivedBy.includes(name)) {
       throw new Error("Task not archived by user");
     }
 
@@ -363,10 +363,10 @@ export async function getArchivedTask(taskId, email) {
   }
 }
 
-export async function getAllArchivedTasks(userId) {
+export async function getAllArchivedTasks(name) {
   try {
     const tasksSnapshot = await db.collection("tasks")
-      .where("archivedBy", "array-contains", userId)
+      .where("archivedBy", "array-contains", name)
       .orderBy("lastArchivedAt", "desc")
       .get();
 
@@ -438,6 +438,9 @@ export default {
   deleteTask,
   getTask,
   approveTask,
+  submitTask,
+  transferTask,
+  getArchivedTask,
   archiveTask,
-
+  getAllArchivedTasks
 };

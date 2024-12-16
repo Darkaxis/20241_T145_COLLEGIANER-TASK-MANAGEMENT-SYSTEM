@@ -95,7 +95,6 @@ eicRoutes.post('/add', async (req, res) => {
 
 
 
-
 eicRoutes.get('/users', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
@@ -173,6 +172,25 @@ eicRoutes.get('/logs', async (req, res) => {
     });
 });
 
+eicRoutes.get('/editors', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(403).json({
+            message: 'No token provided'
+        });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'Editor in Charge') {
+        return res.status(403).json({
+            message: 'Unauthorized'
+        });
+    }
+    const editors = await eicServices.getEditors();
+    res.status(200).json({
+        message: 'Editors retrieved successfully',
+        data: editors
+    });
+});
 
 
 

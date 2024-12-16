@@ -1,65 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Dummy data for completed tasks
-    const dummyCompletedTasks = [{
-            id: 1,
-            name: 'Website Redesign',
-            assignedBy: 'Reynante Baldivino',
-            assignedTo: 'Margaret Zoe Neri',
-            deadline: '2024-03-15',
-            description: 'Complete overhaul of the company website with modern design principles',
-            category: 'Design',
-            privacy: 'Team',
-            link: 'https://github.com/website-redesign'
-        },
-        {
-            id: 2,
-            name: 'Database Migration',
-            assignedBy: 'Margaret Zoe Neri',
-            assignedTo: 'Yed Francois Cagang',
-            deadline: '2024-03-10',
-            description: 'Migration of legacy database to new cloud infrastructure',
-            category: 'Backend',
-            privacy: 'Private',
-            link: 'https://gitlab.com/database-migration'
-        },
-        {
-            id: 3,
-            name: 'User Authentication System',
-            assignedBy: 'Yed Francois Cagang',
-            assignedTo: 'Aubie Bryne Hallazgo',
-            deadline: '2024-03-08',
-            description: 'Implement secure user authentication and authorization system',
-            category: 'Security',
-            privacy: 'Private',
-            link: 'https://github.com/auth-system'
-        },
-        {
-            id: 4,
-            name: 'Mobile App UI Design',
-            assignedBy: 'Aubie Bryne Hallazgo',
-            assignedTo: 'Margaret Zoe Neri',
-            deadline: '2024-03-12',
-            description: 'Design user interface for mobile application',
-            category: 'Design',
-            privacy: 'Team',
-            link: 'https://figma.com/mobile-ui'
-        },
-        {
-            id: 5,
-            name: 'API Documentation',
-            assignedBy: 'Reynante Baldivino',
-            assignedTo: 'Yed Francois Cagang',
-            deadline: '2024-03-14',
-            description: 'Create comprehensive API documentation for developers',
-            category: 'Documentation',
-            privacy: 'Public',
-            link: 'https://docs.api-documentation.com'
+document.addEventListener('DOMContentLoaded', async function() {
+    const response = await fetch('https://localhost:3000/api/v1/eic/archives', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
         }
-    ];
+    });
 
-    // Initialize localStorage with dummy data if empty OR if there are no tasks
+    const data = await response.json();
+
+    // Initialize localStorage with data if empty OR if there are no tasks
     if (!localStorage.getItem('completedTasks') || JSON.parse(localStorage.getItem('completedTasks')).length === 0) {
-        localStorage.setItem('completedTasks', JSON.stringify(dummyCompletedTasks));
+        localStorage.setItem('completedTasks', JSON.stringify(data.data));
     }
 
     // Get completed tasks from localStorage
