@@ -238,7 +238,7 @@ function disableEditMode() {
     const privacyDropdown = document.getElementById('taskPrivacy');
     privacyDropdown.disabled = true;
 
-    
+
 
     // Show Edit button, hide Save button
     document.getElementById('editTaskButton').style.display = 'inline-block';

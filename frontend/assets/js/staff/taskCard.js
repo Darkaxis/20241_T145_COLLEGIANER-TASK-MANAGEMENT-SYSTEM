@@ -124,7 +124,7 @@ function addTaskCardEventListeners(taskCard) {
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
-    
+
 
         // Setup edit button click handler
         const editButton = document.getElementById('editTaskButton');
@@ -452,8 +452,8 @@ async function saveTaskEdits(taskCard) {
 
     try {
         const taskId = taskCard.dataset.taskId;
-       
-      
+
+
         /* Comment out hideFrom handling
         if (updatedData.privacy === 'Private Except') {
             updatedData.hideFrom = document.getElementById('hideFromUsers').value;
@@ -622,3 +622,12 @@ function validateTaskDate(dateInput) {
     }
     return true;
 }
+
+// Disable edit button functionality
+document.querySelectorAll('.edit-task-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Optionally, display a message or redirect the user
+        alert("Editing is disabled.");
+    });
+});
