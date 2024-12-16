@@ -58,6 +58,7 @@ async function createTask(taskData) {
       privacy: encrypt(taskData.privacy),
       link: encrypt(taskData.link || ''),
       deadline: encrypt(isoDeadline),
+      archived: false,
       // Non-encrypted metadata
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -101,38 +102,44 @@ async function createTask(taskData) {
 async function getAllTasks() {
   try {
     const tasksSnapshot = await db.collection("tasks").get();
-    
-  
-        // Map over tasks and wait for all promises to resolve
+
+    // Map over tasks and wait for all promises to resolve
     const tasks = await Promise.all(
-        tasksSnapshot.docs.map(async (doc) => {
-            const taskData = doc.data();
-            
- 
-            return {
-                id: doc.id,
-                taskName: decrypt(taskData.taskName),
-                description: decrypt(taskData.description),
-                assignedTo: decrypt(taskData.assignedTo),
-                category: decrypt(taskData.category),
-                status: decrypt(taskData.status),
-                privacy: decrypt(taskData.privacy),
-                link: decrypt(taskData.link),
-                deadline: formatDeadline(decrypt(taskData.deadline)),
-                // Non-encrypted fields
-                createdAt: taskData.createdAt,
-                updatedAt: taskData.updatedAt,
-                version: taskData.version,
-                googleTaskId: taskData.googleTaskId,
-                googleCalendarEventId: taskData.googleCalendarEventId
-            };
-        })
+      tasksSnapshot.docs.map(async (doc) => {
+        const taskData = doc.data();
+
+        // Exclude archived tasks
+        if (taskData.archived) {
+          return null;
+        }
+
+        return {
+          id: doc.id,
+          taskName: decrypt(taskData.taskName),
+          description: decrypt(taskData.description),
+          assignedTo: decrypt(taskData.assignedTo),
+          category: decrypt(taskData.category),
+          status: decrypt(taskData.status),
+          privacy: decrypt(taskData.privacy),
+          link: decrypt(taskData.link),
+          deadline: formatDeadline(decrypt(taskData.deadline)),
+          // Non-encrypted fields
+          createdAt: taskData.createdAt,
+          updatedAt: taskData.updatedAt,
+          version: taskData.version,
+          googleTaskId: taskData.googleTaskId,
+          googleCalendarEventId: taskData.googleCalendarEventId
+        };
+      })
     );
-    
-    return { 
-      status: 200, 
-      message: "Tasks retrieved successfully", 
-      tasks 
+
+    // Filter out null values (archived tasks)
+    const filteredTasks = tasks.filter(task => task !== null);
+
+    return {
+      status: 200,
+      message: "Tasks retrieved successfully",
+      tasks: filteredTasks
     };
   } catch (error) {
     console.error("Error getting tasks:", error);
@@ -140,6 +147,7 @@ async function getAllTasks() {
   }
 }
 
+export { getAllTasks };
 async function getTasksForUser(name) {
   try {
     // Get all tasks since we can't query encrypted fields
@@ -148,7 +156,7 @@ async function getTasksForUser(name) {
     for (const doc of tasksSnapshot.docs) {
       const taskData = doc.data();
       const decryptedAssignedTo = decrypt(taskData.assignedTo);
-      if (decryptedAssignedTo === name) {
+      if (decryptedAssignedTo === name && !taskData.archived) {
         tasks.push({
           id: doc.id,
           taskName: decrypt(taskData.taskName),
@@ -160,6 +168,7 @@ async function getTasksForUser(name) {
           link: decrypt(taskData.link),
           deadline: formatDeadline(decrypt(taskData.deadline)),
           // Non-encrypted fields
+          
           createdAt: taskData.createdAt,
           updatedAt: taskData.updatedAt,
           version: taskData.version,
@@ -180,6 +189,7 @@ async function getTasksForUser(name) {
     throw new Error("Error getting tasks");
   }
 }
+
 // Function to edit a task
 async function editTask(taskId, taskData) {
   const deadline = new Date(taskData.deadline);

@@ -35,13 +35,13 @@ eicRoutes.post('/add', async (req, res) => {
 
         // Check if user already exists
     try {
-        // const user = await eicServices.getUserByEmail(email);
-        // if (user) {
-        //     return res.status(409).json({
-        //         success: false,
-        //         message: "User already exists. Operation cancelled."
-        //     });
-        // }
+        const user = await eicServices.getUserByEmail(email);
+        if (user) {
+            return res.status(409).json({
+                success: false,
+                message: "User already exists. Operation cancelled."
+            });
+        }
     
         console.log(`Adding ${role} with email ${email} and role ${role}`);
         const state = `user-${uuidv4()}`; // Generate a unique state with type
