@@ -2,7 +2,7 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
     try {
-        const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+        const response = await fetch('https://localhost:3000/api/v1/staff/tasks/get/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         console.error('Error fetching tasks:', error);
     }
     try {
-        let usersResponse = await fetch('https://localhost:3000/api/v1/eic/users', {
+        let usersResponse = await fetch('https://localhost:3000/api/v1/staff/users', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const myTask = document.getElementById('myTask');
     myTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/user', {
+            const response = await fetch('https://localhost:3000/api/v1/staff/tasks/get/user', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
             });
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const allTask = document.getElementById('allTask');
     allTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+            const response = await fetch('https://localhost:3000/api/v1/staff/tasks/get/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
             });

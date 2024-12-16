@@ -9,40 +9,6 @@ import { encrypt, decrypt } from '../utils/encrypt.js';
 
 dotenv.config();
 
-// Function to get user profile information from Google People API
-export async function getUserProfile(accessToken) {
-  try {
-    oauth2Client.setCredentials(accessToken);
-    const people = google.people({ version: "v1", auth: oauth2Client });
-    const response = await people.people.get({
-      resourceName: "people/me",
-      personFields: "names,emailAddresses,photos",
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      // Handle token expiration and refresh token logic here
-      console.error("Access token expired. Refreshing token...");
-      try {
-        const newTokens = await oauth2Client.refreshAccessToken();
-        oauth2Client.setCredentials(newTokens.credentials);
-        const people = google.people({ version: "v1", auth: oauth2Client });
-        const response = await people.people.get({
-          resourceName: "people/me",
-          personFields: "names,emailAddresses,photos",
-        });
-        return response.data;
-      } catch (refreshError) {
-        console.error("Error refreshing access token:", refreshError);
-        throw new Error("Error refreshing access token");
-      }
-    } else {
-      console.error("Error fetching user profile:", error);
-      throw new Error("Error fetching user profile from Google People API");
-    }
-  }
-}
-
 // Function to get user by email
 export async function getUserByEmail(email) {
   try {
@@ -63,7 +29,7 @@ export async function getUserByEmail(email) {
         email: decrypt(userData.email),
         profile: decrypt(userData.profile),
         role: decrypt(userData.role),
-        disabled: userData.disabled || false,
+    
     };
   } catch (error) {
     console.error("Error getting user by email:", error);
@@ -99,7 +65,7 @@ export async function getAllUsers() {
           refreshToken: userData.refreshToken,
           token: userData.token,
           createdAt: userData.createdAt,
-          disabled: userData.disabled || false,
+      
           version: userData.version
         };
       });
@@ -126,7 +92,7 @@ export async function updateUser(email, role, disabled) {
   const userDoc = userSnapshot.docs[0];
   const userData = userDoc.data();
   userData.role = encrypt(role);
-  userData.disabled = disabled;
+  
 
   await userDoc.ref.update(userData);
   return true;
@@ -193,7 +159,7 @@ export async function getEditors() {
                     name: decrypt(userData.name),
                     profile: decrypt(userData.profile),
                     role: decrypt(userData.role),
-                    disabled: userData.disabled || false,
+                
                 };
             })
             .filter((user) => {
@@ -209,7 +175,6 @@ export async function getEditors() {
 
 export default {
 
-  getUserProfile,
   getUserByEmail,
 getAllUsers,
 updateUser,
