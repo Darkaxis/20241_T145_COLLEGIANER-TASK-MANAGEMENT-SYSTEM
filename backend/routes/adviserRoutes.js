@@ -24,7 +24,7 @@ adviserRoutes.get('/users', async (req, res) => {
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'Staff') {
+        if (decoded.role !== 'Adviser') {
             return res.status(403).json({
                 message: 'Unauthorized'
             });
