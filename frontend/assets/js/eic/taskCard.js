@@ -2,7 +2,7 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
     try {
-        const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+        const response = await fetch('https://localhost:3000/api/v1/eic/tasks/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const allTask = document.getElementById('allTask');
     allTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/all', {
+            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
                 

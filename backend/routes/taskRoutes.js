@@ -35,7 +35,7 @@ taskRoutes.post('/create', async (req, res) => {
 
 
 
-taskRoutes.get('/get/all', async (req, res) => {
+taskRoutes.get('/all', async (req, res) => {
     const token = req.cookies.token;
     if(!token) {
         return res.status(401).json({ message: 'No token provided' });

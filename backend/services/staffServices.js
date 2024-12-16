@@ -32,15 +32,6 @@ export async function getAllUsers() {
             id: doc.id,
             email: decrypt(userData.email),
             name: decrypt(userData.name),
-            role: decrypt(userData.role),
-            profile: decrypt(userData.profile),
-            // Non-encrypted fields
-            emailSearch: userData.emailSearch,
-            refreshToken: userData.refreshToken,
-            token: userData.token,
-            createdAt: userData.createdAt,
-        
-            version: userData.version
           };
         });
       });
