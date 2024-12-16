@@ -7,6 +7,7 @@ import editorialRoutes from './routes/editorialRoutes.js'; // Import the editori
 import staffRoutes from './routes/staffRoutes.js'; // Import the staff routes
 import oauthRoutes from './routes/oauthRoutes.js'; // Import the OAuth2 routes
 import loginRoutes from './routes/loginRoutes.js';
+import adviserRoutes from './routes/adviserRoutes.js';
 import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
@@ -47,6 +48,7 @@ app.use(passport.session());
 // Use the admin routes
 app.use('/api/v1/eic', eicRoutes);
 app.use('/api/v1/eb', editorialRoutes);
+app.use('/api/v1/adviser', adviserRoutes);
 app.use('/api/v1/staff', staffRoutes);
 app.use('/api/v1/login', loginRoutes);
 

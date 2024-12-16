@@ -1,38 +1,53 @@
 
-import dotenv from 'dotenv';
-import { google } from 'googleapis';
-import oauth2Client from '../utils/passport.js'; // Ensure shared OAuth client is imported
-import db from '../utils/firestoreClient.js'; // Ensure shared Firestore client is imported
+import admin from "firebase-admin";
+import dotenv from "dotenv";
+import { google } from "googleapis";
+import db from "../utils/firestoreClient.js"; // Ensure shared Firestore client is imported
+import { encrypt, decrypt } from '../utils/encrypt.js';
+
 
 dotenv.config();
 
 
 
-
-// Function to get user by email
-export async function getUserByEmail(email) {
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
-    if (userSnapshot.empty) {
-        return null;
+// Function to get all users
+export async function getAllUsers() {
+    try {
+      const users = await db.runTransaction(async (transaction) => {
+        const usersSnapshot = await transaction.get(db.collection("users"));
+        if (usersSnapshot.empty) {
+          return [];
+        }
+  
+        return usersSnapshot.docs.map((doc) => {
+          const userData = doc.data();
+          
+          // Remove sensitive data
+          delete userData.password;
+          
+          // Decrypt fields
+          return {
+            id: doc.id,
+            email: decrypt(userData.email),
+            name: decrypt(userData.name),
+            role: decrypt(userData.role),
+            profile: decrypt(userData.profile),
+            // Non-encrypted fields
+            emailSearch: userData.emailSearch,
+            refreshToken: userData.refreshToken,
+            token: userData.token,
+            createdAt: userData.createdAt,
+        
+            version: userData.version
+          };
+        });
+      });
+  
+      return users;
+    } catch (error) {
+      console.error("Error getting users:", error);
+      throw new Error("Error getting users");
     }
-    return userSnapshot.docs[0].data();
-}
+  }
 
-
-
-// Function to get details of an admin user
-export async function getEditorDetails(editorId) {
-    const userDoc = await db.collection('users').doc(editorId).get();
-    if (!userDoc.exists) {
-        throw new Error('User not found');
-    }
-    return userDoc.data();
-}
-
-
-
-
-export default {
-    getEditorDetails,
-    getUserByEmail,
-};
+  export default { getAllUsers };   
