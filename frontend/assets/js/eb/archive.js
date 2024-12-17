@@ -1,69 +1,18 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Dummy data for completed tasks
-    const dummyCompletedTasks = [{
-            id: 1,
-            name: 'Website Redesign',
-            assignedBy: 'Reynante Baldivino',
-            assignedTo: 'Margaret Zoe Neri',
-            deadline: '2024-03-15',
-            description: 'Complete overhaul of the company website with modern design principles',
-            category: 'Design',
-            privacy: 'Team',
-            link: 'https://github.com/website-redesign'
+document.addEventListener('DOMContentLoaded', async function() {
+    const response = await fetch('https://localhost:3000/api/v1/eb/tasks/archives', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+            
         },
-        {
-            id: 2,
-            name: 'Database Migration',
-            assignedBy: 'Margaret Zoe Neri',
-            assignedTo: 'Yed Francois Cagang',
-            deadline: '2024-03-10',
-            description: 'Migration of legacy database to new cloud infrastructure',
-            category: 'Backend',
-            privacy: 'Private',
-            link: 'https://gitlab.com/database-migration'
-        },
-        {
-            id: 3,
-            name: 'User Authentication System',
-            assignedBy: 'Yed Francois Cagang',
-            assignedTo: 'Aubie Bryne Hallazgo',
-            deadline: '2024-03-08',
-            description: 'Implement secure user authentication and authorization system',
-            category: 'Security',
-            privacy: 'Private',
-            link: 'https://github.com/auth-system'
-        },
-        {
-            id: 4,
-            name: 'Mobile App UI Design',
-            assignedBy: 'Aubie Bryne Hallazgo',
-            assignedTo: 'Margaret Zoe Neri',
-            deadline: '2024-03-12',
-            description: 'Design user interface for mobile application',
-            category: 'Design',
-            privacy: 'Team',
-            link: 'https://figma.com/mobile-ui'
-        },
-        {
-            id: 5,
-            name: 'API Documentation',
-            assignedBy: 'Reynante Baldivino',
-            assignedTo: 'Yed Francois Cagang',
-            deadline: '2024-03-14',
-            description: 'Create comprehensive API documentation for developers',
-            category: 'Documentation',
-            privacy: 'Public',
-            link: 'https://docs.api-documentation.com'
-        }
-    ];
+        credentials: 'include'
+        
+    });
 
-    // Initialize localStorage with dummy data if empty OR if there are no tasks
-    if (!localStorage.getItem('completedTasks') || JSON.parse(localStorage.getItem('completedTasks')).length === 0) {
-        localStorage.setItem('completedTasks', JSON.stringify(dummyCompletedTasks));
-    }
-
-    // Get completed tasks from localStorage
-    const completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || [];
+    const data = await response.json();
+    const completedTasks = data.tasks;
+    console.log(completedTasks);
+   
 
     function displayCompletedTasks() {
         const tableBody = document.querySelector('.table-body');
@@ -78,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const archiveItem = document.createElement('div');
             archiveItem.className = 'archive-item';
             archiveItem.innerHTML = `
-                <div class="col-task task-name-clickable">${task.name}</div>
+                <div class="col-task task-name-clickable">${task.taskName}</div>
                 <div class="col-assigned">${task.assignedBy}</div>
                 <div class="col-actions">
                     <button class="action-btn restore">
@@ -104,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function restoreItem(task, element) {
+    async function restoreItem(task, element) {
         const modal = document.createElement('div');
         modal.className = 'custom-modal';
         modal.innerHTML = `
@@ -113,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-undo"></i>
                 </div>
                 <h3>Restore Task</h3>
-                <p>Are you sure you want to restore "${task.name}"?</p>
+                <p>Are you sure you want to restore "${task.taskName}"?</p>
                 <div class="modal-buttons">
                     <button class="cancel-btn">Cancel</button>
                     <button class="confirm-btn">Restore</button>
@@ -126,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.remove();
         };
 
-        modal.querySelector('.confirm-btn').onclick = () => {
+        modal.querySelector('.confirm-btn').onclick = async () => {
             element.classList.add('fade-out');
             const index = completedTasks.findIndex(t => t.id === task.id);
             if (index > -1) {
@@ -134,16 +83,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
             }
 
-            setTimeout(() => {
-                element.remove();
-                checkEmptyState();
-                showNotification('Task restored successfully');
-                modal.remove();
-            }, 300);
+            const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/unarchive/${task.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                setTimeout(() => {
+                    element.remove();
+                    checkEmptyState();
+                    showNotification('Task restored successfully');
+                    modal.remove();
+                }, 300);
+            }
+            
         };
     }
 
-    function deleteItem(task, element) {
+    async function deleteItem(task, element) {
         const modal = document.createElement('div');
         modal.className = 'custom-modal';
         modal.innerHTML = `
@@ -152,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-trash"></i>
                 </div>
                 <h3>Delete Task</h3>
-                <p>Are you sure you want to permanently delete "${task.name}"?</p>
+                <p>Are you sure you want to permanently delete "${task.taskName}"?</p>
                 <div class="modal-buttons">
                     <button class="cancel-btn">Cancel</button>
                     <button class="confirm-btn delete">Delete</button>
@@ -165,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.remove();
         };
 
-        modal.querySelector('.confirm-btn').onclick = () => {
+        modal.querySelector('.confirm-btn').onclick = async () => {
             element.classList.add('fade-out');
             const index = completedTasks.findIndex(t => t.id === task.id);
             if (index > -1) {
@@ -173,13 +133,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
             }
 
+            const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/delete/${task.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+
+            if (response.ok) {
             setTimeout(() => {
                 element.remove();
                 checkEmptyState();
                 showNotification('Task deleted successfully');
                 modal.remove();
             }, 300);
-        };
+        }}
     }
 
     function checkEmptyState() {
@@ -214,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('taskDetailModal');
 
         // Update modal content
-        document.getElementById('taskDetailTitle').textContent = task.name;
+        document.getElementById('taskDetailTitle').textContent = task.taskName;
         document.getElementById('taskDetailAssignedBy').textContent = task.assignedBy;
         document.getElementById('taskDetailAssignedTo').textContent = task.assignedTo || 'Not specified';
         document.getElementById('taskDetailDeadline').textContent = task.deadline || 'No deadline set';
