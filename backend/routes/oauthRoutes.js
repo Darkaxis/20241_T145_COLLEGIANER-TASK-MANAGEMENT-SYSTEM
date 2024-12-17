@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 import googleMailServices from '../services/google/googleMailServices.js';
 import  passport  from '../utils/passport.js';
 
-import { fileURLToPath } from 'url';
 import loginServices from '../services/loginServices.js';
 
 dotenv.config();

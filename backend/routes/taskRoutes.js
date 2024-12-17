@@ -107,6 +107,8 @@ taskRoutes.delete('/delete/:id', async (req, res) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
+
+    
     if (decoded.role !== 'Editor in Charge' && decoded.role !== 'Editorial Board') {
         return res.status(403).json({ message: 'Unauthorized' });
     }
