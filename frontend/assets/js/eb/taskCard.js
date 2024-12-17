@@ -2,7 +2,7 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
     try {
-        const response = await fetch('https://localhost:3000/api/v1/eic/tasks/all', {
+        const response = await fetch('https://localhost:3000/api/v1/eb/tasks/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async() => {
         console.error('Error fetching tasks:', error);
     }
     try {
-        let usersResponse = await fetch('https://localhost:3000/api/v1/eic/users', {
+        let usersResponse = await fetch('https://localhost:3000/api/v1/eb/users', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
         });
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const myTask = document.getElementById('myTask');
     myTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/get/user', {
+            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/get/user', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
             });
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     const allTask = document.getElementById('allTask');
     allTask.addEventListener('click', async() => {
         try {
-            const response = await fetch('https://localhost:3000/api/v1/eic/tasks/all', {
+            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/all', {
                 method: 'GET',
                 credentials: 'include' // Include cookies in the request
             });
@@ -271,7 +271,7 @@ function updateTaskCard(taskCard) {
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/eic/tasks/delete/${taskCard.dataset.taskId}`, {
+            fetch(`https://localhost:3000/api/v1/eb/tasks/delete/${taskCard.dataset.taskId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
@@ -291,6 +291,12 @@ function updateTaskCard(taskCard) {
 function archiveTask(taskCard) {
     // Add your archive functionality here
     console.log('Archiving task:', taskCard.id);
+    const response = fetch(`https://localhost:3000/api/v1/eb/tasks/archive/${taskCard.dataset.taskId}`, {
+        method: 'PATCH',
+        credentials: 'include'
+    });
+
+
     // For example:
     taskCard.remove();
     // You might want to store it in an archive list or send to backend
@@ -470,7 +476,7 @@ async function saveTaskEdits(taskCard) {
     try {
         // send to backend
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

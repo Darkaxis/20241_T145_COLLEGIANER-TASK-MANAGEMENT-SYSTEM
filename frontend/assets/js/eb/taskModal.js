@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     //fetch all user names
-    const response = await fetch('https://localhost:3000/api/v1/eic/users', {
+    const response = await fetch('https://localhost:3000/api/v1/eb/users', {
         method: 'GET',
         credentials: 'include'
     })
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             if (validateFormData(formData)) {
                 //send to server
-                const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
+                const response = await fetch('https://localhost:3000/api/v1/eb/tasks/create', {
                     method: 'POST',
                     include: 'credentials',
                     headers: {
@@ -367,7 +367,7 @@ async function saveTaskEdits(taskCard) {
     try {
         // Send to backend
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
+        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
