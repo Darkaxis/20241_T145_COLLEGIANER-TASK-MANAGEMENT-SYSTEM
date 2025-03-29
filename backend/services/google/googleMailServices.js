@@ -14,6 +14,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN })
 
 async function sendOAuthLink(email, link) {
     if (!email || !email.endsWith('buksu.edu.ph')) {
+        console.log('Invalid email');
         return 400;
     }
 

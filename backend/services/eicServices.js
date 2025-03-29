@@ -171,6 +171,9 @@ export async function getEditors() {
     }
 }
 
+//reset all password to qwerty123
+
+
 
 export default {
 

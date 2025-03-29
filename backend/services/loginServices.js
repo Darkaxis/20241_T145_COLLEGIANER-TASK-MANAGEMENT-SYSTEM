@@ -107,5 +107,7 @@ export async function resetPassword(email, password) {
         password: hashedPassword
     });
 }
+// ...existing code...
+
 
 export default {getUser, authenticateUser, registerUser, resetPassword};

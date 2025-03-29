@@ -122,4 +122,5 @@ loginRoutes.put('/reset-password', async(req, res) => {
     }
 });
 
+
 export default loginRoutes;

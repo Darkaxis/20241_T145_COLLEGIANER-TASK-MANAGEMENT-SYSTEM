@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
             showProfile();
         });
     }
-
+        // ...existing code...
+    
     // Close button click handler
     const closeProfileBtn = document.getElementById('closeProfile');
     if (closeProfileBtn) {
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                 credentials: "include", // Include cookies in the request
             }
         );
-
+        checkAuthStatus();
         if (!userResponse.ok) {
             // If the response is not OK, redirect to the login page
             window.location.href = 'https://localhost:4000/';
@@ -110,3 +111,23 @@ document.addEventListener("DOMContentLoaded", async() => {
 
 
 });
+
+function checkAuthStatus() {
+    fetch("https://localhost:3000/api/v1/login/verify-token", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => {
+        if (!response.ok) {
+            window.location.href = 'https://localhost:4000/';
+        }
+    })
+    .catch(error => {
+        console.error("Auth check failed:", error);
+        window.location.href = 'https://localhost:4000/';
+    });
+}
+
+// Check auth status every 5 minutes
+const AUTH_CHECK_INTERVAL = 1000; // 5 minutes in milliseconds
+setInterval(checkAuthStatus, AUTH_CHECK_INTERVAL);
