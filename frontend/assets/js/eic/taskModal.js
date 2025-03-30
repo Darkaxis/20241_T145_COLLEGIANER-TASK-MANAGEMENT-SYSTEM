@@ -60,6 +60,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             };
     
             if (validateFormData(formData)) {
+                saveTaskButton.disabled = true;
+                saveTaskButton.innerHTML = 'Creating...';
+                saveTaskButton.classList.add('disabled');
+                saveTaskButton.classList.remove('btn-primary');
+                saveTaskButton.classList.add('btn-secondary');
                 //send to server
                 const response = await fetch('https://localhost:3000/api/v1/eic/tasks/create', {
                     method: 'POST',
@@ -69,10 +74,20 @@ document.addEventListener('DOMContentLoaded', async function() {
                     },
                     body: JSON.stringify(formData)
                 });
+                
+                saveTaskButton.disabled = false;
+                saveTaskButton.innerHTML = 'Create Task';
+                saveTaskButton.classList.remove('disabled');
+                saveTaskButton.classList.remove('btn-secondary');
+                saveTaskButton.classList.add('btn-primary');
 
+                
                 createTask(formData);
                 closeAndResetModal();
             }
+            else{
+                alert('Please fill in all required fields');
+        }   
         });
     }
 
