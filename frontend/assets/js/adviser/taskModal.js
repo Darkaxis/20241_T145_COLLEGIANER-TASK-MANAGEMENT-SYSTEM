@@ -342,13 +342,88 @@ function showTaskDetails(taskCard) {
     }
 } */
 
-// Update the saveTaskEdits function
-async function saveTaskEdits(taskCard) {
+// Update the validateTaskFields function to correctly identify the assignee field
+function validateTaskFields() {
+    const titleInput = document.getElementById('taskTitle');
+    const descriptionInput = document.getElementById('taskDescription');
     const dateInput = document.getElementById('taskDate');
-    if (!validateTaskDate(dateInput)) {
+    
+    // Try different possible IDs for the assignee field
+    let assigneeSelect = document.getElementById('taskAssignee');
+    if (!assigneeSelect) {
+        assigneeSelect = document.querySelector('select[name="assignee"]');
+    }
+    if (!assigneeSelect) {
+        assigneeSelect = document.querySelector('.assignee-select');
+    }
+    
+    // Try different possible IDs for the privacy field
+    let privacySelect = document.getElementById('taskPrivacy');
+    if (!privacySelect) {
+        privacySelect = document.querySelector('select[name="privacy"]');
+    }
+    
+    console.log('Found assignee element:', assigneeSelect);
+    console.log('Found privacy element:', privacySelect);
+    
+    // Create an array of required fields with their display names
+    const requiredFields = [
+        { field: titleInput, name: 'Title' },
+        { field: descriptionInput, name: 'Description' },
+        { field: dateInput, name: 'Due Date' }
+    ];
+    
+    // Only add assignee to required fields if we found the element
+    if (assigneeSelect) {
+        requiredFields.push({ field: assigneeSelect, name: 'Assignee' });
+    }
+    
+    // Only add privacy to required fields if we found the element
+    if (privacySelect) {
+        requiredFields.push({ field: privacySelect, name: 'Privacy' });
+    }
+    
+    // Debug logging to check field values
+    console.log('Validating fields:');
+    requiredFields.forEach(item => {
+        console.log(`${item.name}: `, item.field ? item.field.value : 'field not found');
+    });
+    
+    // Check each field and collect any that are empty
+    const emptyFields = requiredFields.filter(item => {
+        // Make sure the field exists before checking its value
+        if (!item.field) {
+            console.error(`Field ${item.name} not found in the DOM`);
+            return true; // Consider missing fields as empty
+        }
+        return !item.field.value || item.field.value.trim() === '';
+    });
+    
+    // If there are empty fields, show an error and return false
+    if (emptyFields.length > 0) {
+        const fieldNames = emptyFields.map(item => item.name).join(', ');
+        alert(`Please fill in all required fields: ${fieldNames}`);
         return false;
     }
+    
+    return true;
+}
 
+// Update the saveTaskEdits function to use validation
+async function saveTaskEdits(taskCard) {
+    // First validate all required fields
+    if (!validateTaskFields()) {
+        return false;
+    }
+    
+    const dateInput = document.getElementById('taskDate');
+    const titleInput = document.getElementById('taskTitle');
+    const descriptionInput = document.getElementById('taskDescription');
+    const statusSelect = document.getElementById('taskStatus');
+    const prioritySelect = document.getElementById('taskPriority');
+    const assigneeSelect = document.getElementById('taskAssignee');
+    const privacySelect = document.getElementById('taskPrivacy');
+    
     // Ensure date is properly formatted as ISO string
     const selectedDate = new Date(dateInput.value);
     selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
@@ -357,11 +432,11 @@ async function saveTaskEdits(taskCard) {
     // Get updated values
     const updatedData = {
         id: taskCard.dataset.taskId,
-        taskName: document.getElementById('taskTitle').value,
-        description: document.getElementById('taskDescription').value,
-        status: document.getElementById('taskStatus').value,
-        privacy: document.getElementById('taskPrivacy').value,
-        assignedTo: document.getElementById('taskAssignTo').value,
+        taskName: titleInput.value,
+        description: descriptionInput.value,
+        status: statusSelect.value,
+        privacy: privacySelect.value,
+        assignedTo: assigneeSelect.value,
         deadline: isoDate,
         link: document.getElementById('taskLink').value,
         category: document.getElementById('taskDetailCategory').value

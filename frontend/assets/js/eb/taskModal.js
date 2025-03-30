@@ -337,8 +337,67 @@ function toggleHideFromUsersInModal() {
     }
 }
 
-// Update the saveTaskEdits function
+// Update the validateTaskFields function to correctly identify the assignee field
+function validateTaskFields() {
+    const titleInput = document.getElementById('taskTitle');
+    const descriptionInput = document.getElementById('taskDescription');
+    const dateInput = document.getElementById('taskDate');
+    
+    // Try different possible IDs for the assignee field
+    let assigneeSelect = document.getElementById('taskAssignee');
+    if (!assigneeSelect) {
+        assigneeSelect = document.querySelector('select[name="assignee"]');
+    }
+    if (!assigneeSelect) {
+        assigneeSelect = document.querySelector('.assignee-select');
+    }
+    
+    console.log('Found assignee element:', assigneeSelect);
+    
+    // Create an array of required fields with their display names
+    const requiredFields = [
+        { field: titleInput, name: 'Title' },
+        { field: descriptionInput, name: 'Description' },
+        { field: dateInput, name: 'Due Date' }
+    ];
+    
+    // Only add assignee to required fields if we found the element
+    if (assigneeSelect) {
+        requiredFields.push({ field: assigneeSelect, name: 'Assignee' });
+    }
+    
+    // Debug logging to check field values
+    console.log('Validating fields:');
+    requiredFields.forEach(item => {
+        console.log(`${item.name}: `, item.field ? item.field.value : 'field not found');
+    });
+    
+    // Check each field and collect any that are empty
+    const emptyFields = requiredFields.filter(item => {
+        // Make sure the field exists before checking its value
+        if (!item.field) {
+            console.error(`Field ${item.name} not found in the DOM`);
+            return true; // Consider missing fields as empty
+        }
+        return !item.field.value || item.field.value.trim() === '';
+    });
+    
+    // If there are empty fields, show an error and return false
+    if (emptyFields.length > 0) {
+        const fieldNames = emptyFields.map(item => item.name).join(', ');
+        alert(`Please fill in all required fields: ${fieldNames}`);
+        return false;
+    }
+    
+    return true;
+}
+
+// Update the saveTaskEdits function to be more responsive and complete
 async function saveTaskEdits(taskCard) {
+
+    if (!validateTaskFields()) {
+        return false;
+    }
     const dateInput = document.getElementById('taskDate');
     if (!validateTaskDate(dateInput)) {
         return false;
@@ -362,11 +421,18 @@ async function saveTaskEdits(taskCard) {
         category: document.getElementById('taskDetailCategory').value
     };
 
+    /* Comment out hideFrom handling
+    if (updatedData.privacy === 'Private Except') {
+        updatedData.hideFrom = document.getElementById('hideFromUsers').value;
+    }
+    */
+
     console.log('Sending update with data:', updatedData);
 
     try {
         // Send to backend
         const taskId = taskCard.dataset.taskId;
+        console.log(taskId);
         const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {
@@ -399,7 +465,7 @@ async function saveTaskEdits(taskCard) {
         // Move card to correct column if status changed
         const columnId = getColumnIdFromStatus(updatedData.status);
         const targetColumn = document.getElementById(columnId);
-        if (targetColumn && taskCard.parentElement.id !== columnId) {
+        if (targetColumn && taskCard.id !== columnId) {
             targetColumn.appendChild(taskCard);
             updateTaskCounts();
         }

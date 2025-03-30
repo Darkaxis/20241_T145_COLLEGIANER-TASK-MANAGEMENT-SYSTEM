@@ -67,7 +67,7 @@ function showErrorMessage(fieldId, message) {
     const parentContainer = field.closest('.d-flex');
 
     // Remove any existing error messages
-    const existingError = parentContainer.parentElement.querySelector('.error-message-container');
+    //const existingError = parentContainer.parentElement.querySelector('.error-message-container');
     if (existingError) {
         existingError.remove();
     }

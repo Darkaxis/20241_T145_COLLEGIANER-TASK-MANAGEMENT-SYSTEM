@@ -266,16 +266,26 @@ function updateTaskCard(taskCard) {
         taskMenu.classList.remove('show');
     });
 
-    deleteBtn.addEventListener('click', (e) => {
+    deleteBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (confirm('Are you sure you want to delete this task?')) {
-            fetch(`https://localhost:3000/api/v1/adviser/tasks/delete/${taskCard.dataset.taskId}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            })
-
-            taskCard.remove();
-            updateTaskCounts();
+            try {
+                const response = await fetch(`https://localhost:3000/api/v1/adviser/tasks/delete/${taskCard.dataset.taskId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    taskCard.remove();
+                    updateTaskCounts();
+                    showNotification('Task deleted successfully');
+                } else {
+                    showNotification('Failed to delete task');
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showNotification('Error deleting task');
+            }
         }
         taskMenu.classList.remove('show');
     });
@@ -287,15 +297,28 @@ function updateTaskCard(taskCard) {
 }
 
 function archiveTask(taskCard) {
-    // Add your archive functionality here
     console.log('Archiving task:', taskCard.id);
-    const response = fetch(`https://localhost:3000/api/v1/adviser/tasks/archive/${taskCard.dataset.taskId}`, {
-        method: 'PATCH',
-        credentials: 'include'
-    });
-
-    taskCard.remove();
-    // You might want to store it in an archive list or send to backend
+    
+    // Convert to async function and properly await the response
+    (async () => {
+        try {
+            const response = await fetch(`https://localhost:3000/api/v1/adviser/tasks/archive/${taskCard.dataset.taskId}`, {
+                method: 'PATCH',
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                taskCard.remove();
+                updateTaskCounts();
+                showNotification('Task archived successfully');
+            } else {
+                showNotification('Failed to archive task');
+            }
+        } catch (error) {
+            console.error('Error archiving task:', error);
+            showNotification('Error archiving task');
+        }
+    })();
 }
 
 function addTaskCardButtonListeners(taskCard) {
@@ -445,28 +468,61 @@ function toggleHideFromUsersInModal() {
     }
 }
 
-// Add this function to save edits
-async function saveTaskEdits(taskCard) {
+// Add this function to validate task fields before saving
+function validateTaskFields() {
+    const titleInput = document.getElementById('taskTitle');
+    const descriptionInput = document.getElementById('taskDescription');
     const dateInput = document.getElementById('taskDate');
-    if (!validateTaskDate(dateInput)) {
+    const assigneeSelect = document.getElementById('taskAssignee');
+    const privacySelect = document.getElementById('taskPrivacy');
+    
+    // Create an array of required fields with their display names
+    const requiredFields = [
+        { field: titleInput, name: 'Title' },
+        { field: descriptionInput, name: 'Description' },
+        { field: dateInput, name: 'Due Date' },
+        { field: assigneeSelect, name: 'Assignee' },
+        { field: privacySelect, name: 'Privacy' }
+    ];
+    
+    // Check each field and collect any that are empty
+    const emptyFields = requiredFields.filter(item => {
+        return !item.field || !item.field.value || item.field.value.trim() === '';
+    });
+    
+    // If there are empty fields, show an error and return false
+    if (emptyFields.length > 0) {
+        const fieldNames = emptyFields.map(item => item.name).join(', ');
+        showNotification(`Please fill in all required fields: ${fieldNames}`, 'error');
         return false;
     }
+    
+    return true;
+}
 
-    // Ensure date is properly formatted as ISO string
-    const selectedDate = new Date(dateInput.value);
-    selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-    const isoDate = selectedDate.toISOString();
-
-    // Get updated values
+// Update the existing saveTaskEdits function to use validation
+async function saveTaskEdits(taskCard) {
+    // First validate all required fields
+    if (!validateTaskFields()) {
+        return false;
+    }
+    
+    const dateInput = document.getElementById('taskDate');
+    const titleInput = document.getElementById('taskTitle');
+    const descriptionInput = document.getElementById('taskDescription');
+    const statusSelect = document.getElementById('taskStatus');
+    const prioritySelect = document.getElementById('taskPriority');
+    const assigneeSelect = document.getElementById('taskAssignee');
+    const privacySelect = document.getElementById('taskPrivacy');
+    
     const updatedData = {
-        taskName: document.getElementById('taskTitle').value,
-        description: document.getElementById('taskDescription').value,
-        status: document.getElementById('taskStatus').value,
-        privacy: document.getElementById('taskPrivacy').value,
-        assignedTo: document.getElementById('taskAssignTo').value,
-        deadline: isoDate,
-        link: document.getElementById('taskLink').value,
-        category: document.getElementById('taskDetailCategory').value
+        title: titleInput.value.trim(),
+        description: descriptionInput.value.trim(),
+        dueDate: dateInput.value,
+        status: statusSelect.value,
+        priority: prioritySelect.value,
+        assignee: assigneeSelect.value,
+        privacy: privacySelect.value
     };
 
     try {
@@ -484,11 +540,6 @@ async function saveTaskEdits(taskCard) {
         if (!response.ok) {
             throw new Error('Failed to update task');
         }
-
-        // // Add hideFrom if privacy is Private Except
-        // if (updatedData.privacy === 'Private Except') {
-        //     updatedData.hideFrom = document.getElementById('hideFromUsers').value;
-        // }
 
         // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {
@@ -512,10 +563,13 @@ async function saveTaskEdits(taskCard) {
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
         modal.hide();
-
+        
+        showNotification('Task updated successfully');
+        return true;
     } catch (error) {
         console.error('Error updating task:', error);
-        alert('Failed to update task. Please try again.');
+        showNotification('Failed to update task. Please try again.', 'error');
+        return false;
     }
 }
 
@@ -618,6 +672,22 @@ function handleDrop(e) {
     if (taskCard) {
         taskCard.classList.remove('drag-over');
     }
+    
+    // Get the dragged task and its new column
+    const draggedTask = document.querySelector('.dragging');
+    if (draggedTask) {
+        const newColumn = e.target.closest('.task-column');
+        if (newColumn) {
+            const newStatus = getStatusFromColumnId(newColumn.id);
+            const taskId = draggedTask.dataset.taskId;
+            
+            // Update the task's status attribute
+            draggedTask.dataset.status = newStatus;
+            
+            // Update the server
+            updateTaskStatus(taskId, newStatus);
+        }
+    }
 }
 
 function handleDragEnd(e) {
@@ -651,4 +721,70 @@ function validateTaskDate(dateInput) {
         return false;
     }
     return true;
+}
+
+// Add this function to handle task creation
+async function createNewTask(taskData) {
+    try {
+        const response = await fetch('https://localhost:3000/api/v1/adviser/tasks/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(taskData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            // Create the task in the UI with the server-generated ID
+            createTask({...taskData, id: result.taskId});
+            showNotification('Task created successfully');
+            return true;
+        } else {
+            showNotification('Failed to create task');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error creating task:', error);
+        showNotification('Error creating task');
+        return false;
+    }
+}
+
+// Add this function to update task status on the server
+async function updateTaskStatus(taskId, newStatus) {
+    try {
+        const response = await fetch(`https://localhost:3000/api/v1/adviser/tasks/update/${taskId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        if (response.ok) {
+            showNotification(`Task moved to ${newStatus}`);
+            return true;
+        } else {
+            showNotification('Failed to update task status');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error updating task status:', error);
+        showNotification('Error updating task status');
+        return false;
+    }
+}
+
+// Helper function to get status from column ID
+function getStatusFromColumnId(columnId) {
+    const statusMap = {
+        'todo-column': 'To Do',
+        'in-progress-column': 'In Progress',
+        'checking-column': 'Checking',
+        'done-column': 'Done'
+    };
+    return statusMap[columnId] || 'To Do';
 }
