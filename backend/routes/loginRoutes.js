@@ -1,7 +1,7 @@
 import express from 'express';
 import loginServices from '../services/loginServices.js';
 import cookieParser from 'cookie-parser';
-
+import db from '../utils/firestoreClient.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
@@ -77,6 +77,27 @@ loginRoutes.post('/register', async(req, res) => {
     const { encodedData, password } = req.body;
 
     const userData = jwt.verify(encodedData, process.env.JWT_SECRET);
+    const tokenDoc = await db.collection('registrationTokens')
+    .doc(userData.registrationToken).get();
+    
+    if (!tokenDoc.exists) {
+    return res.status(400).json({
+        success: false,
+        message: 'Invalid registration link'
+    });
+    }
+    const tokenData = tokenDoc.data();
+        if (tokenData.used) {
+            return res.status(400).json({
+                success: false,
+                message: 'This registration link has already been used'
+            });
+        }
+        
+        // Mark the token as used
+        await db.collection('registrationTokens')
+            .doc(userData.registrationToken)
+            .update({ used: true, usedAt: admin.firestore.FieldValue.serverTimestamp() });
     try {
 
         const user = await loginServices.registerUser(userData, password);

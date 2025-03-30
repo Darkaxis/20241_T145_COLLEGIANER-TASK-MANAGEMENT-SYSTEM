@@ -4,6 +4,7 @@ import { getTempAdminData, deleteTempAdminData, setTempAdminData } from '../util
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import googleMailServices from '../services/google/googleMailServices.js';
+import db from '../utils/firestoreClient.js';
 import  passport  from '../utils/passport.js';
 
 import loginServices from '../services/loginServices.js';
@@ -59,6 +60,7 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
 
         if (state.startsWith('user')) {
             // Encode user data for URL
+            const registrationToken = uuidv4();
             const userData = {
                 email: email,
                 name: name,
@@ -67,10 +69,17 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
                 refreshToken: refreshToken,
                 accessToken: accessToken,
                 profile: profile,
-                state: state
+                state: state,
+                registrationToken: registrationToken
+        
             };
         
             const encodedData = jwt.sign(userData, process.env.JWT_SECRET, {expiresIn: '3d'});
+            await db.collection('registrationTokens').doc(registrationToken).set({
+                used: false,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                email: email
+            });
             res.redirect(`https://localhost:4000/register?data=${encodedData}&name=${name}`);
         } else if (state.startsWith('login')) {
             // Handle login callback
