@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                   
                     encodedData,
                     password: password.value
                 })
@@ -55,8 +54,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 alert('Registration successful');
                 window.location.href = '/';
             }
+            else {
+                const errorData = await response.json();
+                alert('Registration failed. error: ' + errorData.message);
+            }
         } catch (error) {
+            alert('Registration failed. error: ' + error.message);
             console.error('Error:', error);
+            
         }
     
     });

@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import googleMailService from '../services/google/googleMailServices.js';
+import admin from 'firebase-admin';
 
 dotenv.config();
 
@@ -94,6 +95,17 @@ loginRoutes.post('/register', async(req, res) => {
             });
         }
         
+
+        // Check if the email is already registered
+        const existingUser = await db.collection('users')
+            .where('emailSearch', '==', userData.email.toLowerCase())
+            .get();
+        if (!existingUser.empty) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email already registered'
+            });
+        }
         // Mark the token as used
         await db.collection('registrationTokens')
             .doc(userData.registrationToken)

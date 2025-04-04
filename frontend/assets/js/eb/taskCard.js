@@ -2,72 +2,72 @@ let users = [];
 
 document.addEventListener('DOMContentLoaded', async() => {
     try {
-        // Use Promise.all to fetch tasks and users in parallel
-        const [tasksResponse, usersResponse] = await Promise.all([
-            fetch('https://localhost:3000/api/v1/eb/tasks/all', {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Cache-Control': 'no-cache' } // Prevent caching
-            }),
-            fetch('https://localhost:3000/api/v1/eb/users', {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Cache-Control': 'no-cache' } // Prevent caching
-            })
-        ]);
-        
-        // Process responses in parallel
-        const [tasksData, usersData] = await Promise.all([
-            tasksResponse.json(),
-            usersResponse.json()
-        ]);
-        
-        // Update users array
-        users = usersData.data.map(user => user.name);
-        
-        // Create tasks with a small delay between each to prevent UI freezing
-        const tasks = tasksData.tasks;
-        if (tasks && tasks.length > 0) {
-            // For better performance, batch task creation
-            const batchSize = 10;
-            for (let i = 0; i < tasks.length; i += batchSize) {
-                const batch = tasks.slice(i, i + batchSize);
-                setTimeout(() => {
-                    batch.forEach(task => createTask(task));
-                }, 0);
-            }
-        }
+        const response = await fetch('https://localhost:3000/api/v1/eb/tasks/all', {
+            method: 'GET',
+            credentials: 'include' // Include cookies in the request
+        });
+        const tasks = await response.json();
+        tasks.tasks.forEach(task => createTask(task));
     } catch (error) {
-        console.error('Error initializing tasks and users:', error);
-        showNotification('Error loading tasks', 'error');
+        console.error('Error fetching tasks:', error);
     }
-    
-    // Set up event listeners for task filtering
-    setupTaskFilterListeners();
-    
-    // Setup modal handlers
-    setupTaskDetailModalHandlers();
+    try {
+        let usersResponse = await fetch('https://localhost:3000/api/v1/eb/users', {
+            method: 'GET',
+            credentials: 'include' // Include cookies in the request
+        });
+        let usersData = await usersResponse.json();
+        users = usersData.data.map(user => user.name);
+
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+
+    const myTask = document.getElementById('myTask');
+    myTask.addEventListener('click', async() => {
+        try {
+            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/get/user', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in the request
+            });
+            const tasks = await response.json();
+            document.querySelectorAll('.task-card').forEach(card => card.remove());
+            tasks.tasks.forEach(task => createTask(task));
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    });
+    const allTask = document.getElementById('allTask');
+    allTask.addEventListener('click', async() => {
+        try {
+            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/all', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in the request
+                
+            });
+            const tasks = await response.json();
+            document.querySelectorAll('.task-card').forEach(card => card.remove());
+            tasks.tasks.forEach(task => createTask(task));
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    });
 });
 
 function createTask(task) {
-    // Create the task card element
+
     const taskCard = document.createElement('div');
     taskCard.dataset.taskId = task.id;
     taskCard.className = 'task-card';
     taskCard.draggable = true;
     taskCard.id = 'task-' + Date.now();
 
-    // Use a more efficient way to set data attributes
-    for (const [key, value] of Object.entries(task)) {
-        if (key !== 'hideFrom' && value !== undefined) {
-            taskCard.dataset[key] = value;
-        }
-    }
-    
+    // Set data attributes
+    Object.entries(task).forEach(([key, value]) => {
+        taskCard.dataset[key] = value;
+    });
     // Make sure category is included in the dataset
-    if (!taskCard.dataset.category) {
-        taskCard.dataset.category = '';
-    }
+    taskCard.dataset.category = task.category || '';
 
     // Add event listeners
     addTaskCardEventListeners(taskCard);
@@ -76,11 +76,10 @@ function createTask(task) {
     updateTaskCard(taskCard);
 
     // Add to appropriate column
-    const columnId = getColumnIdFromStatus(task.status || 'To Do');
+    const columnId = getColumnIdFromStatus(task.status);
     const column = document.getElementById(columnId);
     if (column) {
-        // Use prepend to show new tasks at the top
-        column.prepend(taskCard);
+        column.appendChild(taskCard);
         updateColumnCount(columnId);
     }
 }
@@ -100,10 +99,6 @@ function addTaskCardEventListeners(taskCard) {
 
         // Get the modal element
         const taskDetailModal = document.getElementById('taskDetailModal');
-        
-        // IMPORTANT: Set the task ID on the modal itself
-        taskDetailModal.dataset.taskId = taskCard.dataset.taskId;
-        console.log('Setting modal task ID:', taskCard.dataset.taskId);
 
         // Fill in the modal with task data
         document.getElementById('taskTitle').value = taskCard.dataset.taskName || '';
@@ -130,16 +125,28 @@ function addTaskCardEventListeners(taskCard) {
 
         document.getElementById('taskLink').value = taskCard.dataset.link || '';
 
-        // Handle Private Except case
-        /* const hideFromContainer = document.getElementById('hideFromUsersContainer');
-        const hideFromInput = document.getElementById('hideFromUsers');
-        if (taskCard.dataset.privacy === 'Private Except') {
-            hideFromInput.value = taskCard.dataset.hideFrom || '';
-            hideFromContainer.style.display = 'block';
-        } else {
-            hideFromInput.value = '';
-            hideFromContainer.style.display = 'none';
-        } */
+        // // Handle Private Except case
+        // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+        // const hideFromInput = document.getElementById('hideFromUsers');
+        // if (taskCard.dataset.privacy === 'Private Except') {
+        //     hideFromInput.value = taskCard.dataset.hideFrom || '';
+        //     hideFromContainer.style.display = 'block';
+        // } else {
+        //     hideFromInput.value = '';
+        //     hideFromContainer.style.display = 'none';
+        // }
+
+        // Setup edit button click handler
+        const editButton = document.getElementById('editTaskButton');
+        if (editButton) {
+            editButton.onclick = () => enableEditMode();
+        }
+
+        // Setup save button click handler
+        const saveButton = document.getElementById('saveEditButton');
+        if (saveButton) {
+            saveButton.onclick = () => saveTaskEdits(taskCard);
+        }
 
         // Reset to view mode when modal opens
         disableEditMode();
@@ -187,12 +194,13 @@ function updateTaskCard(taskCard) {
 
     const privacyIcons = {
         'Public': 'fa-globe',
-        'Private': 'fa-lock'
-            // Remove Private Except icon
+        'Private': 'fa-lock',
+        // 'Private Except': 'fa-user-secret'
     };
 
-    // Simplify privacy text display
-    const privacyText = taskCard.dataset.privacy;
+    // const privacyText = taskCard.dataset.privacy === 'Private Except' ?
+    //     `Private Except: ${taskCard.dataset.hideFrom}` :
+    taskCard.dataset.privacy;
 
     // Format the date properly
     let deadlineDisplay = 'No deadline set';
@@ -229,8 +237,8 @@ function updateTaskCard(taskCard) {
             <div class="task-card-body">
                 <p><i class="fa-regular fa-user"></i> ${taskCard.dataset.assignedTo}</p>
                 <p><i class="fa-regular fa-calendar"></i> ${deadlineDisplay}</p>
-                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i> ${privacyText}</p>
-                <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
+                <p><i class="fas ${privacyIcons[taskCard.dataset.privacy]}"></i></p>
+                  <p><i class="fas fa-tag"></i> ${taskCard.dataset.category || 'No Category'}</p> 
                 ${taskCard.dataset.status === 'Done' ? '<p class="text-success completion-status"><i class="fas fa-check-circle"></i> Completed</p>' : ''}
             </div>
         </div>
@@ -352,58 +360,42 @@ function handleMarkAsDone(taskCard) {
     moveTaskToDone(taskCard);
 }
 
-// Update the moveTaskToDone function to properly update the server
-function moveTaskToDone(taskCard) {
-    console.log('Moving task to Done:', taskCard.id);
-    
-    // Update status in the UI
+// Add this new consolidated function for moving tasks to Done
+async function moveTaskToDone(taskCard) {
+    // Update the task's status
     taskCard.dataset.status = 'Done';
-    
-    // Move the card to the Done column
+
+
+
+
+    console.log('Status updated to Done');
+
+    // Move to Done column
     const doneColumn = document.getElementById('done-column');
     if (doneColumn) {
         doneColumn.appendChild(taskCard);
-        updateTaskCounts();
-    }
-    
-    // Update the server
-    updateTaskStatus(taskCard.dataset.taskId, 'Done');
-}
+        console.log('Task moved to Done column');
 
-// Add a function to move task to In Progress
-function moveTaskToInProgress(taskCard) {
-    console.log('Moving task to In Progress:', taskCard.id);
-    
-    // Update status in the UI
-    taskCard.dataset.status = 'In Progress';
-    
-    // Move the card to the In Progress column
-    const inProgressColumn = document.getElementById('in-progress-column');
-    if (inProgressColumn) {
-        inProgressColumn.appendChild(taskCard);
-        updateTaskCounts();
-    }
-    
-    // Update the server
-    updateTaskStatus(taskCard.dataset.taskId, 'In Progress');
-}
+        // Add completion animation
+        taskCard.style.animation = 'completionPulse 1s';
+        setTimeout(() => {
+            taskCard.style.animation = '';
+        }, 1000);
 
-// Add a function to move task to Checking
-function moveTaskToChecking(taskCard) {
-    console.log('Moving task to Checking:', taskCard.id);
-    
-    // Update status in the UI
-    taskCard.dataset.status = 'Checking';
-    
-    // Move the card to the Checking column
-    const checkingColumn = document.getElementById('checking-column');
-    if (checkingColumn) {
-        checkingColumn.appendChild(taskCard);
         updateTaskCounts();
     }
-    
-    // Update the server
-    updateTaskStatus(taskCard.dataset.taskId, 'Checking');
+
+    // Update card display with completion indicator
+    updateTaskCard(taskCard);
+
+    // Close any open modals
+    const taskDetailModal = document.getElementById('taskDetailModal');
+    if (taskDetailModal) {
+        const modal = bootstrap.Modal.getInstance(taskDetailModal);
+        if (modal) {
+            modal.hide();
+        }
+    }
 }
 
 // Add this new function to handle edit mode
@@ -467,8 +459,8 @@ function enableEditMode() {
 
 function toggleHideFromUsersInModal() {
     const privacySelect = document.getElementById('taskPrivacy');
-    const hideFromContainer = document.getElementById('hideFromUsersContainer');
-    const hideFromInput = document.getElementById('hideFromUsers');
+    // const hideFromContainer = document.getElementById('hideFromUsersContainer');
+    // const hideFromInput = document.getElementById('hideFromUsers');
 
     if (privacySelect.value === 'Private') {
         hideFromContainer.style.display = 'block';
@@ -478,179 +470,62 @@ function toggleHideFromUsersInModal() {
     }
 }
 
-// Add validation function if it doesn't exist
+// Add this function to validate task fields before saving
 function validateTaskFields() {
-    console.log('Validating task fields');
-    
-    // Get all required input fields
     const titleInput = document.getElementById('taskTitle');
     const descriptionInput = document.getElementById('taskDescription');
     const dateInput = document.getElementById('taskDate');
-    const statusSelect = document.getElementById('taskStatus');
+    const assigneeSelect = document.getElementById('taskAssignee');
     
-    // If any of these are missing, log an error
-    if (!titleInput || !descriptionInput || !dateInput || !statusSelect) {
-        console.error('Required field elements not found in DOM:', {
-            titleInput: !!titleInput,
-            descriptionInput: !!descriptionInput,
-            dateInput: !!dateInput,
-            statusSelect: !!statusSelect
-        });
-    }
-    
-    // Define required fields with user-friendly names
+    // Create an array of required fields with their display names
     const requiredFields = [
         { field: titleInput, name: 'Title' },
         { field: descriptionInput, name: 'Description' },
         { field: dateInput, name: 'Due Date' },
-        { field: statusSelect, name: 'Status' }
+        { field: assigneeSelect, name: 'Assignee' }
     ];
     
-    // Check for empty fields
+    // Check each field and collect any that are empty
     const emptyFields = requiredFields.filter(item => {
-        if (!item.field) return false; // Skip if field doesn't exist (will be caught by earlier check)
-        return !item.field.value || item.field.value.trim() === '';
+        return !item.field || !item.field.value || item.field.value.trim() === '';
     });
     
-    // If there are empty fields, show an error
+    // If there are empty fields, show an error and return false
     if (emptyFields.length > 0) {
         const fieldNames = emptyFields.map(item => item.name).join(', ');
-        alert(`Please fill in all required fields: ${fieldNames}`);
+        showNotification(`Please fill in all required fields: ${fieldNames}`, 'error');
         return false;
     }
     
     return true;
 }
 
-// Fix the setupTaskDetailModalHandlers function
-function setupTaskDetailModalHandlers() {
-    console.log('Setting up task detail modal handlers');
-    
-    // Setup edit button click handler
-    const editButton = document.getElementById('editTaskButton');
-    if (editButton) {
-        editButton.onclick = () => enableEditMode();
-    }
-    
-    // Setup save button click handler - FIXED
-    const saveButton = document.getElementById('saveEditButton');
-    if (saveButton) {
-        console.log('Adding click handler to save button');
-        saveButton.onclick = function() {
-            console.log('Save button clicked');
-            
-            const taskDetailModal = document.getElementById('taskDetailModal');
-            // Fix: Use the correct data attribute name
-            const taskId = taskDetailModal.dataset.taskId;
-            console.log('Looking for task with ID:', taskId);
-            
-            // Try multiple ways to find the task card
-            let taskCard = document.getElementById('task-' + taskId) || 
-                          document.getElementById(taskId) || 
-                          document.querySelector(`[data-task-id="${taskId}"]`);
-            
-            if (taskCard) {
-                console.log('Found task card:', taskCard);
-                saveTaskEdits(taskCard);
-            } else {
-                console.error('Could not find task card with ID:', taskId);
-                showNotification('Error: Could not find task to save', 'error');
-            }
-        };
-    } else {
-        console.warn('Save button not found in DOM');
-    }
-    
-    // Ensure task modal has event listeners when shown
-    const taskDetailModal = document.getElementById('taskDetailModal');
-    if (taskDetailModal) {
-        taskDetailModal.addEventListener('shown.bs.modal', function() {
-            console.log('Modal shown, reinforcing save button handler');
-            // Re-attach save button handler when modal is shown
-            const saveButton = document.getElementById('saveEditButton');
-            if (saveButton) {
-                saveButton.onclick = function() {
-                    const taskId = taskDetailModal.dataset.taskId;
-                    console.log('Save clicked, task ID:', taskId);
-                    
-                    let taskCard = document.getElementById('task-' + taskId) || 
-                                  document.getElementById(taskId) || 
-                                  document.querySelector(`[data-task-id="${taskId}"]`);
-                    
-                    if (taskCard) {
-                        saveTaskEdits(taskCard);
-                    } else {
-                        console.error('Could not find task card with ID:', taskId);
-                        showNotification('Error: Could not find task to save', 'error');
-                    }
-                };
-            }
-        });
-    }
-}
-
-// Also ensure saveTaskEdits can handle the task data properly
+// Update the existing saveTaskEdits function to use validation
 async function saveTaskEdits(taskCard) {
-    console.log('saveTaskEdits called with taskCard:', taskCard);
-    
     // First validate all required fields
     if (!validateTaskFields()) {
         return false;
     }
     
-    // Show a loading indicator
-    const saveButton = document.querySelector('#saveEditButton');
-    if (!saveButton) {
-        console.error('Save button not found!');
-        return false;
-    }
-    
-    const originalButtonText = saveButton.textContent;
-    saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-    saveButton.disabled = true;
-    
-    // Get all the form fields
     const dateInput = document.getElementById('taskDate');
     const titleInput = document.getElementById('taskTitle');
     const descriptionInput = document.getElementById('taskDescription');
     const statusSelect = document.getElementById('taskStatus');
-    
-    // These fields might be optional depending on the role
-    const prioritySelect = document.getElementById('taskPriority') || { value: 'Medium' };
+    const prioritySelect = document.getElementById('taskPriority');
     const assigneeSelect = document.getElementById('taskAssignee');
     
-    // Log all field values for debugging
-    console.log('Form field values:', {
-        title: titleInput?.value,
-        description: descriptionInput?.value,
-        date: dateInput?.value,
-        status: statusSelect?.value,
-        priority: prioritySelect?.value,
-        assignee: assigneeSelect?.value
-    });
-    
+    const updatedData = {
+        title: titleInput.value.trim(),
+        description: descriptionInput.value.trim(),
+        dueDate: dateInput.value,
+        status: statusSelect.value,
+        priority: prioritySelect.value,
+        assignee: assigneeSelect.value
+    };
+
     try {
-        // Format date properly
-        const selectedDate = new Date(dateInput.value);
-        selectedDate.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-        const isoDate = selectedDate.toISOString();
-        
-        // Prepare data for update
-        const updatedData = {
-            title: titleInput.value.trim(),
-            description: descriptionInput.value.trim(),
-            dueDate: isoDate,
-            status: statusSelect.value,
-            priority: prioritySelect.value,
-            assignee: assigneeSelect.value
-        };
-        
-        console.log('Update data prepared:', updatedData);
-        
-        // Send to backend
+        // send to backend
         const taskId = taskCard.dataset.taskId;
-        console.log(`Sending update to server for task ID: ${taskId}`);
-        
         const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/update/${taskId}`, {
             method: 'PUT',
             headers: {
@@ -659,58 +534,39 @@ async function saveTaskEdits(taskCard) {
             body: JSON.stringify(updatedData),
             credentials: 'include'
         });
-        
-        // Reset button state
-        saveButton.innerHTML = originalButtonText;
-        saveButton.disabled = false;
-        
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to update task');
+            throw new Error('Failed to update task');
         }
-        
-        // Update task card with data
+
+        // Update task card dataset
         Object.entries(updatedData).forEach(([key, value]) => {
             taskCard.dataset[key] = value;
         });
-        
+
         // Update the card display
         updateTaskCard(taskCard);
-        
+
         // Move card to correct column if status changed
         const columnId = getColumnIdFromStatus(updatedData.status);
         const targetColumn = document.getElementById(columnId);
-        const originalColumn = taskCard.parentElement;
-        if (targetColumn && originalColumn && originalColumn.id !== columnId) {
+        if (targetColumn && taskCard.parentElement.id !== columnId) {
             targetColumn.appendChild(taskCard);
             updateTaskCounts();
         }
-        
+
         // Reset modal to view mode
-        if (typeof disableEditMode === 'function') {
-            disableEditMode();
-        }
+        disableEditMode();
+
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('taskDetailModal'));
+        modal.hide();
         
-        // Close the modal
-        const modal = document.getElementById('taskDetailModal');
-        if (modal) {
-            const bsModal = bootstrap.Modal.getInstance(modal);
-            if (bsModal) {
-                bsModal.hide();
-            }
-        }
-        
-        showNotification('Task updated successfully', 'success');
+        showNotification('Task updated successfully');
         return true;
-        
     } catch (error) {
         console.error('Error updating task:', error);
-        
-        // Reset button state
-        saveButton.innerHTML = originalButtonText;
-        saveButton.disabled = false;
-        
-        showNotification('Failed to update task: ' + error.message, 'error');
+        showNotification('Failed to update task. Please try again.', 'error');
         return false;
     }
 }
@@ -841,7 +697,6 @@ function handleDragEnd(e) {
 }
 
 
-
 // Add validateTaskDate function if not already present
 function validateTaskDate(dateInput) {
     const selectedDate = new Date(dateInput.value);
@@ -856,44 +711,9 @@ function validateTaskDate(dateInput) {
     return true;
 }
 
-// Update the createNewTask function to validate fields
-async function createNewTask() {
-    // First validate all required fields
-    if (!validateTaskFields()) {
-        return false;
-    }
-    
-    const titleInput = document.getElementById('taskTitle');
-    const descriptionInput = document.getElementById('taskDescription');
-    const dateInput = document.getElementById('taskDate');
-    const statusSelect = document.getElementById('taskStatus');
-    const prioritySelect = document.getElementById('taskPriority');
-    const assigneeSelect = document.getElementById('taskAssignee');
-    
-    // Create task data object
-    const taskData = {
-        title: titleInput.value.trim(),
-        description: descriptionInput.value.trim(),
-        dueDate: dateInput.value,
-        status: statusSelect.value,
-        priority: prioritySelect.value,
-        assignee: assigneeSelect.value
-    };
-    
-    // Generate a temporary ID for the task
-    const tempId = `temp-${Date.now()}`;
-    
-    // Create a temporary task card
-    const tempTask = {
-        _id: tempId,
-        ...taskData
-    };
-    
-    // Add the temporary task to the UI
-    createTask(tempTask);
-    
+// Add this function to handle task creation
+async function createNewTask(taskData) {
     try {
-        // Send the task data to the server
         const response = await fetch('https://localhost:3000/api/v1/eb/tasks/create', {
             method: 'POST',
             headers: {
@@ -905,44 +725,32 @@ async function createNewTask() {
         
         if (response.ok) {
             const result = await response.json();
-            
-            // Find the temporary task card and update it with the real ID
-            const tempCard = document.querySelector(`[data-task-id="${tempId}"]`);
-            if (tempCard) {
-                tempCard.dataset.taskId = result.taskId;
-                delete tempCard.dataset._isTemporary;
-                
-                // Update any visual indicators if needed
-                updateTaskCard(tempCard);
-            }
-            
+            // Create the task in the UI with the server-generated ID
+            createTask({...taskData, id: result.taskId});
             showNotification('Task created successfully');
             return true;
         } else {
-            // If the server request failed, remove the temporary task
-            const tempCard = document.querySelector(`[data-task-id="${tempId}"]`);
-            if (tempCard) {
-                tempCard.remove();
-                updateTaskCounts();
-            }
-            
             showNotification('Failed to create task');
             return false;
         }
     } catch (error) {
         console.error('Error creating task:', error);
-        
-        // If there was an error, remove the temporary task
-        const tempCard = document.querySelector(`[data-task-id="temp-${Date.now()}"]`);
-        if (tempCard) {
-            tempCard.remove();
-            updateTaskCounts();
-        }
-        
         showNotification('Error creating task');
         return false;
     }
 }
+
+// Replace any existing task creation code with a call to this function
+// For example, in your form submission handler:
+// document.getElementById('createTaskForm').addEventListener('submit', async (e) => {
+//     e.preventDefault();
+//     const taskData = {
+//         taskName: document.getElementById('taskName').value,
+//         description: document.getElementById('description').value,
+//         // ... other fields
+//     };
+//     await createNewTask(taskData);
+// });
 
 // Add this function to update task status on the server
 async function updateTaskStatus(taskId, newStatus) {
@@ -980,156 +788,3 @@ function getStatusFromColumnId(columnId) {
     };
     return statusMap[columnId] || 'To Do';
 }
-
-// Extract task filter setup to a separate function for cleaner code
-function setupTaskFilterListeners() {
-    const myTask = document.getElementById('myTask');
-    myTask.addEventListener('click', () => fetchAndDisplayTasks('user'));
-    
-    const allTask = document.getElementById('allTask');
-    allTask.addEventListener('click', () => fetchAndDisplayTasks('all'));
-}
-
-// Consolidated function for fetching and displaying tasks
-async function fetchAndDisplayTasks(type) {
-    try {
-        const endpoint = type === 'user' ? 
-            'https://localhost:3000/api/v1/eb/tasks/get/user' : 
-            'https://localhost:3000/api/v1/eb/tasks/all';
-            
-        showNotification('Loading tasks...', 'info');
-        
-        const response = await fetch(endpoint, {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Cache-Control': 'no-cache' }
-        });
-        
-        const tasks = await response.json();
-        
-        // Clear existing tasks
-        document.querySelectorAll('.task-card').forEach(card => card.remove());
-        
-        // Add new tasks
-        if (tasks.tasks && tasks.tasks.length > 0) {
-            tasks.tasks.forEach(task => createTask(task));
-            showNotification(`Loaded ${tasks.tasks.length} tasks`);
-        } else {
-            showNotification('No tasks found');
-        }
-    } catch (error) {
-        console.error('Error fetching tasks:', error);
-        showNotification('Error loading tasks', 'error');
-    }
-}
-
-// Add this global function at the top of your file
-window.saveTaskChanges = function() {
-    console.log('saveTaskChanges called directly');
-    
-    // Get the modal and task ID
-    const modal = document.getElementById('taskDetailModal');
-    const taskId = modal.dataset.taskId;
-    
-    console.log('Task ID:', taskId);
-    
-    if (!taskId) {
-        alert('Error: Could not identify task ID');
-        return;
-    }
-    
-    // Get form data
-    const title = document.getElementById('taskTitle').value;
-    const description = document.getElementById('taskDescription').value;
-    const date = document.getElementById('taskDate').value;
-    const status = document.getElementById('taskStatus').value;
-    const privacy = document.getElementById('taskPrivacy').value;
-    const category = document.getElementById('taskDetailCategory').value;
-    const link = document.getElementById('taskLink').value || '';
-    const assignTo = document.getElementById('taskAssignTo')?.value || '';
-    
-    // Validate required fields
-    if (!title || !description || !date || !status) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    // Format date
-    const selectedDate = new Date(date);
-    selectedDate.setHours(12, 0, 0, 0);
-    const isoDate = selectedDate.toISOString();
-    
-    // Create update data
-    const updatedData = {
-        taskName: title.trim(),
-        description: description.trim(),
-        deadline: isoDate,
-        status: status,
-        privacy: privacy,
-        category: category,
-        link: link,
-        assignedTo: assignTo
-    };
-    
-    console.log('Update data:', updatedData);
-    
-    // Show loading state
-    const saveButton = document.getElementById('saveEditButton');
-    saveButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
-    saveButton.disabled = true;
-    
-    // Send update to server
-    fetch(`https://localhost:3000/api/v1/eb/tasks/update/${taskId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData),
-        credentials: 'include'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Server returned error ' + response.status);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Update successful:', data);
-        
-        // Close the modal
-        const bsModal = bootstrap.Modal.getInstance(modal);
-        if (bsModal) {
-            bsModal.hide();
-        } else {
-            // Fallback
-            modal.style.display = 'none';
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) backdrop.remove();
-        }
-        
-        // Reload the page to ensure everything is updated
-        alert('Task updated successfully! Page will reload.');
-        window.location.reload();
-    })
-    .catch(error => {
-        console.error('Error updating task:', error);
-        saveButton.innerHTML = 'Save Changes';
-        saveButton.disabled = false;
-        alert('Error saving task: ' + error.message);
-    });
-};
-
-// Add this to your DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', function() {
-    // Add direct onclick attribute to save button when modal is shown
-    const taskDetailModal = document.getElementById('taskDetailModal');
-    if (taskDetailModal) {
-        taskDetailModal.addEventListener('shown.bs.modal', function() {
-            console.log('Modal shown, adding direct onclick to save button');
-            const saveButton = document.getElementById('saveEditButton');
-            if (saveButton) {
-                saveButton.setAttribute('onclick', 'saveTaskChanges()');
-                console.log('Added onclick attribute to save button');
-            }
-        });
-    }
-});

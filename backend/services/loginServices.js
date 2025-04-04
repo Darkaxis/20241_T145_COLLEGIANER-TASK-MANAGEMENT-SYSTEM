@@ -24,6 +24,14 @@ export async function registerUser(userData, password) {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       version: 1 
     };
+    // chech if user already exists
+    const existingUserSnapshot = await db
+        .collection("users")
+        .where("emailSearch", "==", userData.email.toLowerCase())
+        .get();
+    if (!existingUserSnapshot.empty) {
+        return false; // User already exists
+    }
     
     const userRef = await db.collection("users").add(user);
 

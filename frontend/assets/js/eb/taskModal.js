@@ -407,7 +407,7 @@ function validateTaskFields() {
     return true;
 }
 
-// Update the saveTaskEdits function to be more responsive and complete
+// Update the saveTaskEdits function to use validation
 async function saveTaskEdits(taskCard) {
 
     if (!validateTaskFields()) {

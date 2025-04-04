@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import googleMailServices from '../services/google/googleMailServices.js';
 import db from '../utils/firestoreClient.js';
 import  passport  from '../utils/passport.js';
+import admin from 'firebase-admin';
 
 import loginServices from '../services/loginServices.js';
 
@@ -56,8 +57,6 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
         const email = userProfile.emails[0].value;
         const profile = userProfile.photos[0].value;
         
-        
-
         if (state.startsWith('user')) {
             // Encode user data for URL
             const registrationToken = uuidv4();
