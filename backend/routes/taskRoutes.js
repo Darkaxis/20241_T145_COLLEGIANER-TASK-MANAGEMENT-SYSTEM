@@ -11,7 +11,7 @@ dotenv.config();
 
 taskRoutes.post('/create', async (req, res) => {
         const token = req.cookies.token;  
-        
+        //
         if(!token) {
             return res.status(401).json({ message: 'No token provided' });
         }
@@ -75,7 +75,7 @@ taskRoutes.get('/get/user', async (req, res) => {
 taskRoutes.put('/edit/:id', async (req, res) => {
     
     const token = req.cookies.token;
-    
+
     if(!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
@@ -88,12 +88,13 @@ taskRoutes.put('/edit/:id', async (req, res) => {
     try {
         const taskId = req.params.id;
         const taskData = req.body;
-        
+        console.log(taskData);
         const updatedTask = await taskService.editTask(taskId, taskData);
         
         logAction('Task updated', decoded.name, "update");
         res.status(200).send(updatedTask);
     } catch (error) {
+        console.log(error);
         res.status(400).send(error.message);
     }
 });     

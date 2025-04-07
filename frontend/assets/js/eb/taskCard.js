@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', async() => {
         const response = await fetch('https://localhost:3000/api/v1/eb/tasks/all', {
             method: 'GET',
             credentials: 'include' // Include cookies in the request
+            
         });
         const tasks = await response.json();
+        document.querySelectorAll('.task-card').forEach(card => card.remove());
         tasks.tasks.forEach(task => createTask(task));
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -22,21 +24,6 @@ document.addEventListener('DOMContentLoaded', async() => {
     } catch (error) {
         console.error('Error fetching users:', error);
     }
-
-    const myTask = document.getElementById('myTask');
-    myTask.addEventListener('click', async() => {
-        try {
-            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/get/user', {
-                method: 'GET',
-                credentials: 'include' // Include cookies in the request
-            });
-            const tasks = await response.json();
-            document.querySelectorAll('.task-card').forEach(card => card.remove());
-            tasks.tasks.forEach(task => createTask(task));
-        } catch (error) {
-            console.error('Error fetching tasks:', error);
-        }
-    });
     const allTask = document.getElementById('allTask');
     allTask.addEventListener('click', async() => {
         try {
@@ -52,6 +39,22 @@ document.addEventListener('DOMContentLoaded', async() => {
             console.error('Error fetching tasks:', error);
         }
     });
+    const myTask = document.getElementById('myTask');
+    myTask.addEventListener('click', async() => {
+        try {
+            const response = await fetch('https://localhost:3000/api/v1/eb/tasks/get/user', {
+                method: 'GET',
+                credentials: 'include' // Include cookies in the request
+            });
+            const tasks = await response.json();
+            document.querySelectorAll('.task-card').forEach(card => card.remove());
+            tasks.tasks.forEach(task => createTask(task));
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    });
+    
+    
 });
 
 function createTask(task) {
@@ -462,27 +465,123 @@ function toggleHideFromUsersInModal() {
     // const hideFromContainer = document.getElementById('hideFromUsersContainer');
     // const hideFromInput = document.getElementById('hideFromUsers');
 
-    if (privacySelect.value === 'Private') {
-        hideFromContainer.style.display = 'block';
-        hideFromInput.removeAttribute('readonly');
-    } else {
-        hideFromContainer.style.display = 'none';
-    }
+    // if (privacySelect.value === 'Private') {
+    //     hideFromContainer.style.display = 'block';
+    //     hideFromInput.removeAttribute('readonly');
+    // } else {
+    //     hideFromContainer.style.display = 'none';
+    // }
 }
 
+// Replace your current showNotification function with this enhanced version
+function showNotification(message, type = 'success') {
+    // Add the CSS if not already present
+    if (!document.getElementById('notification-styles')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'notification-styles';
+        styleSheet.innerHTML = `
+            .notification {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                color: white;
+                max-width: 350px;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+                z-index: 9999;
+                animation: slide-in 0.3s ease-out forwards, fade-out 0.5s ease-in 2.5s forwards;
+                transform: translateX(100%);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .notification.success {
+                background-color: #4CAF50;
+                border-left: 5px solid #2E7D32;
+            }
+            
+            .notification.error {
+                background-color: #F44336;
+                border-left: 5px solid #B71C1C;
+            }
+            
+            .notification.warning {
+                background-color: #FF9800;
+                border-left: 5px solid #E65100;
+            }
+            
+            .notification.info {
+                background-color: #2196F3;
+                border-left: 5px solid #0D47A1;
+            }
+            
+            @keyframes slide-in {
+                from { transform: translateX(100%); }
+                to { transform: translateX(0); }
+            }
+            
+            @keyframes fade-out {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => {
+        notification.remove();
+    });
+    
+    // Create the notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    // Add appropriate icon based on notification type
+    let icon = '';
+    switch(type) {
+        case 'success':
+            icon = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+            icon = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icon = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+        default:
+            icon = '<i class="fas fa-info-circle"></i>';
+            break;
+    }
+    
+    // Set notification content with icon
+    notification.innerHTML = `${icon} <span>${message}</span>`;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Remove after timeout
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 // Add this function to validate task fields before saving
 function validateTaskFields() {
     const titleInput = document.getElementById('taskTitle');
     const descriptionInput = document.getElementById('taskDescription');
     const dateInput = document.getElementById('taskDate');
-    const assigneeSelect = document.getElementById('taskAssignee');
+    
     
     // Create an array of required fields with their display names
     const requiredFields = [
         { field: titleInput, name: 'Title' },
         { field: descriptionInput, name: 'Description' },
         { field: dateInput, name: 'Due Date' },
-        { field: assigneeSelect, name: 'Assignee' }
     ];
     
     // Check each field and collect any that are empty
@@ -508,25 +607,32 @@ async function saveTaskEdits(taskCard) {
     }
     
     const dateInput = document.getElementById('taskDate');
-    const titleInput = document.getElementById('taskTitle');
-    const descriptionInput = document.getElementById('taskDescription');
-    const statusSelect = document.getElementById('taskStatus');
-    const prioritySelect = document.getElementById('taskPriority');
-    const assigneeSelect = document.getElementById('taskAssignee');
+    if (taskCard.dataset.deadline) {
+        const deadlineDate = new Date(taskCard.dataset.deadline);
+        const formattedDate = deadlineDate.toISOString().split('T')[0];
+        dateInput.value = formattedDate;
+    } else {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
     
-    const updatedData = {
-        title: titleInput.value.trim(),
-        description: descriptionInput.value.trim(),
-        dueDate: dateInput.value,
-        status: statusSelect.value,
-        priority: prioritySelect.value,
-        assignee: assigneeSelect.value
-    };
 
+    const updatedData = {
+        taskName: document.getElementById('taskTitle').value,
+        description: document.getElementById('taskDescription').value,
+        assignedTo: document.getElementById('taskAssignTo').value,
+        category: document.getElementById('taskDetailCategory').value,
+        status: document.getElementById('taskStatus').value,
+        privacy: document.getElementById('taskPrivacy').value,
+        link: document.getElementById('taskLink').value,
+        deadline: document.getElementById('taskDate').value,
+        
+        
+    };
+    console.log('Updated data:', updatedData);
     try {
         // send to backend
         const taskId = taskCard.dataset.taskId;
-        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/update/${taskId}`, {
+        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/edit/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -725,7 +831,6 @@ async function createNewTask(taskData) {
         
         if (response.ok) {
             const result = await response.json();
-            // Create the task in the UI with the server-generated ID
             createTask({...taskData, id: result.taskId});
             showNotification('Task created successfully');
             return true;

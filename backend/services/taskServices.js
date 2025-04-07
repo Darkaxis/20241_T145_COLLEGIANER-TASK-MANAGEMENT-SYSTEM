@@ -232,7 +232,7 @@ async function editTask(taskId, taskData) {
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         version: currentVersion + 1, // Increment the version number
       };
-
+      console.log(updatedTask);
       transaction.update(taskRef, updatedTask);
       console.log(updatedTask);
     });

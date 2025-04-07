@@ -8,6 +8,7 @@ import db from '../utils/firestoreClient.js';
 import  passport  from '../utils/passport.js';
 import admin from 'firebase-admin';
 
+
 import loginServices from '../services/loginServices.js';
 
 dotenv.config();
@@ -23,8 +24,7 @@ oauthRoutes.get('/auth', (req, res, next) => {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     state: state, // Pass the state parameter
-    accessType: 'offline',
-    prompt: 'consent'
+    accessType: 'offline'
   })(req, res, next);
 });
 
@@ -37,6 +37,7 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
             message: 'Missing state parameter'
         });
     }
+    
 
     const tempData = getTempAdminData(state);
 
@@ -80,6 +81,7 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
                 email: email
             });
             res.redirect(`https://localhost:4000/register?data=${encodedData}&name=${name}`);
+
         } else if (state.startsWith('login')) {
             // Handle login callback
             const user = await loginServices.getUser(email);

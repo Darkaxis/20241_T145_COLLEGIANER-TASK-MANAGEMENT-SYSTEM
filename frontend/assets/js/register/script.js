@@ -5,7 +5,8 @@
 
 
 document.addEventListener('DOMContentLoaded', async function() {
-    
+   
+
     const password = document.getElementById('password');
     password.addEventListener('input', validatePassword);
     const confirmPassword = document.getElementById('confirm-password');
@@ -17,7 +18,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     const nameElement = document.getElementById('name');
     nameElement.textContent = name;
     
-    
+    const checkifUserExists = await fetch('https://localhost:3000/api/v1/login/user', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({
+            encodedData
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (!checkifUserExists.ok) {
+        alert('User already exists!');
+        window.location.href = 'https://localhost:4000/';
+    }
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
     
