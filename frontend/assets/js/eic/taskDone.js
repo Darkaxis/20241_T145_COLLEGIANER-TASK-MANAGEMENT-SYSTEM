@@ -34,6 +34,7 @@ async function moveTaskToDone(taskCard) {
         body: JSON.stringify(taskData),
         credentials: 'include'
     });
+    
     console.log('Status updated to Done');
 
     // Move to Done column

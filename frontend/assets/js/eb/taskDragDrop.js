@@ -41,14 +41,11 @@ async function updateTaskStatus(taskCard, columnId) {
     taskData.status = newStatus;
     const taskId = taskCard.dataset.taskId;
     
-    const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/edit/${taskId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(taskData),
-        credentials: 'include'
-    });
+   
+    if (!response.ok) {
+        alert('Failed to update task:', response.statusText);
+        return;
+    }
     console.log(taskData)
 
 

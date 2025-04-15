@@ -38,13 +38,11 @@ async function updateTaskStatus(taskCard, columnId) {
     const taskId = taskCard.dataset.taskId;
     // If status is Done, use the consolidated function
     if (newStatus === 'Done') {
-        const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/approve/${taskId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
+        
+        if (!response.ok) {
+            alert('Failed to approve task:', response.statusText);
+            return;
+        }
         moveTaskToDone(taskCard);
     } else {
         updateTaskCard(taskCard);

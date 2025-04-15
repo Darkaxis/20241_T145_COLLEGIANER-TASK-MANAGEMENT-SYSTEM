@@ -148,12 +148,13 @@ taskRoutes.patch('/approve/:id', async (req, res) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    if (decoded.role !== 'Editor in Charge') {
+    if (decoded.role !== 'Editor in Charge' && decoded.role !== 'Editorial Board') {
         return res.status(403).json({ message: 'Unauthorized' });
     }
     try {
         const taskId = req.params.id;
         const task = await taskService.approveTask(taskId);
+        console.log('task approved');
         logAction('Task approved', decoded.name, "update");
         res.status(200).send(task);
     } catch (error) {

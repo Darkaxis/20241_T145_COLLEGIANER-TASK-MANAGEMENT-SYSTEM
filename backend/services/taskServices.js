@@ -326,11 +326,17 @@ async function approveTask(taskId) {
       // if (taskData.status !== "Checking") {
       //   throw new Error("Task is not pending approval");
       // }
-      transaction.update(taskRef, { status: "Done", version: taskData.version + 1 });
+      transaction.update(taskRef, { status: encrypt("Done"), version: taskData.version + 1 });
     });
     
     const email = await getUser(decrypt(taskData.assignedTo));
-    await googleTaskServices.googleTaskStatusDone(taskData.googleTaskId, email);
+
+     try {
+      await googleTaskServices.googleTaskStatusDone(taskData.googleTaskId, email);
+    } catch (googleTaskError) {
+      console.error("Error updating Google Task status (non-blocking):", googleTaskError);
+      // Continue processing even if Google Task update fails
+    }
     return { status: 200, message: "Task approved successfully" };
   } catch (error) {
     console.error("Error approving task:", error);

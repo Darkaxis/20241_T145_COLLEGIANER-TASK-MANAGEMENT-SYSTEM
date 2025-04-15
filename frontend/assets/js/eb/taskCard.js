@@ -645,6 +645,7 @@ async function saveTaskEdits(taskCard) {
 
         if (!response.ok) {
             throw new Error('Failed to update task');
+            r
         }
 
         // Update task card dataset
@@ -772,30 +773,62 @@ function handleDragLeave(e) {
     }
 }
 
-function handleDrop(e) {
+async function handleDrop(e) {
     e.preventDefault();
     const taskCard = e.target.closest('.task-card');
+    const newColumn = e.target.closest('.task-column');
+    
     if (taskCard) {
         taskCard.classList.remove('drag-over');
     }
     
     // Get the dragged task and its new column
     const draggedTask = document.querySelector('.dragging');
-    if (draggedTask) {
-        const newColumn = e.target.closest('.task-column');
-        if (newColumn) {
-            const newStatus = getStatusFromColumnId(newColumn.id);
-            const taskId = draggedTask.dataset.taskId;
+    if (draggedTask && newColumn) {
+        const newStatus = getStatusFromColumnId(newColumn.id);
+        const taskId = taskCard.dataset.taskId;
+        const originalStatus = draggedTask.dataset.status;
+        const originalColumn = document.getElementById(getColumnIdFromStatus(originalStatus));
+        
+        try {
+            // First attempt to update on the backend
+            const response = await fetch(`https://localhost:3000/api/v1/eic/tasks/approve/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+        
+            if (response.ok) {
+                // Only update the UI if backend update was successful
+                draggedTask.dataset.status = newStatus;
+                
+                // Make sure the card is in the correct column
+                if (draggedTask.parentElement.id !== newColumn.id) {
+                    newColumn.appendChild(draggedTask);
+                }
+                updateTaskCard(draggedTask);
+                updateTaskCounts();
+                showNotification(`Task moved to ${newStatus}`, 'success');
+            } else {
+                // If backend update failed, move the card back to its original column
+                if (originalColumn) {
+                    originalColumn.appendChild(draggedTask);
+                }
+                showNotification('Failed to update task status', 'error');
+            }
+        } catch (error) {
+            console.error('Error updating task status:', error);
             
-            // Update the task's status attribute
-            draggedTask.dataset.status = newStatus;
-            
-            // Update the server
-            updateTaskStatus(taskId, newStatus);
+            // If there was an error, move the card back to its original column
+            if (originalColumn) {
+                originalColumn.appendChild(draggedTask);
+            }
+            showNotification('Error updating task status', 'error');
         }
     }
 }
-
 function handleDragEnd(e) {
     e.target.classList.remove('dragging');
     document.querySelectorAll('.task-card').forEach(card => {
@@ -861,14 +894,15 @@ async function createNewTask(taskData) {
 
 // Add this function to update task status on the server
 async function updateTaskStatus(taskId, newStatus) {
+    
     try {
-        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/update/${taskId}`, {
-            method: 'PATCH',
+        const response = await fetch(`https://localhost:3000/api/v1/eb/tasks/edit/${taskId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
-            body: JSON.stringify({ status: newStatus })
+            body: JSON.stringify(newStatus),
+            credentials: 'include'
         });
         
         if (response.ok) {
