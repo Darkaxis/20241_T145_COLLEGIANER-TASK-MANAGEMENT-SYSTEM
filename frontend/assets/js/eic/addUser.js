@@ -182,7 +182,7 @@ async function saveUser() {
         if (response.status == 409) {
             alert('User already exists');
         } else if (response.ok) {
-            alert('Successfully saved user');
+            alert('Successfully sent invitation email to user. \n  An email will be sent to the user with instructions on how to set their password. ');
         }
         // Refresh the page to show updated data
         location.reload();

@@ -29,8 +29,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
     if (!checkifUserExists.ok) {
-        alert('User already exists!');
-        window.location.href = 'https://localhost:4000/';
+        alert('User already exists. Please login or reset your password.');
+        window.location.href = '/login';
+        return;
     }
     form.addEventListener('submit', async function(e) {
         e.preventDefault();

@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async() => {
                 credentials: "include", // Include cookies in the request
             }
         );
+        
         checkAuthStatus();
 
         if (!userResponse.ok) {
@@ -113,7 +114,8 @@ document.addEventListener("DOMContentLoaded", async() => {
 
 });
 
-
+const AUTH_CHECK_INTERVAL = 1000;
+setInterval(checkAuthStatus, AUTH_CHECK_INTERVAL);
 function checkAuthStatus() {
     fetch("https://localhost:3000/api/v1/login/verify-token", {
         method: "GET",
@@ -129,7 +131,3 @@ function checkAuthStatus() {
         window.location.href = 'https://localhost:4000/';
     });
 }
-
-// Check auth status every 5 minutes
-const AUTH_CHECK_INTERVAL = 1000; // 5 minutes in milliseconds
-setInterval(checkAuthStatus, AUTH_CHECK_INTERVAL);
