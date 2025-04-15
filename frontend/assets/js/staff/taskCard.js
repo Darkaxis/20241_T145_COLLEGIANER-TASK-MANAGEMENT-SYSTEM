@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
             tasks.tasks.forEach(task => createTask(task));
+            updateTaskCounts();
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             const tasks = await response.json();
             document.querySelectorAll('.task-card').forEach(card => card.remove());
             tasks.tasks.forEach(task => createTask(task));
+            updateTaskCounts();
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
