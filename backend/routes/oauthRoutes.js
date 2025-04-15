@@ -133,13 +133,14 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
     } catch (error) {
         console.log("Error during OAuth2 callback:", error);
         if (error.message === "User not found") {
-            
             res.redirect(`https://localhost:4000/user_not_found`);
         }
+        else{
         res.status(500).json({
             message: 'Error during OAuth2 callback',
             error: error.message
         });
+    }
     }
 });
 

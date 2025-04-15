@@ -127,21 +127,21 @@ loginRoutes.post('/logout', (req, res) => {
 
 loginRoutes.post('/user', async(req, res) => {
     const token = req.body.encodedData;
-
+    
     if (!token) {
         return res.status(401).json({ message: 'No token provided' });
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
         const user = await loginServices.getUser(decoded.email);
-        console.log(user);
-        if (    user) {
-            
-            return res.status(409).json({ message: 'User already exists' });
+        
+        
+        if (user !== null) {
+            res.status(409).json({  message: 'User already exists' });
         }
-        res.status(200).json({ user });
+        return res.status(200);
+       
     } catch (error) {
         res.status(401).json({ message: 'Invalid token' });
     }

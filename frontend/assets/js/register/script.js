@@ -1,9 +1,5 @@
 
 
-
-
-
-
 document.addEventListener('DOMContentLoaded', async function() {
    
 
@@ -20,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     const checkifUserExists = await fetch('https://localhost:3000/api/v1/login/user', {
         method: 'POST',
-        credentials: 'include',
+        
         body: JSON.stringify({
             encodedData
         }),
@@ -30,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     if (!checkifUserExists.ok) {
         alert('User already exists. Please login or reset your password.');
+        console.log('checkifUserExists', checkifUserExists);
         window.location.href = '/login';
         return;
     }

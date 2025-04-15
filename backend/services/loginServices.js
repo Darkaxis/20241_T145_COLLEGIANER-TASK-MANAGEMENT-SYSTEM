@@ -79,6 +79,7 @@ export async function authenticateUser(email, password) {
 
 // Update getUser to use non-encrypted field
 export async function getUser(email) {
+  try {
     const userSnapshot = await db
         .collection("users")
         .where("emailSearch", "==", email.toLowerCase())
@@ -89,14 +90,18 @@ export async function getUser(email) {
     }
 
     const userData = userSnapshot.docs[0].data();
-    
     return {
         id: userSnapshot.docs[0].id,
         name: decrypt(userData.name),
         email: decrypt(userData.email),
         profile: decrypt(userData.profile),
         role: decrypt(userData.role),
+    
     };
+  } catch (error) {
+    
+    return null ;
+  }
 }
 
 
