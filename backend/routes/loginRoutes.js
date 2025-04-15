@@ -47,6 +47,7 @@ loginRoutes.post('/', async(req, res) => {
         res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         console.error('Login error:', error);
+        
         res.status(401).json({ message: error.message });
     }
 });

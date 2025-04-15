@@ -29,6 +29,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/index.html'));
 });
 
+app.get('/user_not_found', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/login/userNotFound.html'));
+});
 // New routes
 app.get('/password_reset', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages/login/passReset.html'));

@@ -86,11 +86,10 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
             // Handle login callback
             const user = await loginServices.getUser(email);
         
-            if (!user) {
-                return res.status(401).json({
-                    message: 'User not found. Please sign up first.'
-                });
-            }
+        
+                
+                
+            
             const token = jwt.sign(
                 {
                     userId: user.id, 
@@ -132,7 +131,11 @@ oauthRoutes.get('/callback', passport.authenticate('google', { failureRedirect: 
             });
         }
     } catch (error) {
-        console.error('Error during OAuth2 callback:', error);
+        console.log("Error during OAuth2 callback:", error);
+        if (error.message === "User not found") {
+            
+            res.redirect(`https://localhost:4000/user_not_found`);
+        }
         res.status(500).json({
             message: 'Error during OAuth2 callback',
             error: error.message
